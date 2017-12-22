@@ -1,0 +1,7 @@
+---
+  - name: "query"
+    shell: "apt search hunspell | grep installé"
+    register: out
+    failed_when: false
+
+  - debug: var=out.stdout_lines

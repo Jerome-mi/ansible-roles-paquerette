@@ -1,0 +1,170 @@
+---
+
+# https://docs.mattermost.com/install/install-ubuntu-1604.html
+
+  - name: "template check log"
+    template:
+      src: mattermost_check.j2
+      dest: "{{ base_prod_ansible_log }}/{{ mattermost_instance_id }}.log"
+    vars:
+      letsencrypt_domain: "{{ mattermost_domain }}"
+
+  - name: "fetch check log"
+    fetch:
+      src: "{{ base_prod_ansible_log }}/{{ mattermost_instance_id }}.log"
+      dest: "{{ mattermost_instance_id }}.log"
+      flat: yes
+
+  - name: create database {{ mattermost_database_name }}
+    postgresql_db:
+    # postgres=# CREATE DATABASE mattermost;
+      name: "{{ mattermost_database_name | mandatory }}"
+      encoding: UTF-8
+      lc_collate: fr_FR.UTF-8
+      lc_ctype: fr_FR.UTF-8
+      template: template0
+      state: present
+    become_user: postgres
+    vars:
+      ansible_ssh_pipelining: true
+
+  - name: create database user {{ mattermost_database_user }}
+    postgresql_user:
+    # postgres=# CREATE USER mmuser WITH PASSWORD 'mmuser_password';
+      name: "{{ mattermost_database_user | mandatory }}"
+      password: "{{ mattermost_database_password | mandatory }}"
+      state: present
+    become_user: postgres
+    vars:
+      ansible_ssh_pipelining: true
+
+  - name: grant on database
+    postgresql_privs:
+    # postgres=# GRANT ALL PRIVILEGES ON DATABASE mattermost to mmuser;
+      db: "{{ mattermost_database_name }}"
+      role: "{{ mattermost_database_user }}"
+      privs: ALL
+      type: database
+      state: present
+    become_user: postgres
+    vars:
+      ansible_ssh_pipelining: true
+
+  - name: "add system user {{ mattermost_user_instance }}"
+    user:
+    #  sudo useradd --system --user-group mattermost
+      name: "{{ mattermost_user_instance | mandatory }}"
+      system: yes
+      state: present
+
+  - name: create temporary download directory
+    tempfile:
+      state: directory
+      suffix: "_mattermost_new"
+    register: _tmp_new_mattermost
+    changed_when: False
+
+    #  sudo mkdir /opt/mattermost/data
+
+  - name: "retrieving mattermost version {{ mattermost_version }} in {{ _tmp_new_mattermost.path }}"
+    unarchive:
+    #  wget https://releases.mattermost.com/X.X.X/mattermost-X.X.X-linux-amd64.tar.gz
+      src: "https://releases.mattermost.com/{{ mattermost_version }}/mattermost-{{ mattermost_version }}-linux-amd64.tar.gz"
+      dest: "{{ _tmp_new_mattermost.path }}"
+      remote_src: True
+      group: "{{ mattermost_user_instance }}"
+      owner: "{{ mattermost_user_instance }}"
+    args:
+      creates: "{{ mattermost_root_instance }}/{{ mattermost_instance_id }}"
+
+  - name: "dir {{ mattermost_root_instance }}"
+    file:
+      path: "{{ mattermost_root_instance }}"
+      state: directory
+      mode: 0755
+
+  - name: "Move {{ _tmp_new_mattermost.path }}/mattermost to {{ mattermost_root_instance }}/{{ mattermost_instance_id }}"
+    command: "/bin/mv {{ _tmp_new_mattermost.path }}/mattermost {{ mattermost_root_instance }}/{{ mattermost_instance_id }}"
+    args:
+      creates: "{{ mattermost_root_instance }}/{{ mattermost_instance_id }}"
+
+  - name: "dir {{ mattermost_root_instance }}/{{ mattermost_instance_id }}.data"
+    file:
+      path: "{{ mattermost_root_instance }}/{{ mattermost_instance_id }}.data"
+      state: directory
+      mode: 0755
+      owner: "{{ mattermost_user_instance }}"
+      group: "{{ mattermost_user_instance }}"
+
+  - name: "link data directory"
+    file:
+      state: link
+      src: "{{ mattermost_root_instance }}/{{ mattermost_instance_id }}.data"
+      path: "{{ mattermost_root_instance }}/{{ mattermost_instance_id }}/data"
+
+  - name: "template /config/config.json {{ mattermost_instance_id }}"
+    template:
+      src: mattermost_config.json.{{ mattermost_version }}.j2
+      dest: "{{ mattermost_root_instance }}/{{ mattermost_instance_id }}/config/config.json"
+      backup: yes
+
+  - name: "remove {{ _tmp_new_mattermost.path }}"
+    file:
+      path: "{{ _tmp_new_mattermost.path }}"
+      state: absent
+    changed_when: False
+
+  - name: "template mattermost_service.j2 {{ mattermost_instance_id }}"
+    template:
+      src: mattermost_service.{{ mattermost_version }}.j2
+      dest: "/lib/systemd/system/{{ mattermost_instance_id }}.service"
+
+  - name: "start and enable service {{ mattermost_instance_id }}.service"
+    systemd:
+      name: "{{ mattermost_instance_id }}.service"
+      state: started
+      daemon_reload: yes
+      enabled: yes
+
+  - name: "template for backup"
+    template:
+      src: mattermost_backup.j2
+      dest: "{{ backup_item_dir }}/20-{{ mattermost_instance_id }}.sh"
+      mode: 0640
+
+  - name: "log dest {{ nginx_log_dest }}/{{ mattermost_instance_id }}"
+    file:
+      state: directory
+      path: "{{ nginx_log_dest }}/{{ mattermost_instance_id }}"
+
+  - name: "template mattermost_nginx_ssl.j2 {{ mattermost_instance_id }}"
+    template:
+      src: mattermost_nginx_ssl.{{ mattermost_version }}.j2
+      dest: "/etc/nginx/sites-available/{{ mattermost_instance_id }}"
+    notify: reload nginx
+
+  - name: "logrotate for log {{ nginx_log_dest }}/{{ mattermost_instance_id }}"
+    template:
+      src: mattermost_logrotate.j2
+      dest: "/etc/logrotate.d/{{ mattermost_instance_id }}"
+      mode: 0644
+
+  - name: "enable site for {{ mattermost_domain }}"
+    file:
+      state: link
+      path: "/etc/nginx/sites-enabled/{{ mattermost_instance_id }}"
+      src: "/etc/nginx/sites-available/{{ mattermost_instance_id }}"
+    notify: reload nginx
+
+  - name: "template for monitoring {{ mattermost_domain }}"
+    template:
+      src: "mattermost.monit.j2"
+      dest: "/etc/monit/conf.d/{{ mattermost_instance_id }}.conf"
+    notify: reload monit
+
+  - name: "letsencrypt certificate for {{ mattermost_domain }}"
+    command: "{{ certbot_grant_command }}"
+    args:
+      creates: "{{ letsencrypt_cert_root }}/{{ mattermost_domain | quote }}"
+    vars:
+      letsencrypt_domain: "{{ mattermost_domain }}"

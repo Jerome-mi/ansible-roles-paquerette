@@ -1,0 +1,74 @@
+---
+
+  - name: 'set relayhost to {{ smtp_host}}'
+    lineinfile:
+      path: "/etc/postfix/main.cf"
+      regexp: '^relayhost'
+      line: "relayhost = [{{ smtp_host}}]:{{ smtp_port }}"
+      state: present
+      backup: yes
+    notify: restart postfix
+
+  - name: 'push root mail to sms'
+    lineinfile:
+      path: "/etc/postfix/main.cf"
+      line: "{{comment_for_sms_push | mandatory}}always_bcc = {{ mail_for_sms_push }}"
+      state: present
+    notify: restart postfix
+
+  - name: 'smtp_sasl_auth_enable = yes'
+    lineinfile:
+      path: "/etc/postfix/main.cf"
+      line: "smtp_sasl_auth_enable = yes"
+      state: present
+    notify: restart postfix
+
+  - name: 'smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd'
+    lineinfile:
+      path: "/etc/postfix/main.cf"
+      line: "smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd"
+      state: present
+    notify: restart postfix
+
+  - name: 'smtp_sasl_security_options = noanonymous'
+    lineinfile:
+      path: "/etc/postfix/main.cf"
+      line: "smtp_sasl_security_options = noanonymous"
+      state: present
+    notify: restart postfix
+
+  - name: 'canonical_maps = hash:/etc/postfix/canonical'
+    lineinfile:
+      path: "/etc/postfix/main.cf"
+      line: "canonical_maps = hash:/etc/postfix/canonical"
+      state: present
+    notify: restart postfix
+
+  - name: '/etc/postfix/sasl_passwd'
+    lineinfile:
+      path: "/etc/postfix/sasl_passwd"
+      line: "[{{ smtp_host }}]:{{ smtp_port }} {{ smtp_user }}:{{ smtp_password }}"
+      state: present
+      create: yes
+      mode: 0600
+    notify: postmap /etc/postfix/sasl_passwd
+
+  - name: '/etc/postfix/canonical'
+    lineinfile:
+      path: "/etc/postfix/canonical"
+      line: root@{{ansible_hostname}} {{ base_postmaster }}
+      state: present
+      create: yes
+      mode: 0600
+    notify: postmap /etc/postfix/canonical
+
+  - name: '/etc/postfix/canonical'
+    lineinfile:
+      path: "/etc/postfix/canonical"
+      line: root@localhost.localdomain {{ base_postmaster }}
+      state: present
+      create: yes
+      mode: 0600
+    notify: postmap /etc/postfix/canonical
+
+

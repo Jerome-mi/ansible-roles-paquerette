@@ -1,0 +1,41 @@
+---
+
+  - name: 'set monit cycle to {{ monit_cycle_duration }} seconds'
+    lineinfile:
+      path: "/etc/monit/monitrc"
+      regexp: "^[\t ]*set daemon"
+      line: "set daemon {{ monit_cycle_duration }} start delay {{ monit_start_delay }}"
+      state: present
+    notify: reload monit
+
+  - name: "monit.conf.j2"
+    template:
+      src: "monit.conf.j2"
+      dest: "/etc/monit/conf.d/base.conf"
+    notify: reload monit
+
+  - name: "monit sms notification"
+    template:
+      src: "monit_sms.j2"
+      dest: "{{ monit_sms_script }}"
+      mode: '0777'
+
+  - name: "cron stop monit for backup"
+    cron:
+      name: "stop monit"
+      hour: "{{ backup_monit_stop_hour }}"
+      minute: "{{ backup_monit_stop_minute }}"
+      job: "/bin/systemctl stop monit.service"
+
+  - name: "cron start monit for backup"
+    cron:
+      name: "start monit"
+      hour: "{{ backup_monit_start_hour | mandatory }}"
+      minute: "{{ backup_monit_start_minute | mandatory }}"
+      job: "/bin/systemctl start monit.service"
+
+  - name: "cron start monit anyway"
+    cron:
+      name: "start monit anyway"
+      hour: "{{ monit_start_anyway_time | mandatory }}"
+      job: "/bin/systemctl start monit.service"

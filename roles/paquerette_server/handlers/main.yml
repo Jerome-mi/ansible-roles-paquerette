@@ -1,0 +1,19 @@
+---
+
+- name: restart cron
+  service: name=cron state=restarted
+
+- name: postmap /etc/postfix/canonical
+  command: /usr/sbin/postmap /etc/postfix/canonical
+  notify: restart postfix
+
+- name: postmap /etc/postfix/sasl_passwd
+  command: /usr/sbin/postmap /etc/postfix/sasl_passwd
+  notify: restart postfix
+
+- name: restart postfix
+  service: name=postfix state=restarted
+
+- name: reload monit
+  service: name=monit state=reloaded
+

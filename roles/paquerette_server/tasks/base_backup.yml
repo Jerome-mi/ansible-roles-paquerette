@@ -1,0 +1,38 @@
+---
+
+  - name: 'set reportsuccess to no'
+    lineinfile:
+      path: "/etc/backupninja.conf"
+      regexp: '^reportsuccess'
+      line: 'reportsuccess = no'
+      state: present
+
+  - name: 'set reportinfo to yes'
+    lineinfile:
+      path: "/etc/backupninja.conf"
+      regexp: '^reportinfo'
+      line: 'reportinfo = yes'
+      state: present
+
+  - name: "{{ backup_prod_dir }}"
+    file:
+      state: directory
+      path: "{{ backup_prod_dir }}"
+
+  - name: "template day"
+    template:
+      src: backup.day.j2
+      dest: "{{ backup_item_dir }}/50-day.sh"
+      mode: 0640
+
+  - name: "template month"
+    template:
+      src: backup.month.j2
+      dest: "{{ backup_item_dir }}/50-month.sh"
+      mode: 0640
+
+  - name: "template {{ base_prod_options }}"
+    template:
+      src: opt_backup_day.j2
+      dest: "{{ backup_item_dir }}/20-prod-opt.sh"
+      mode: 0640

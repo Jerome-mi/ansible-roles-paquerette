@@ -1,0 +1,8 @@
+---
+dependencies:
+
+  - { role: paquerette_server_def }
+
+
+
+

@@ -1,0 +1,28 @@
+---
+# certbot certonly --agree-tos --webroot -n -m {{ base_postmaster }} --webroot-path=/var/www/html -d
+# certbot certonly --dry-run --test-cert --agree-tos --webroot -m postmaster@paquerette.eu --webroot-path=/var/www/html -d test-server.paquerette.eu
+  rev_proxy: "nginx"
+
+
+  www_root: "{{ base_prod_path }}/www"
+  www_log: "{{ base_prod_log }}/nginx"
+
+
+  # to be deprecated
+  nginx_www_root: "{{ www_root }}"
+  nginx_log_dest: "{{ www_log }}"
+  ##
+
+  letsencrypt_cert_root: "/etc/letsencrypt/live/"
+
+  # certbot certonly --agree-tos --webroot -n -m postmaster@paquerette.eu --webroot-path={{  }} -d "test-server.paquerette.eu"
+  # definir letsencrypt_instance_path et letsencrypt_domain avant l'appel
+  certbot_grant_command: "certbot certonly --agree-tos --webroot -n -m {{ base_postmaster }} --webroot-path=/var/www/html -d {{ letsencrypt_domain | mandatory }} "
+
+  # certbot revoke --cert-path /etc/letsencrypt/live/test-server.paquerette.eu/cert.pem
+  certbot_revoke_command: "certbot revoke --cert-path /etc/letsencrypt/live/{{ letsencrypt_domain | mandatory | quote }}/cert.pem"
+
+  ### ???
+  cert_delete_command: "certbot delete --cert-name "
+
+

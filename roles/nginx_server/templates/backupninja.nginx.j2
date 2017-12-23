@@ -1,0 +1,5 @@
+# Note: the spaces around the equal sign ('=') are optional.
+when = everyday at {{ backup_base_service_conf_time | mandatory }}
+
+rsync -aAx --del /etc/nginx {{ backup_prod_dir | mandatory}}
+rc=$?; if [[ $rc != 0 ]]; then error "nginx configuration" ; fi

@@ -1,0 +1,7 @@
+---
+
+- name: reload nginx
+  service: name=nginx state=restarted
+
+- name: reload monit
+  service: name=monit state=reloaded

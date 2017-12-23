@@ -1,0 +1,5 @@
+---
+
+  postgres_base_packages: ["postgresql", "postgresql-contrib", "libpq-dev", "python-psycopg2", ]
+
+

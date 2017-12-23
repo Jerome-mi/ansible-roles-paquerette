@@ -1,0 +1,17 @@
+Bonjour à toutes et tous,
+ 
+vous êtes de plus en plus nombreux à utiliser nos services et nous vous remercions de votre confiance.
+
+Afin de garantir la qualité de nos service, nous allons réaliser une opération de maintenance sur nos serveurs:
+
+ le _DATE, entre _HDEP et _HFIN.
+
+L’accès à votre service _SERVICE sera temporairement suspendue pendant _DUREE.
+ 
+Nous restons à votre disposition si vous avez la moindre question à ce sujet!
+Merci de votre compréhension,
+
+Très bonne journée!
+ 
+L'équipe Pâquerette
+ 

@@ -1,0 +1,12 @@
+Bonjour,
+ 
+l'opération de maintenance planifiée de votre service _SERVICE est démarrée.
+
+L’accès à votre service est interrompue pendant _DUREE. Nous sommes désolés pour la gêne occasionnée. Vour recevrez un mail vous indiquant le rétablissement de votre service.
+ 
+Merci de votre compréhension,
+
+Très bonne journée!
+ 
+L'équipe Pâquerette
+ 

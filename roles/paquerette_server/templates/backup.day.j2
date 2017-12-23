@@ -1,0 +1,11 @@
+# Note: the spaces around the equal sign ('=') are optional.
+when = everyday at {{ backup_day_conf_time | mandatory }}
+
+export LANG=fr_FR.utf8
+
+jour=$(date "+%A")
+
+rsync -aAx --del {{ backup_prod_dir }}/ {{ backup_base_dir }}/$jour
+
+rc=$?; if [[ $rc != 0 ]]; then error "$jour prod rsync" ; fi
+

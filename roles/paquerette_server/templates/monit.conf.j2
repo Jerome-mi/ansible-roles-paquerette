@@ -1,0 +1,44 @@
+#set mailserver localhost
+set mailserver {{ smtp_host }} port {{ smtp_port }}
+  USERNAME {{ smtp_user }} PASSWORD {{ smtp_password }}
+  using {{ smtp_tlsv1 }} with timeout 30 seconds
+
+#set alert {{ base_postmaster | mandatory }}
+set alert {{ base_postmaster | mandatory }} not on { instance, action }
+{{ comment_for_sms_push | mandatory }}set alert {{ mail_for_sms_push | mandatory }} not on { instance, action }
+
+set mail-format {
+   from: {{ base_postmaster }}
+   subject: [Monit - {{ ansible_hostname }}] $SERVICE $EVENT at $DATE
+   message: Monit $ACTION $SERVICE at $DATE on $HOST: $DESCRIPTION.
+            Yours sincerely,
+            monit
+ }
+
+set httpd port 2812 and
+        use address localhost
+        allow localhost
+
+check system $HOST
+    if loadavg (1min) > 4 then alert
+    if loadavg (5min) > 2 then alert
+    if cpu usage > 95% for 5 cycles then alert
+    if memory usage > 75% then alert
+    if swap usage > 25% then alert
+
+check filesystem rootfs with path /
+       if space usage > 60% then alert
+
+check filesystem datafs with path {{ base_prod_path }}
+    start program  = "/bin/mount {{ base_prod_path }}"
+    stop program  = "/bin/umount {{ base_prod_path }}"
+#    if failed permission 660 then unmonitor
+#    if failed uid root then unmonitor
+#    if failed gid disk then unmonitor
+    if space usage > 80% for 5 times within 15 cycles then alert
+    if space usage > 99% then stop
+#    if inode usage > 30000 then alert
+    if inode usage > 99% then stop
+    if changed fsflags then alert
+
+

@@ -1,0 +1,51 @@
+---
+
+  - name: "directory for key file for ext backup host"
+    file:
+      state: directory
+      path: "{{ ext_backup_key_path }}"
+      owner: "{{ ext_backup_user }}"
+      group: "{{ ext_backup_user }}"
+
+  - name: "key file for scp to ext backup host"
+    copy:
+      src: "{{ src_key_file }}"
+      dest: "{{ ext_backup_key_path }}"
+      owner: "{{ ext_backup_user }}"
+      group: "{{ ext_backup_user }}"
+      mode: 0600
+
+  - name: "check known host for {{ ext_backup_host }}"
+    command: "ssh-keygen -F {{ ext_backup_host }}"
+    changed_when: False
+    failed_when: False
+    register: _known_host_test
+
+  - name: "ensure presence of /root/.ssh"
+    file:
+      path: "/root/.ssh"
+      state: directory
+
+  - name: "ssh-keyscan {{ ext_backup_host }} >> /root/.ssh/known_hosts"
+    shell: "ssh-keyscan {{ ext_backup_host }} >> /root/.ssh/known_hosts"
+    changed_when: False
+    when: 'not "found" in _known_host_test.stdout'
+
+  - name: "ext backup template day"
+    template:
+      src: ext.backup.day.j2
+      dest: "{{ backup_item_dir }}/60-ext-day.sh"
+      mode: 0640
+
+  - name: "ext backup template month"
+    template:
+      src: ext.backup.month.j2
+      dest: "{{ backup_item_dir }}/60-ext-month.sh"
+      mode: 0640
+
+  - name: "cross backup template"
+    template:
+      src: cross.backup.j2
+      dest: "{{ backup_item_dir }}/70-ext-cross.sh"
+      mode: 0640
+

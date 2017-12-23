@@ -1,0 +1,6 @@
+#!/bin/sh
+
+message="Monit: $MONIT_SERVICE - $MONIT_EVENT at $MONIT_DATE on host '$MONIT_HOST': $MONIT_DESCRIPTION."
+
+echo monit_sms_called >> /tmp/monit_sms
+echo message  >> /tmp/monit_sms

@@ -1,0 +1,14 @@
+---
+
+- locale_gen:
+    name: fr_FR.UTF-8
+    state: present
+
+- locale_gen:
+    name: en_US.UTF-8
+    state: present
+
+- name: set timezone to Paris
+  timezone:
+    name: "Europe/Paris"
+  notify: restart cron

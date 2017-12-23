@@ -1,0 +1,98 @@
+---
+
+  - name: "install apache2"
+    apt:
+      name: apache2
+      state: present
+      update_cache: yes
+
+  - name: " ServerName {{ apache_default_domain }}"
+    lineinfile:
+      line: "ServerName {{ apache_default_domain }}"
+      path: "/etc/apache2/apache2.conf"
+      state: present
+      backup: yes
+    notify: restart apache2
+
+  - apache2_module:
+      name: "{{ item }}"
+      state: present
+    with_items: "{{ apache_module_list }}"
+    notify: restart apache2
+
+  - name: "ufw: Allow Apache Full"
+    ufw:
+      rule: allow
+      name: Apache Full
+
+  - name: "Move /var/www {{ www_root }}"
+    command: "/bin/mv /var/www {{ www_root }}"
+    args:
+      creates: "{{ www_root }}"
+
+  - name: "link /var/www to {{ www_root }}"
+    file:
+      state: link
+      src: "{{ www_root }}"
+      path: "/var/www"
+
+  - name: "log dest {{ www_log }}"
+    file:
+      state: directory
+      path: "{{ www_log }}"
+
+  - name: "cron stop apache for backup"
+    cron:
+      name: "stop apache"
+      hour: "{{ backup_web_stop_hour }}"
+      minute: "{{ backup_web_stop_minute }}"
+      job: "/bin/systemctl stop apache2.service"
+
+  - name: "cron start apache for backup"
+    cron:
+      name: "start apache"
+      hour: "{{ backup_web_start_hour | mandatory }}"
+      minute: "{{ backup_web_start_minute | mandatory }}"
+      job: "/bin/systemctl start apache2.service"
+
+  - name: "template for backup"
+    template:
+      src: backupninja.apache.j2
+      dest: "{{ backup_item_dir }}/10-apache2.sh"
+      mode: 0640
+
+  - name: "monit.apache.j2"
+    template:
+      src: "monit.apache.j2"
+      dest: "/etc/monit/conf.d/apache.conf"
+    notify: reload monit
+
+# https://www.digitalocean.com/community/tutorials/how-to-set-up-let-s-encrypt-certificates-for-multiple-apache-virtual-hosts-on-ubuntu-16-04
+# https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-16-04
+
+  - name: "letsencrypt certbot repository"
+    apt_repository:
+      repo: "ppa:certbot/certbot"
+
+  - name: "python-certbot-apache"
+    apt:
+      name: python-certbot-apache
+      state: present
+      update_cache: yes
+
+#  - name: "disable site 000-default-le-ssl.conf"
+#    file:
+#      state: absent
+#      path: "/etc/apache2/sites-enabled/000-default-le-ssl.conf"
+#    notify: reload apache2
+
+  - name: "cron for automatic letsencrypt renew"
+    cron:
+      name: "letsencrypt certbot automatic renew"
+      weekday: 1
+      hour: "{{ renew_cert_web_stop_hour | mandatory}}"
+      minute: "{{ renew_cert_web_stop_minute | mandatory }}"
+      job: '/usr/bin/certbot renew --quiet'
+
+
+

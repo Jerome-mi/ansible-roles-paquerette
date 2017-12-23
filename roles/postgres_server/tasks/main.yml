@@ -1,0 +1,23 @@
+---
+
+  - name: "postgres base packages"
+    apt:
+      name: "{{ item }}"
+      state: latest
+      update_cache: yes
+    with_items: "{{ postgres_base_packages }}"
+
+  - name: "template for backup"
+    template:
+      src: backupninja.postgres.j2
+      dest: "{{ backup_item_dir }}/10-postgres.sh"
+      mode: 0640
+
+  - name: "template for monitoring postgres9.5"
+    template:
+      src: "postgres9.5.monit.j2"
+      dest: "/etc/monit/conf.d/postgres9.5.conf"
+    notify: reload monit
+
+
+

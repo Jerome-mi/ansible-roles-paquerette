@@ -1,0 +1,43 @@
+---
+#############################################
+# BASE PACKAGES
+#############################################
+
+  php_version: "7.0"
+
+# apache postgres
+  php_apache_packages_list: [
+    "libapache2-mod-php{{ php_version }}",
+    "php{{ php_version }}",
+    "php{{ php_version }}-curl",
+    "php{{ php_version }}-fpm",
+    "php{{ php_version }}-gd",
+    #"php{{ php_version }}-geoip",
+    "php{{ php_version }}-gmp",
+    "php{{ php_version }}-intl",
+    "php{{ php_version }}-json",
+    "php{{ php_version }}-mbstring",
+    "php{{ php_version }}-mcrypt",
+    #"php{{ php_version }}-msgpack",
+    "php{{ php_version }}-mysql",
+    "php{{ php_version }}-pgsql",
+    "php-redis",
+    "php{{ php_version }}-sqlite3",
+    "php{{ php_version }}-sqlite3",
+    "php{{ php_version }}-xml",
+    "php{{ php_version }}-zip",
+    ]
+
+  apache_module_list: [
+    "dir",
+    "env",
+    "headers",
+    "mime",
+    "proxy_fcgi",
+    "rewrite",
+    "setenvif",
+    ]
+
+  php_ini_file: "/etc/php/{{ php_version }}/apache2/php.ini"
+  #php{{ php_version }}_ini_file: "/etc/php/{{ php_version }}/apache2/php.ini"
+  #php{{ php_version }}_ini_file: "/etc/php/{{ php_version }}/fpm/php.ini"

@@ -1,0 +1,45 @@
+---
+
+  - name: "mariadb base packages"
+    apt:
+      name: "{{ item }}"
+      state: latest
+      update_cache: yes
+    with_items: "{{ mariadb_base_packages }}"
+
+  - name: "setting the root password for all hosts"
+    mysql_user:
+      user: "root"
+      password: "{{ mysql_root_password }}"
+      host_all: yes
+
+  - name: "setting the root password for localhost"
+    mysql_user:
+      user: "root"
+      password: "{{ mysql_root_password }}"
+
+  - name: "removing the test database"
+    mysql_db:
+      db: test
+      state: absent
+
+  - name: "removing anonymous user"
+    mysql_user:
+      name: ''
+      host_all: yes
+      state: absent
+
+  - name: "template for backup"
+    template:
+      src: backupninja.mariadb-mysql.j2
+      dest: "{{ backup_item_dir }}/10-mariadb-mysql.sh"
+      mode: 0640
+
+  - name: "template for monitoring mariadb"
+    template:
+      src: "mariadb-mysql.monit.j2"
+      dest: "/etc/monit/conf.d/mariadb-mysql.conf"
+    notify: reload monit
+
+
+

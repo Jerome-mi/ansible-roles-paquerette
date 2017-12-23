@@ -1,0 +1,118 @@
+---
+
+# https://docs.mattermost.com/administration/upgrade.html#
+
+  - name: "template check log"
+    template:
+      src: mattermost_upg_check.j2
+      dest: "{{ base_prod_ansible_log }}/{{ mattermost_instance_id }}.upg.{{ mattermost_version }}.log"
+
+  - name: "fetch check log"
+    fetch:
+      src: "{{ base_prod_ansible_log }}/{{ mattermost_instance_id }}.upg.{{ mattermost_version }}.log"
+      dest: "{{ mattermost_instance_id }}.upg.{{ mattermost_version }}.log"
+      flat: yes
+
+  - name: "create temporary download directory"
+    tempfile:
+      state: directory
+      suffix: "_mattermost_new"
+    register: _tmp_new_mattermost
+    changed_when: False
+
+  - name: "retrieving mattermost version {{ mattermost_version }} in {{ _tmp_new_mattermost.path }}"
+    unarchive:
+    #  wget https://releases.mattermost.com/{{ mattermost_version }}/mattermost-{{ mattermost_version }}-linux-amd64.tar.gz
+      src: "https://releases.mattermost.com/{{ mattermost_version }}/mattermost-{{ mattermost_version }}-linux-amd64.tar.gz"
+      dest: "{{ _tmp_new_mattermost.path }}"
+      remote_src: True
+      owner: "{{ mattermost_user_instance }}"
+      group: "{{ mattermost_user_instance }}"
+
+  - name: "disable site for {{ mattermost_domain }}"
+    file:
+      state: absent
+      path: "/etc/nginx/sites-enabled/{{ mattermost_instance_id }}"
+
+  - name: "reload nginx"
+    service: name=nginx state=reloaded
+
+  - name: "stop service {{ mattermost_instance_id }}.service"
+    systemd:
+      name: "{{ mattermost_instance_id }}.service"
+      state: stopped
+
+  - name: "create dir for backup current version {{ backup_version_dir | mandatory }}/{{ mattermost_instance_id | mandatory }}/{{ mattermost_oldversion | mandatory }}"
+    file:
+      path: "{{ backup_version_dir }}/{{ mattermost_instance_id }}/{{ mattermost_oldversion }}"
+      state: directory
+      mode: 0777
+
+  - name: "backup nginx config"
+    command: "cp /etc/nginx/sites-available/{{ mattermost_instance_id }} {{ backup_version_dir }}/{{ mattermost_instance_id }}/{{ mattermost_oldversion }}/{{ mattermost_instance_id }}.nginx"
+    args:
+      creates: "{{ backup_version_dir }}/{{ mattermost_instance_id }}/{{ mattermost_oldversion }}/{{ mattermost_instance_id }}/{{ mattermost_instance_id }}.nginx"
+
+  - name: "backup app"
+    command: "rsync -aAx --del {{ mattermost_root_instance }}/{{ mattermost_instance_id}} {{ backup_version_dir }}/{{ mattermost_instance_id }}/{{ mattermost_oldversion }}"
+    args:
+      creates: "{{ backup_version_dir }}/{{ mattermost_instance_id }}/{{ mattermost_oldversion }}/{{ mattermost_instance_id }}"
+
+  - name: "backup database"
+    shell: "/usr/bin/pg_dump {{ mattermost_database_name }} > {{ backup_version_dir }}/{{ mattermost_instance_id }}/{{ mattermost_oldversion }}/{{ mattermost_database_name }}.sql"
+    become_user: "postgres"
+    vars:
+      ansible_ssh_pipelining: true
+    args:
+      creates: "{{ backup_version_dir }}/{{ mattermost_instance_id }}/{{ mattermost_oldversion }}/{{ mattermost_database_name }}.sql"
+
+  - name: "remove {{ mattermost_root_instance }}/{{ mattermost_instance_id }}"
+    file:
+      path: "{{ mattermost_root_instance }}/{{ mattermost_instance_id }}"
+      state: absent
+
+  - name: "Move {{ _tmp_new_mattermost.path }}/mattermost to {{ mattermost_root_instance }}/{{ mattermost_instance_id }}"
+    command: "/bin/mv {{ _tmp_new_mattermost.path }}/mattermost {{ mattermost_root_instance }}/{{ mattermost_instance_id }}"
+    args:
+      creates: "{{ mattermost_root_instance }}/{{ mattermost_instance_id }}"
+
+  - name: "remove {{ _tmp_new_mattermost.path }}"
+    file:
+      path: "{{ _tmp_new_mattermost.path }}"
+      state: absent
+    changed_when: False
+
+  - name: "restore config.json"
+    copy:
+      src: "{{ backup_version_dir }}/{{ mattermost_instance_id }}/{{ mattermost_oldversion }}/{{ mattermost_instance_id}}/config/config.json"
+      dest: "{{ mattermost_root_instance }}/{{ mattermost_instance_id }}/config/config.json"
+      remote_src: yes
+      backup: yes
+
+  - name: "link to data directory"
+    file:
+      state: link
+      src: "{{ mattermost_root_instance }}/{{ mattermost_instance_id }}.data"
+      path: "{{ mattermost_root_instance }}/{{ mattermost_instance_id }}/data"
+
+  - name: "{{ mattermost_user_instance }} owner of {{ mattermost_root_instance }}/{{ mattermost_instance_id }}"
+    file:
+      state: directory
+      path: "{{ mattermost_root_instance }}/{{ mattermost_instance_id }}"
+      recurse: yes
+      owner: "{{ mattermost_user_instance }}"
+      group: "{{ mattermost_user_instance }}"
+
+  - name: "start service {{ mattermost_instance_id }}.service"
+    systemd:
+      name: "{{ mattermost_instance_id }}.service"
+      state: started
+
+  - name: "enable site for {{ mattermost_domain }}"
+    file:
+      state: link
+      path: "/etc/nginx/sites-enabled/{{ mattermost_instance_id }}"
+      src: "/etc/nginx/sites-available/{{ mattermost_instance_id }}"
+
+  - name: "reload nginx"
+    service: name=nginx state=reloaded

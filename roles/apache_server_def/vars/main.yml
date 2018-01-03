@@ -1,7 +1,5 @@
 ---
 
-  rev_proxy: "apache2"
-
   www_root: "{{ base_prod_path }}/www"
   www_log: "{{ base_prod_log }}/apache2"
 

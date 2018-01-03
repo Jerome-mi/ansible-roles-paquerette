@@ -1,0 +1,7 @@
+---
+
+#  nextcloud_domain: "xxx"
+#  nextcloud_oldversion: 12.0.3
+#  nextcloud_version: 12.0.4
+#  nextcloud_instance_id: "nextcloud"
+#  nextcloud_database_name: "{{ nextcloud_instance_id }}_db"

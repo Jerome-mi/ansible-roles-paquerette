@@ -1,0 +1,165 @@
+---
+
+# https://nextcloud.com/install/#instructions-server
+
+  - name: "template check log"
+    template:
+      src: nextcloud_check.j2
+      dest: "{{ base_prod_ansible_log }}/{{ nextcloud_instance_id }}.log"
+    vars:
+       letsencrypt_domain: "{{ nextcloud_domain | quote }}"
+    tag: check_log
+
+  - name: "fetch check log"
+    fetch:
+      src: "{{ base_prod_ansible_log }}/{{ nextcloud_instance_id }}.log"
+      dest: "{{ nextcloud_instance_id }}.log"
+      flat: yes
+    tag: check_log
+
+  - name: "create database {{ nextcloud_database_name }}"
+    postgresql_db:
+      name: "{{ nextcloud_database_name | mandatory }}"
+      encoding: UTF-8
+      lc_collate: fr_FR.UTF-8
+      lc_ctype: fr_FR.UTF-8
+      template: template0
+      state: present
+    become_user: postgres
+    vars:
+      ansible_ssh_pipelining: true
+
+  - name: "create database user {{ nextcloud_database_user }}"
+    postgresql_user:
+      name: "{{ nextcloud_database_user | mandatory }}"
+      password: "{{ nextcloud_database_password | mandatory }}"
+      state: present
+    become_user: postgres
+    vars:
+      ansible_ssh_pipelining: true
+
+  - name: "grant on database"
+    postgresql_privs:
+      db: "{{ nextcloud_database_name }}"
+      role: "{{ nextcloud_database_user }}"
+      privs: ALL
+      type: database
+      state: present
+    become_user: postgres
+    vars:
+      ansible_ssh_pipelining: true
+
+  - name: create temporary download directory
+    tempfile:
+      state: directory
+      suffix: "_nextcloud_new"
+    register: _tmp_new_nextcloud
+    changed_when: False
+
+    #  sudo mkdir /opt/nextcloud/data
+
+  - name: "retrieving nextcloud version {{ nextcloud_version }} in {{ _tmp_new_nextcloud.path }}"
+    unarchive:
+    #  wget https://releases.nextcloud.com/X.X.X/nextcloud-X.X.X-linux-amd64.tar.gz
+      src: "https://download.nextcloud.com/server/releases/nextcloud-{{ nextcloud_version }}.tar.bz2"
+      dest: "{{ _tmp_new_nextcloud.path }}"
+      remote_src: True
+      group: "www-data"
+      owner: "www-data"
+    args:
+      creates: "{{ nextcloud_root_instance }}/{{ nextcloud_instance_id }}"
+
+  - name: "dir {{ nextcloud_root_instance }}"
+    file:
+      path: "{{ nextcloud_root_instance }}"
+      state: directory
+      mode: 0755
+
+  - name: "Move {{ _tmp_new_nextcloud.path }}/nextcloud to {{ nextcloud_root_instance }}/{{ nextcloud_instance_id }}"
+    command: "/bin/mv {{ _tmp_new_nextcloud.path }}/nextcloud {{ nextcloud_root_instance }}/{{ nextcloud_instance_id }}"
+    args:
+      creates: "{{ nextcloud_root_instance }}/{{ nextcloud_instance_id }}"
+
+  - name: "dir {{ nextcloud_root_instance }}/{{ nextcloud_instance_id }}.data"
+    file:
+      path: "{{ nextcloud_root_instance }}/{{ nextcloud_instance_id }}.data"
+      state: directory
+      mode: 0755
+      group: "www-data"
+      owner: "www-data"
+
+  - name: "link data directory"
+    file:
+      state: link
+      src: "{{ nextcloud_root_instance }}/{{ nextcloud_instance_id }}.data"
+      path: "{{ nextcloud_root_instance }}/{{ nextcloud_instance_id }}/data"
+
+  - name: "remove {{ _tmp_new_nextcloud.path }}"
+    file:
+      path: "{{ _tmp_new_nextcloud.path }}"
+      state: absent
+    changed_when: False
+
+  - name: "nextcloud base app configuration template"
+    template:
+      src: nextcloud_app_install.j2
+      dest: "{{ nextcloud_root_instance }}/{{ nextcloud_instance_id }}/ansible_base_install.sh"
+      mode: 0700
+
+  - name: "nextcloud base app configuration"
+    command: "{{ nextcloud_root_instance }}/{{ nextcloud_instance_id }}/ansible_base_install.sh"
+    register: __ansible_base_install
+    args:
+      creates: "{{ nextcloud_root_instance }}/{{ nextcloud_instance_id }}/ansible_base_install.done"
+
+    # crontab -u www-data -e
+    #*/15  *  *  *  *
+  - name: "cron mode for background jobs"
+    cron:
+      name: "{{ nextcloud_root_instance }}/{{ nextcloud_instance_id }}/cron.php >/dev/null 2>&1"
+      user: "www-data"
+      minute: "*/15"
+      job: "php -f {{ nextcloud_root_instance }}/{{ nextcloud_instance_id }}/cron.php >/dev/null 2>&1"
+
+  - name: "template for backup"
+    template:
+      src: nextcloud_backup.j2
+      dest: "{{ backup_item_dir }}/20-{{ nextcloud_instance_id }}.sh"
+      mode: 0640
+
+  - name: "log dest {{ apache_log_dest }}/{{ nextcloud_instance_id }}"
+    file:
+      state: directory
+      path: "{{ apache_log_dest }}/{{ nextcloud_instance_id }}"
+
+  - name: "template {{ rev_proxy }}_nextcloud.j2 {{ nextcloud_instance_id }}"
+    template:
+      src: "{{ rev_proxy }}_nextcloud.j2"
+      dest: "/etc/{{ rev_proxy }}/sites-available/{{ nextcloud_instance_id }}.conf"
+    notify: reload {{ rev_proxy }}
+
+#  - name: "logrotate for log {{ {{ rev_proxy }}_log_dest }}/{{ nextcloud_instance_id }}"
+#    template:
+#      src: nextcloud_logrotate.j2
+#      dest: "/etc/logrotate.d/{{ nextcloud_instance_id }}"
+#      mode: 0644
+
+  - name: "enable site for {{ nextcloud_domain }}"
+    file:
+      state: link
+      path: "/etc/{{ rev_proxy }}/sites-enabled/{{ nextcloud_instance_id }}.conf"
+      src: "/etc/{{ rev_proxy }}/sites-available/{{ nextcloud_instance_id }}.conf"
+    notify: reload {{ rev_proxy }}
+
+  - name: "template for monitoring {{ nextcloud_domain }}"
+    template:
+      src: "nextcloud_monit.j2"
+      dest: "/etc/monit/conf.d/{{ nextcloud_instance_id }}.conf"
+    notify: reload monit
+
+  - name: "letsencrypt certificate for {{ nextcloud_domain }}"
+    command: "{{ certbot_grant_command }}"
+    args:
+      creates: "{{ letsencrypt_cert_root }}/{{ nextcloud_domain | quote }}"
+    vars:
+      letsencrypt_domain: "{{ nextcloud_domain }}"

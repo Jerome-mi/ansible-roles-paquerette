@@ -1,0 +1,12 @@
+---
+dependencies:
+
+  - { role: paquerette_server_def }
+
+  - { role: nextcloud_platform_def }
+
+  - { role: apache_server }
+
+  - { role: php7_apache }
+
+  - { role: postgres_server }

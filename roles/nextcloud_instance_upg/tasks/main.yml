@@ -1,0 +1,172 @@
+---
+
+# https://nextcloud.com/install/#instructions-server
+# https://docs.nextcloud.com/server/12/admin_manual/maintenance/upgrade.html
+
+  - name: "template check log"
+    template:
+      src: nextcloud_upg_check.j2
+      dest: "{{ base_prod_ansible_log }}/{{ nextcloud_instance_id }}.upg.{{ nextcloud_version }}.log"
+
+  - name: "fetch check log"
+    fetch:
+      src: "{{ base_prod_ansible_log }}/{{ nextcloud_instance_id }}.upg.{{ nextcloud_version }}.log"
+      dest: "{{ nextcloud_instance_id }}.upg.{{ nextcloud_version }}.log"
+      flat: yes
+
+  - name: "create temporary download directory"
+    tempfile:
+      state: directory
+      suffix: "_nextcloud_new"
+    register: _tmp_new_nextcloud
+    changed_when: False
+
+  - name: "retrieving nextcloud version {{ nextcloud_version }} in {{ _tmp_new_nextcloud.path }}"
+    unarchive:
+    #  wget https://releases.nextcloud.com/X.X.X/nextcloud-X.X.X-linux-amd64.tar.gz
+      src: "https://download.nextcloud.com/server/releases/nextcloud-{{ nextcloud_version }}.tar.bz2"
+      dest: "{{ _tmp_new_nextcloud.path }}"
+      remote_src: True
+      group: "www-data"
+      owner: "www-data"
+
+  - name: "disable site for {{ nextcloud_domain }}"
+    file:
+      state: absent
+      path: "/etc/nginx/sites-enabled/{{ nextcloud_instance_id }}"
+    when: rev_proxy == "nginx"
+
+  - name: "disable site for {{ nextcloud_domain }}"
+    file:
+      state: absent
+      path: "/etc/apache2/sites-enabled/{{ nextcloud_instance_id }}.conf"
+    when: rev_proxy == "apache2"
+
+  - name: "reload {{ rev_proxy }}"
+    service: name={{ rev_proxy }} state=reloaded
+
+  - name: "create dir for backup current version {{ backup_version_dir | mandatory }}/{{ nextcloud_instance_id | mandatory }}/{{ nextcloud_oldversion | mandatory }}"
+    file:
+      path: "{{ backup_version_dir }}/{{ nextcloud_instance_id }}/{{ nextcloud_oldversion }}"
+      state: directory
+      mode: 0777
+
+  - name: "create {{ rev_proxy }} dir for backup current version {{ backup_version_dir | mandatory }}/{{ nextcloud_instance_id | mandatory }}/{{ nextcloud_oldversion | mandatory }}"
+    file:
+      path: "{{ backup_version_dir }}/{{ nextcloud_instance_id }}/{{ nextcloud_oldversion }}/{{ rev_proxy }}"
+      state: directory
+      mode: 0777
+
+  - name: "create app dir for backup current version {{ backup_version_dir | mandatory }}/{{ nextcloud_instance_id | mandatory }}/{{ nextcloud_oldversion | mandatory }}"
+    file:
+      path: "{{ backup_version_dir }}/{{ nextcloud_instance_id }}/{{ nextcloud_oldversion }}/app"
+      state: directory
+      mode: 0777
+
+  - name: "create sql dir for backup current version {{ backup_version_dir | mandatory }}/{{ nextcloud_instance_id | mandatory }}/{{ nextcloud_oldversion | mandatory }}"
+    file:
+      path: "{{ backup_version_dir }}/{{ nextcloud_instance_id }}/{{ nextcloud_oldversion }}/sql"
+      state: directory
+      mode: 0777
+
+  - name: "backup nginx config"
+    command: "cp /etc/nginx/sites-available/{{ nextcloud_instance_id }} {{ backup_version_dir }}/{{ nextcloud_instance_id }}/{{ nextcloud_oldversion }}/{{ rev_proxy }}"
+    args:
+      creates: "{{ backup_version_dir }}/{{ nextcloud_instance_id }}/{{ nextcloud_oldversion }}/{{ rev_proxy }}/{{ nextcloud_instance_id }}"
+    when: rev_proxy == "nginx"
+
+  - name: "backup apache2 config"
+    command: "cp /etc/apache2/sites-available/{{ nextcloud_instance_id }}.conf {{ backup_version_dir }}/{{ nextcloud_instance_id }}/{{ nextcloud_oldversion }}/{{ rev_proxy }}"
+    args:
+      creates: "{{ backup_version_dir }}/{{ nextcloud_instance_id }}/{{ nextcloud_oldversion }}/{{ rev_proxy }}/{{ nextcloud_instance_id }}.conf"
+    when: rev_proxy == "apache2"
+
+  #rsync -aAx --del {{ www_root }}/{{ nextcloud_instance_id | mandatory }}.data .
+
+  - name: "backup app"
+    command: "rsync -aAx --del {{ www_root }}/{{ nextcloud_instance_id}} {{ backup_version_dir }}/{{ nextcloud_instance_id }}/{{ nextcloud_oldversion }}/app"
+    args:
+      creates: "{{ backup_version_dir }}/{{ nextcloud_instance_id }}/{{ nextcloud_oldversion }}/app/{{ nextcloud_instance_id }}"
+
+  - name: "backup database"
+    shell: "/usr/bin/pg_dump {{ nextcloud_database_name }} > {{ backup_version_dir }}/{{ nextcloud_instance_id }}/{{ nextcloud_oldversion }}/sql/{{ nextcloud_database_name }}.sql"
+    become_user: "postgres"
+    vars:
+      ansible_ssh_pipelining: true
+    args:
+      creates: "{{ backup_version_dir }}/{{ nextcloud_instance_id }}/{{ nextcloud_oldversion }}/sql/{{ nextcloud_database_name }}.sql"
+
+  - name: "backup app configuration"
+    shell: "php {{ www_root }}/{{ nextcloud_instance_id}}/occ config:list > {{ backup_version_dir }}/{{ nextcloud_instance_id }}/{{ nextcloud_oldversion }}/config.list"
+    become_user: "www-data"
+    vars:
+      ansible_ssh_pipelining: true
+    args:
+      creates: "{{ backup_version_dir }}/{{ nextcloud_instance_id }}/{{ nextcloud_oldversion }}/config.list"
+
+  - name: "remove {{ www_root }}/{{ nextcloud_instance_id }}"
+    file:
+      path: "{{ www_root }}/{{ nextcloud_instance_id }}"
+      state: absent
+
+  - name: "Move {{ _tmp_new_nextcloud.path }}/nextcloud to {{ www_root }}/{{ nextcloud_instance_id }}"
+    command: "/bin/mv {{ _tmp_new_nextcloud.path }}/nextcloud {{ www_root }}/{{ nextcloud_instance_id }}"
+    args:
+      creates: "{{ www_root }}/{{ nextcloud_instance_id }}"
+
+  - name: "remove {{ _tmp_new_nextcloud.path }}"
+    file:
+      path: "{{ _tmp_new_nextcloud.path }}"
+      state: absent
+    changed_when: False
+
+  - name: "restore config.php"
+    copy:
+      src: "{{ backup_version_dir }}/{{ nextcloud_instance_id }}/{{ nextcloud_oldversion }}/app/{{ nextcloud_instance_id}}/config/config.php"
+      dest: "{{ www_root }}/{{ nextcloud_instance_id }}/config/config.php"
+      remote_src: yes
+      backup: yes
+
+  - name: "link to data directory"
+    file:
+      state: link
+      src: "{{ www_root }}/{{ nextcloud_instance_id }}.data"
+      path: "{{ www_root }}/{{ nextcloud_instance_id }}/data"
+
+  - name: "www-data owner of {{ www_root }}/{{ nextcloud_instance_id }}"
+    file:
+      state: directory
+      path: "{{ www_root }}/{{ nextcloud_instance_id }}"
+      recurse: yes
+      owner: "www-data"
+      group: "www-data"
+
+  - name: "chmod 750 for directories"
+    command: "find {{ www_root }}/{{ nextcloud_instance_id }}/ -type d -exec chmod 750 {} \\;"
+
+  - name: "chmod 640 for files"
+    command: "find {{ www_root }}/{{ nextcloud_instance_id }}/ -type f -exec chmod 640 {} \\;"
+
+  - name: "perform nextcloud upgrade"
+    command: "php {{ www_root }}/{{ nextcloud_instance_id }}/occ upgrade"
+    become_user: "www-data"
+    vars:
+      ansible_ssh_pipelining: true
+
+  - name: "enable site for {{ nextcloud_domain }}"
+    file:
+      state: link
+      path: "/etc/nginx/sites-enabled/{{ nextcloud_instance_id }}"
+      src: "/etc/nginx/sites-available/{{ nextcloud_instance_id }}"
+    when: rev_proxy == "nginx"
+
+  - name: "enable site for {{ nextcloud_domain }}"
+    file:
+      state: link
+      path: "/etc/apache2/sites-enabled/{{ nextcloud_instance_id }}.conf"
+      src: "/etc/apache2/sites-available/{{ nextcloud_instance_id }}.conf"
+    when: rev_proxy == "apache2"
+
+  - name: "reload {{ rev_proxy }}"
+    service: name={{ rev_proxy }} state=reloaded
+

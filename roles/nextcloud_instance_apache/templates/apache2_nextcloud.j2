@@ -1,0 +1,51 @@
+<VirtualHost *:80>
+   ServerName {{ nextcloud_domain | mandatory }}
+
+   RewriteEngine On
+   RewriteCond %{HTTPS} off
+   RewriteRule ^(.*)$ https://%{HTTP_HOST}$1 [R=301,L]
+</VirtualHost>
+
+<IfModule mod_ssl.c>
+   <VirtualHost *:443>
+
+     ServerName {{ nextcloud_domain }}
+     DocumentRoot {{ nextcloud_root_instance | mandatory }}/{{ nextcloud_instance_id | mandatory }}
+
+     CustomLog {{ apache_log_dest }}/{{ nextcloud_instance_id }}/access.log combined
+     ErrorLog {{ apache_log_dest }}/{{ nextcloud_instance_id }}/error.log
+
+     <Directory {{ nextcloud_root_instance }}/{{ nextcloud_instance_id }}/>
+       Options +FollowSymlinks
+       AllowOverride All
+       Require all granted
+
+      <IfModule mod_dav.c>
+        Dav off
+      </IfModule>
+
+       SetEnv HOME {{ nextcloud_root_instance }}/{{ nextcloud_instance_id }}
+       SetEnv HTTP_HOME {{ nextcloud_root_instance }}/{{ nextcloud_instance_id }}
+     </Directory>
+
+     <IfModule mod_headers.c>
+          Header always set Strict-Transport-Security "max-age=15768000; preload"
+     </IfModule>
+
+     SSLEngine on
+     SSLCertificateFile /etc/letsencrypt/live/{{ nextcloud_domain }}/fullchain.pem
+     SSLCertificateKeyFile /etc/letsencrypt/live/{{ nextcloud_domain }}/privkey.pem
+     
+     # Spreed WebRTC config (must be in same vhost)
+#     <Location /webrtc>
+#          ProxyPass http://127.0.0.1:8080/webrtc
+#          ProxyPassReverse /webrtc
+#     </Location>
+#     <Location /webrtc/ws>
+#          ProxyPass ws://127.0.0.1:8080/webrtc/ws
+#     </Location>
+#          ProxyVia On
+#          ProxyPreserveHost On
+#          RequestHeader set X-Forwarded-Proto 'https' env=HTTPS
+     </VirtualHost>
+</IfModule>

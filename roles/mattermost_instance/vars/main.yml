@@ -1,13 +1,13 @@
 ---
   # https://docs.mattermost.com/administration/upgrade.html#version-archive
 
-  mattermost_domain: "team.paquerette.eu"
-  mattermost_version: 4.1.0
+#  mattermost_domain: "test.paquerette.eu"
+#  mattermost_version: 4.1.0
+#
+#  mattermost_port: 8065
+#  mattermost_instance_id: mat_paq_test
 
-  mattermost_port: 8065
-  mattermost_instance_id: mat_paq_team
-
-  mattermost_root_instance: '{{ nginx_www_root | default("/mnt/vdb/www") }}'
+  mattermost_root_instance: '{{ www_root | default("/mnt/vdb/www") }}'
 
   mattermost_database_name: "{{ mattermost_instance_id }}_db"
   mattermost_database_user: "{{ mattermost_instance_id }}_usr"

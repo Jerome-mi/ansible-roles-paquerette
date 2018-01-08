@@ -1,16 +1,16 @@
 ---
 
-#  mattermost_domain: "team.paquerette.eu"
+#  mattermost_domain: "test.paquerette.eu"
 #
 #  mattermost_oldversion: 4.1.0
 #
 #  mattermost_version: 4.4.2
 #
-#  mattermost_instance_id: "mat_paq_team"
+#  mattermost_instance_id: "mat_paq_test"
 #
 #  mattermost_user_instance: "{{ mattermost_instance_id }}"
 #  mattermost_instance_service: "{{ mattermost_instance_id }}"
 #
-#  mattermost_root_instance: '{{ nginx_www_root | default("/mnt/vdb/www") }}'
+  mattermost_root_instance: '{{ www_root | default("/mnt/vdb/www") }}'
 #
-#  mattermost_database_name: "mat_paq_team_db"
+  mattermost_database_name: "{{ mattermost_instance_id }}_db"

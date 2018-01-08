@@ -1,0 +1,153 @@
+---
+
+  - name: "template check log"
+    template:
+      src: collabora_check.j2
+      dest: "{{ base_prod_ansible_log }}/{{ collabora_domain }}.log"
+    vars:
+       letsencrypt_domain: "{{ collabora_domain | quote }}"
+
+  - name: "fetch check log"
+    fetch:
+      src: "{{ base_prod_ansible_log }}/{{ collabora_domain }}.log"
+      dest: "{{ collabora_domain }}.log"
+      flat: yes
+
+  - name: "log dest {{ www_log }}/{{ collabora_domain }}"
+    file:
+      state: directory
+      path: "{{ www_log }}/{{ collabora_domain }}"
+
+  - name: "log dest {{ loolwsd_log_dest }}"
+    file:
+      state: directory
+      path: "{{ loolwsd_log_dest }}"
+      mode: "0777"
+
+  - name: "apt key for collabora - paquerette"
+    apt_key: keyserver="keyserver.ubuntu.com" id="0C54D189F4BA284D"
+
+  - name: "apt_repository for collabora - paquerette"
+    apt_repository:
+      repo: "deb https://collaboraoffice.com/repos/CollaboraOnline/{{ collabora_version }}/customer-ubuntu1604-{{ collabora_secret }} ./"
+      state: present
+
+  - apache2_module:
+      name: "{{ item }}"
+      state: present
+    with_items: "{{ apache_module_list }}"
+    notify: restart apache2
+    when: rev_proxy == "apache2"
+
+  - name: "install hunspell"
+    apt:
+      name: "{{ item }}"
+      state: present
+      update_cache: yes
+    with_items: "{{ hunspell_module_list }}"
+
+  - name: "install loolwsd"
+    apt:
+      name: loolwsd
+      state: present
+      update_cache: yes
+
+  - name: "install collabora-online-brand"
+    apt:
+      name: collabora-online-brand
+      state: present
+      update_cache: yes
+
+  - apache2_module:
+      name: "{{ item }}"
+      state: present
+    with_items: "{{ apache_module_list }}"
+    notify: restart apache2
+    when: rev_proxy == "apache2"
+
+  - name: "letsencrypt certificate for {{ collabora_domain }}"
+    command: "{{ certbot_grant_command }}"
+    args:
+      creates: "{{ letsencrypt_cert_root }}/{{ collabora_domain | quote }}"
+    vars:
+       letsencrypt_domain: "{{ collabora_domain | quote }}"
+
+  - name: "template nginx_collabora.j2 {{ collabora_domain }}"
+    template:
+      src: nginx_collabora.j2
+      dest: "/etc/nginx/sites-available/{{ collabora_domain }}"
+    notify: reload nginx
+    when: rev_proxy == "nginx"
+
+  - name: "template apache2_collabora.j2 {{ collabora_domain }}"
+    template:
+      src: apache2_collabora.j2
+      dest: "/etc/apache2/sites-available/{{ collabora_domain }}.conf"
+    notify: reload apache2
+    when: rev_proxy == "apache2"
+
+  - name: "enable site for {{ collabora_domain }}"
+    file:
+      state: link
+      path: "/etc/nginx/sites-enabled/{{ collabora_domain }}"
+      src: "/etc/nginx/sites-available/{{ collabora_domain }}"
+    notify: reload nginx
+    when: rev_proxy == "nginx"
+
+  - name: "enable site for {{ collabora_domain }}"
+    file:
+      state: link
+      path: "/etc/apache2/sites-enabled/{{ collabora_domain }}.conf"
+      src: "/etc/apache2/sites-available/{{ collabora_domain }}.conf"
+    notify: reload apache2
+    when: rev_proxy == "apache2"
+
+  - name: "copy letsencrypt cert.pem"
+    copy:
+      src: "/etc/letsencrypt/live/{{ collabora_domain }}/cert.pem"
+      dest: "/etc/loolwsd/cert.pem"
+      mode: "0744"
+      remote_src: yes
+
+  - name: "copy letsencrypt privkey.pem"
+    copy:
+      src: "/etc/letsencrypt/live/{{ collabora_domain }}/privkey.pem"
+      dest: "/etc/loolwsd/key.pem"
+      mode: "0744"
+      remote_src: yes
+
+  - name: "copy letsencrypt chain.pem"
+    copy:
+      src: "/etc/letsencrypt/live/{{ collabora_domain }}/chain.pem"
+      dest: "/etc/loolwsd/chain.pem"
+      mode: "0744"
+      remote_src: yes
+
+  - name: "copy letsencrypt fullchain.pem"
+    copy:
+      src: "/etc/letsencrypt/live/{{ collabora_domain }}/fullchain.pem"
+      dest: "/etc/loolwsd/ca-chain.cert.pem"
+      mode: "0744"
+      remote_src: yes
+
+  - name: "template for loolwsd.wml"
+    template:
+      src: loolwsd_xml.j2
+      dest: "/etc/loolwsd/loolwsd.xml"
+      backup: yes
+
+  - name: "start loolwsd service"
+    service: name=loolwsd state=restarted
+
+  # todo : logrotate fro apache2
+  - name: "logrotate for log {{ www_log }}/{{ collabora_domain }}"
+    template:
+      src: "collabora_logrotate_{{ rev_proxy }}.j2"
+      dest: "/etc/logrotate.d/{{ collabora_domain }}"
+      mode: 0644
+
+  - name: "template for monitoring {{ collabora_domain }}"
+    template:
+      src: collabora_monit.j2
+      dest: "/etc/monit/conf.d/{{ collabora_domain }}.conf"
+    notify: reload monit

@@ -1,0 +1,34 @@
+---
+
+  # collabora_domain: moved www.mydomain.com
+  # https://collabora_domain/hosting/discovery
+  # https://collabora_domain/loleaflet/dist/admin/admin.html
+
+  #collabora_client_domain: moved
+  # todo : template for client list
+  #collabora_client_domains: www\\.mydomain\\.com|www\\.mydomain\\.com
+
+  #### in group vars
+  #collabora_secret: "Moved"
+
+  #collabora_port: 9980
+
+  loolwsd_log_dest: "{{ base_prod_path }}/log/loolwsd"
+  # fatal, critical, error, warning, notice, information, debug, trace
+  collabora_log_level: "warning"
+
+  #collabora_admin_user: "admin"
+  #collabora_admin_password: "admin_password"
+
+  apache_module_list: [
+    "proxy",
+    "proxy_http",
+    "proxy_connect",
+    "proxy_wstunnel",
+    ]
+
+  hunspell_module_list: [
+    "hunspell-fr",
+    "hunspell-en-us",
+    "hunspell-en-gb",
+    ]

@@ -137,3 +137,9 @@
 
   renew_cert_web_stop_hour: "2"
   renew_cert_web_stop_minute: "45"
+
+#############################################
+#  WWW
+#############################################
+  www_root: "{{ base_prod_path }}/www"
+  www_log: "{{ base_prod_log }}/{{ rev_proxy }}"

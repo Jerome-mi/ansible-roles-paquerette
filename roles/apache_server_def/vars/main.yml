@@ -1,8 +1,5 @@
 ---
 
-  www_root: "{{ base_prod_path }}/www"
-  www_log: "{{ base_prod_log }}/apache2"
-
   #deprecated
   apache_www_root: "{{ www_root }}"
   apache_log_dest: "{{ www_log }}"

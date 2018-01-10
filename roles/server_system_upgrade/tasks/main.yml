@@ -1,0 +1,17 @@
+---
+
+
+  - name: "apt update"
+    apt:
+      update_cache: yes
+
+  - name: "apt list --upgradable"
+    shell: "apt list --upgradable"
+    register: out
+
+  - debug: var=out.stdout_lines
+
+  - name: "Upgrade system safe"
+    apt:
+      update_cache: yes
+      upgrade: yes

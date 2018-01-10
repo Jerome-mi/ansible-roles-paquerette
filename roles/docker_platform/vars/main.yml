@@ -1,0 +1,3 @@
+---
+
+  docker_runtime_root: "{{ base_prod_path }}/docker"

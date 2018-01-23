@@ -5,6 +5,6 @@
   roles:
 
     - server_check
+#    - server_system_upgrade
 
-  become: yes
-
+  become:

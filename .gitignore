@@ -1,0 +1,15 @@
+.idea/
+
+hosts
+
+group_vars/
+host_vars/
+
+Utils_Test/*
+Utils_prod/*
+
+
+/*.yml
+/*.retry
+
+

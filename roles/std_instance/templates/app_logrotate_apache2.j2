@@ -1,4 +1,3 @@
-# todo: apache
 {{ www_log | mandatory }}/{{ app_instance_id }}/*.log {
         weekly
         missingok
@@ -14,6 +13,8 @@
                 fi \
         endscript
         postrotate
-                invoke-rc.d nginx rotate >/dev/null 2>&1
-        endscript
+                if /etc/init.d/apache2 status > /dev/null ; then \
+                    /etc/init.d/apache2 reload > /dev/null; \
+                fi;
+	    endscript
 }

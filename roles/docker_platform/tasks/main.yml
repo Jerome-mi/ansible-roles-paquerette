@@ -1,0 +1,40 @@
+---
+
+  - name: "pip install docker-py"
+    pip:
+      name: "docker-py"
+
+  - name: "pip install python-apt"
+    pip:
+      name: "python-apt"
+
+  - name: "apt key for docker"
+    apt_key: keyserver="hkp://p80.pool.sks-keyservers.net:80" id="58118E89F3A912897C070ADBF76221572C52609D"
+
+  - name: "apt_repository for docker"
+    apt_repository:
+      repo: "deb https://apt.dockerproject.org/repo ubuntu-xenial main"
+      state: present
+
+  - name: "install docker-engine"
+    apt:
+      name: docker-engine
+      state: present
+      update_cache: yes
+
+  - name: "stop docker.service"
+    service: name=docker.service state=stopped
+
+  - name: "Move docker runtime to {{docker_runtime_root}}"
+    command: "/bin/mv /var/lib/docker {{docker_runtime_root}}"
+    args:
+      creates: "{{docker_runtime_root}}"
+
+  - name: "link /var/lib/docker to {{docker_runtime_root}}"
+    file:
+      state: link
+      src: "{{docker_runtime_root}}"
+      path: "/var/lib/docker"
+
+  - name: "start docker.service"
+    service: name=docker.service state=started

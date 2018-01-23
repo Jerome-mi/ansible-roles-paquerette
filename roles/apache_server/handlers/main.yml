@@ -1,0 +1,7 @@
+---
+
+- name: restart apache2
+  service: name=apache2 state=restarted
+
+- name: reload monit
+  service: name=monit state=reloaded

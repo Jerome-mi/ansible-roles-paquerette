@@ -1,0 +1,145 @@
+---
+#############################################
+# BASE PACKAGES
+#############################################
+
+  base_packages_list: [
+    # needed for ansible apt
+    "aptitude",
+    "apt-transport-https",
+    "backupninja",
+    # needed to send sms
+    "curl",
+    # needed for timezone
+    "dbus",
+    # needed for human beings
+    "htop",
+    "iftop",
+    "iotop",
+    # needed for stmp ssl
+    "libsasl2-modules",
+    "monit",
+    # needed for human beings
+    "nano",
+    "nfs-common",
+#    "python3",
+    # needed for human beings
+    "tree",
+    "python-pip",
+    "ufw",
+    "unzip",
+    ]
+
+#############################################
+# FILE SYSTEM
+#############################################
+  base_prod_path: "/mnt/vdb"
+
+  base_prod_ansible_log: "{{ base_prod_path }}/ansible_log"
+
+  base_prod_options: "{{ base_prod_path }}/opt"
+
+  base_prod_log: "{{ base_prod_path }}/log"
+
+  base_root_opt: "{{ base_prod_path }}/opt-root"
+
+  base_backup_host: "backup-store.paquerette.eu"
+
+  base_tmp_path: "{{ base_prod_path }}/tmp"
+
+#############################################
+# SMTP Postmaster@paquerette.eu
+#############################################
+  base_postmaster: "postmaster@paquerette.eu"
+  base_supportmail: "support@paquerette.eu"
+
+  smtp_shortfrom: "postmaster"
+  smtp_domain: "paquerette.eu"
+  smtp_authtype: "PLAIN"
+  smtp_secure_starttls: "STARTTLS"
+  smtp_tlsv1: "tlsv1"
+  smtp_use_tls: "True"
+  smtp_secure: "tls"
+  smtp_auth: "1"
+  smtp_host: "mail.infomaniak.com"
+  smtp_port: "587"
+  smtp_user: "postmaster@paquerette.eu"
+  #### in group vars
+  #smtp_password: "moved"
+
+#############################################
+# BACKUP
+#############################################
+  backup_item_dir: "/etc/backup.d"
+
+  backup_base_dir: "{{ base_prod_path | mandatory }}/backups"
+  backup_prod_dir: "{{ backup_base_dir }}/prod"
+  backup_version_dir: "{{ backup_base_dir }}/version"
+  backup_opt_dir: "{{ backup_base_dir }}/opt"
+
+# backup stop and start web services
+  backup_web_stop_hour: "2"
+  backup_web_stop_minute: "55"
+  backup_web_start_hour: "3"
+  backup_web_start_minute: "15"
+#
+  backup_base_service_conf_time: "02:57"
+  backup_app_service_conf_time: "03:00"
+  backup_day_conf_time: "03:30"
+  backup_month_conf_time: "{{ backup_day_conf_time }}"
+
+# external backup storage
+  ext_backup_host: "{{ base_backup_host }}"
+  ext_backup_user: "ansible"
+  ext_backup_key_path: "/home/{{ ext_backup_user }}/.ssh/backup"
+  ext_backup_key_file: "{{ ext_backup_key_path }}/id_rsa"
+  src_key_file: "~/.ssh/backup-store/id_rsa"
+  ext_backup_root_dir: "/home/{{ ext_backup_user }}/backup"
+  ext_backup_dir: "{{ ext_backup_root_dir }}/{{ ansible_hostname }}"
+
+# local storage for downloading from ext backup host other backups in local backup storage
+  cross_backup_dir: "{{ backup_base_dir }}/cross"
+
+  ext_backup_time: "04:00"
+  cross_backup_time: "04:30"
+
+#############################################
+#  MONITORING
+#############################################
+
+  backup_monit_stop_hour: "2"
+  backup_monit_stop_minute: "53"
+  backup_monit_start_hour: "3"
+  backup_monit_start_minute: "17"
+
+  monit_start_anyway_time: "6"
+
+  # in seconds
+  monit_cycle_duration: "300"
+  monit_start_delay: "240"
+
+  # sms script
+  monit_sms_script: "/root/monit_sms.sh"
+  # put comment to disable push via mail
+  #### in group vars
+  # comment_for_sms_push: "moved"
+  #mail_for_sms_push: "moved"
+
+#############################################
+#  SCRIPT UTILITY
+#############################################
+
+  script_base_dir: "{{ base_prod_path | mandatory }}/scripts"
+
+#############################################
+#  LETSENCRYPT
+#############################################
+
+  renew_cert_web_stop_hour: "2"
+  renew_cert_web_stop_minute: "45"
+
+#############################################
+#  WWW
+#############################################
+  www_root: "{{ base_prod_path }}/www"
+  www_log: "{{ base_prod_log }}/{{ rev_proxy }}"

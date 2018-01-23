@@ -1,0 +1,10 @@
+---
+
+- hosts: test-server
+
+  roles:
+
+    - server_check
+#    - server_system_upgrade
+
+  become:

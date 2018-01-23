@@ -1,0 +1,28 @@
+---
+
+  - name: "{{ base_prod_ansible_log }}"
+    file:
+      state: directory
+      path: "{{ base_prod_ansible_log }}"
+
+  - name: "{{ base_tmp_path }}"
+    file:
+      state: directory
+      mode: 0777
+      path: "{{ base_tmp_path }}"
+
+  - name: "{{ base_prod_options }}"
+    file:
+      state: directory
+      path: "{{ base_prod_options }}"
+
+  - name: "Move /opt to {{ base_root_opt }}"
+    command: "/bin/mv /opt {{ base_root_opt }}"
+    args:
+      creates: "{{ base_root_opt }}"
+
+  - name: "link /opt to {{ base_root_opt }}"
+    file:
+      state: link
+      src: "{{ base_root_opt }}"
+      path: "/opt"

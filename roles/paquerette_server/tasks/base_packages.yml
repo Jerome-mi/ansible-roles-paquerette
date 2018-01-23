@@ -1,0 +1,25 @@
+---
+
+- name: base packages
+  apt: name="{{ item }}" state=present
+  with_items: "{{ base_packages_list }}"
+
+- name: Upgrade system safe
+  apt:
+    update_cache: yes
+    upgrade: yes
+
+- name: Failtoban based on ufw limit
+  ufw:
+    rule: limit
+    port: ssh
+    proto: tcp
+
+- name: Allow OpenSSH
+  ufw:
+    rule: allow
+    name: OpenSSH
+
+- name: Start firewall ufw
+  ufw:
+    state: enabled

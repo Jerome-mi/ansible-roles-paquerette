@@ -1,0 +1,118 @@
+---
+
+  - name: "PHP packages"
+    apt: name="{{ item }}" state=present
+    with_items: "{{ php_apache_packages_list }}"
+
+  - apache2_module:
+      name: "{{ item }}"
+      state: present
+    with_items: "{{ apache_module_list }}"
+    notify: restart apache2
+
+#  - name: "a2enconf php{{ php_version }}"
+#    command: "a2enconf php{{ php_version }}"
+#    register: __a2enconf_rc
+#    changed_when: '"service apache2 reload" in __a2enconf_rc.stdout'
+#    notify: restart apache2
+
+# TODO : review
+#  - name: "template for monitoring php{{ php_version }}-fpm"
+#    template:
+#      src: "php{{ php_version }}.monit.base"
+#      dest: "/etc/monit/conf.d/php{{ php_version }}.conf"
+#    notify: reload monit
+
+#  - name: cron stop php{{ php_version }}.service for backup
+#    cron:
+#      name: "stop php{{ php_version }}"
+#      hour: "{{ backup_web_stop_hour }}"
+#      minute: "{{ backup_web_stop_minute }}"
+#      job: "/bin/systemctl stop php{{ php_version }}.service"
+#
+#  - name: cron start running php{{ php_version }}.service for backup
+#    cron:
+#      name: "start php{{ php_version }}"
+#      hour: "{{ backup_web_start_hour }}"
+#      minute: "{{ backup_web_start_minute }}"
+#      job: "/bin/systemctl start php{{ php_version }}.service"
+
+  - name: "redis server"
+    apt: name="redis-server" state=present
+
+  - name: "cron stop redis.service for backup"
+    cron:
+      name: "stop redis"
+      hour: "{{ backup_web_stop_hour }}"
+      minute: "{{ backup_web_stop_minute }}"
+      job: "/bin/systemctl stop redis.service"
+
+  - name: "cron start redis.service for backup"
+    cron:
+      name: "start redis"
+      hour: "{{ backup_web_start_hour }}"
+      minute: "{{ backup_web_start_minute }}"
+      job: "/bin/systemctl start redis.service"
+
+  - name: "template for monitoring redis"
+    template:
+      src: "redis.monit.j2"
+      dest: "/etc/monit/conf.d/redis.conf"
+    notify: reload monit
+
+  - name: "OP Cache for PHP{{ php_version }}"
+    lineinfile:
+      line: "opcache.enable=1"
+      insertafter: ";opcache.enable="
+      path: "{{ php_ini_file }}"
+      state: present
+      backup: yes
+    notify: reload php7.0-fpm
+
+  - name: "OP Cache for PHP{{ php_version }}"
+    lineinfile:
+      line: "opcache.enable_cli=1"
+      insertafter: ";opcache.enable_cli="
+      path: "{{ php_ini_file }}"
+      state: present
+    notify: reload php7.0-fpm
+
+  - name: "OP Cache for PHP{{ php_version }}"
+    lineinfile:
+      line: "opcache.memory_consumption=128"
+      insertafter: ";opcache.memory_consumption"
+      path: "{{ php_ini_file }}"
+      state: present
+    notify: reload php7.0-fpm
+
+  - name: "OP Cache for PHP{{ php_version }}"
+    lineinfile:
+      line: "opcache.interned_strings_buffer=8"
+      insertafter: ";opcache.interned_strings_buffer"
+      path: "{{ php_ini_file }}"
+      state: present
+    notify: reload php7.0-fpm
+
+  - name: "OP Cache for PHP{{ php_version }}"
+    lineinfile:
+      line: "opcache.max_accelerated_files=10000"
+      insertafter: ";opcache.max_accelerated_files"
+      path: "{{ php_ini_file }}"
+      state: present
+    notify: reload php7.0-fpm
+
+#  - name: "OP Cache for PHP{{ php_version }}"
+#    lineinfile:
+#      line: "opcache.save_comments=1"
+#      insertafter: ";opcache.save_comments"
+#      path: "{{ php_ini_file }}"
+#      state: present
+#    notify: reload php7.0-fpm
+#
+  - name: "OP Cache for PHP{{ php_version }}"
+    lineinfile:
+      line: "opcache.revalidate_freq=1"
+      insertafter: ";opcache.revalidate_freq"
+      path: "{{ php_ini_file }}"
+      state: present
+    notify: reload php7.0-fpm

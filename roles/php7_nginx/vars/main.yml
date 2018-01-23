@@ -1,0 +1,33 @@
+---
+#############################################
+# BASE PACKAGES
+#############################################
+
+  php_version: "7.0"
+
+
+  php_nginx_packages_list: [
+    "php{{ php_version }}",
+    "php{{ php_version }}-common",
+    "php{{ php_version }}-curl",
+    "php{{ php_version }}-fpm",
+    "php{{ php_version }}-gd",
+    #"php{{ php_version }}-geoip",
+    "php{{ php_version }}-gmp",
+    "php{{ php_version }}-intl",
+    "php{{ php_version }}-json",
+    "php{{ php_version }}-mbstring",
+    "php{{ php_version }}-mcrypt",
+    #"php{{ php_version }}-msgpack",
+    "php{{ php_version }}-mysql",
+    "php{{ php_version }}-pgsql",
+    "php-redis",
+    "php{{ php_version }}-sqlite3",
+    "php{{ php_version }}-sqlite3",
+    "php{{ php_version }}-xml",
+    "php{{ php_version }}-zip",
+    ]
+
+  php_ini_file: "/etc/php/{{ php_version }}/fpm/php.ini"
+
+  php_www_conf_file: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"

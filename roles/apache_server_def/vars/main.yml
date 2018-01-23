@@ -1,0 +1,37 @@
+---
+
+  #deprecated
+  apache_www_root: "{{ www_root }}"
+  apache_log_dest: "{{ www_log }}"
+  ##
+
+  apache_default_domain: "{{ ansible_fqdn }}"
+
+  letsencrypt_cert_root: "/etc/letsencrypt/live/"
+
+  # certbot --agree-tos --apache -n -m postmaster@paquerette.eu -d "test-server.paquerette.eu"
+  # definir letsencrypt_instance_path et letsencrypt_domain avant l'appel
+  # certbot --agree-tos --apache -n -m postmaster@paquerette.eu -d truc.paquerette.eu
+  certbot_grant_command: "certbot --agree-tos --apache -n -m {{ base_postmaster }} -d {{ letsencrypt_domain | mandatory }} "
+  #"certbot --agree-tos --standalone -n -m {{ base_postmaster }} -d {{ letsencrypt_domain | mandatory }} "
+
+  # certbot revoke --cert-path /etc/letsencrypt/live/test-server.paquerette.eu/cert.pem
+  certbot_revoke_command: "certbot revoke --cert-path /etc/letsencrypt/live/{{ letsencrypt_domain | mandatory | quote }}/cert.pem"
+
+  ### ???
+  cert_delete_command: "certbot delete --cert-name "
+
+  apache_module_list: [
+    "proxy",
+    "proxy_http",
+    "proxy_connect",
+    "proxy_wstunnel",
+    "ssl",
+    "dir",
+    "env",
+    "headers",
+    "mime",
+    "proxy_fcgi",
+    "rewrite",
+    "setenvif",
+    ]

@@ -1,0 +1,8 @@
+# Note: the spaces around the equal sign ('=') are optional.
+when = everyday at {{ backup_base_service_conf_time | mandatory }}
+
+rsync -aAx --del /etc/postgresql {{ backup_prod_dir | mandatory}}
+rc=$?; if [[ $rc != 0 ]]; then error "postgres configuration" ; fi
+
+rsync -aAx --del /etc/postgresql-common {{ backup_prod_dir | mandatory}}
+rc=$?; if [[ $rc != 0 ]]; then error "postgresql-common configuration" ; fi

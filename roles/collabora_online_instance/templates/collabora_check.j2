@@ -1,0 +1,19 @@
+
+hostname: {{ ansible_hostname }}
+domain: {{ collabora_domain }}
+
+port: {{ collabora_port }}
+log dest: {{ apache_log_dest }}/{{ collabora_domain }}
+loolwsd log dest: {{ loolwsd_log_dest }}
+
+[Inventory]
+
+[Cleanup]
+
+{{ certbot_revoke_command }}
+{{ cert_delete_command }} {{ letsencrypt_cert_root }}/{{ collabora_domain }}/cert.pem
+
+[Backup]
+
+[Recovery]
+

@@ -1,0 +1,12 @@
+---
+dependencies:
+
+  - { role: paquerette_server_def }
+
+  - { role: mattermost_platform_def }
+
+  - { role: nginx_server }
+
+  - { role: postgres_server }
+
+

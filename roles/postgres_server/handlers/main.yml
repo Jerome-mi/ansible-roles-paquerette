@@ -1,0 +1,7 @@
+---
+
+- name: restart postgres
+  service: name=postgres state=restarted
+
+- name: reload monit
+  service: name=monit state=reloaded

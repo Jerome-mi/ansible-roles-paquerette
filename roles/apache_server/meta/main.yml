@@ -3,4 +3,7 @@ dependencies:
 
   - { role: paquerette_server_def }
 
+  - { role: apache_server_def }
+
+
 

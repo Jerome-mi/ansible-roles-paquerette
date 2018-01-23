@@ -1,0 +1,12 @@
+---
+
+- hosts: paquerette-cs0
+
+  roles:
+
+    - server_system_upgrade
+#    - paquerette_server
+#    - nextcloud_instance_upg
+
+  become: yes
+

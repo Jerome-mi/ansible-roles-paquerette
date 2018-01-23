@@ -1,0 +1,10 @@
+---
+
+- name: restart apache2
+  service: name=apache2 state=restarted
+
+- name: reload monit
+  service: name=monit state=reloaded
+
+- name: reload php7.0-fpm
+  service: name=php7.0-fpm state=reloaded

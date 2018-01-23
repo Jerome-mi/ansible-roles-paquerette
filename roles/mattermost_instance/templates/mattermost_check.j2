@@ -1,0 +1,91 @@
+
+hostname: {{ ansible_hostname }}
+domain: {{ mattermost_domain }}
+version: {{ mattermost_version }}
+instance : {{ mattermost_root_instance }}/{{ mattermost_instance_id }}
+mattermost_port: {{ mattermost_port }}
+
+data in {{ mattermost_root_instance }}/{{ mattermost_instance_id }}.data
+log dest {{ nginx_log_dest }}/{{ mattermost_instance_id }}
+backup prod {{ backup_prod_dir }}/{{ mattermost_instance_id }}
+backup prod data {{ backup_prod_dir }}/{{ mattermost_instance_id }}.data
+
+
+mattermost_instance_id: {{ mattermost_instance_id }}
+mattermost_root_instance: {{ mattermost_root_instance }}
+mattermost_port: {{ mattermost_port }}
+mattermost_user_instance: {{ mattermost_user_instance }}
+mattermost_instance_service: {{ mattermost_instance_service }}
+
+mattermost_database_name: {{ mattermost_database_name }}
+mattermost_database_user: {{ mattermost_database_user }}
+mattermost_database_password: {{ mattermost_database_password }}
+
+[Inventory]
+
+[Cleanup]
+
+rm /etc/nginx/sites-enabled/{{ mattermost_instance_id }}
+systemctl reload nginx
+rm /etc/nginx/sites-available/{{ mattermost_instance_id }}
+
+rm -r {{ mattermost_root_instance }}/{{ mattermost_instance_id }}
+rm -r {{ mattermost_root_instance }}/{{ mattermost_instance_id }}.data
+rm -r {{ nginx_log_dest }}/{{ mattermost_instance_id }}
+#rm -r {{ backup_prod_dir }}/{{ mattermost_instance_id }}
+#rm -r {{ backup_prod_dir }}/{{ mattermost_instance_id }}.data
+
+#{{ certbot_revoke_command }}
+#{{ cert_delete_command }} {{ letsencrypt_cert_root }}/{{ mattermost_domain }}/cert.pem
+
+#rm /etc/monit/conf.d/{{ mattermost_instance_id }}.conf
+#rm {{ backup_item_dir }}/20-{{ mattermost_instance_id }}.sh
+
+su postgres
+psql
+DROP DATABASE {{ mattermost_database_name }};
+DROP USER {{ mattermost_database_user }};
+ \q
+
+[Backup]
+
+cd BACKUPDEST
+chmod 777 .
+
+cp /etc/nginx/sites-available/{{ mattermost_instance_id }} .
+
+rsync -aAx --del {{ mattermost_root_instance }}/{{ mattermost_instance_id | mandatory }} .
+rsync -aAx --del {{ mattermost_root_instance }}/{{ mattermost_instance_id | mandatory }}.data .
+
+su -c "/usr/bin/pg_dump {{ mattermost_database_name }} > {{ mattermost_database_name }}.sql" postgres
+
+[Recovery]
+
+cd BACKUPDEST
+cd {{ backup_prod_dir }}
+
+rm /etc/nginx/sites-enabled/{{ mattermost_instance_id }}
+systemctl reload nginx
+
+rm -r {{ mattermost_root_instance }}/{{ mattermost_instance_id }}
+#rm -r {{ mattermost_root_instance }}/{{ mattermost_instance_id }}.data
+
+rsync -aAx --del {{ mattermost_instance_id }} {{ mattermost_root_instance }}
+#rsync -aAx --del {{ mattermost_instance_id }}.data {{ mattermost_root_instance }}
+
+su postgres
+psql
+DROP DATABASE {{ mattermost_database_name }};
+DROP USER {{ mattermost_database_user }};
+CREATE DATABASE {{ mattermost_database_name }} ENCODING 'UTF-8' LC_COLLATE 'fr_FR.UTF-8' LC_CTYPE 'fr_FR.UTF-8' TEMPLATE 'template0';
+CREATE USER  {{ mattermost_database_user }} WITH PASSWORD '{{ mattermost_database_password }}';
+GRANT ALL PRIVILEGES ON DATABASE {{ mattermost_database_name }} TO {{ mattermost_database_user }};
+\q
+
+su -c "psql -f {{ mattermost_database_name }}.sql -d {{ mattermost_database_name }} " postgres
+
+#{{ certbot_grant_command }}
+#cp {{ mattermost_instance_id }}.conf /etc/nginx/sites-available/{{ mattermost_instance_id }}.conf
+
+ln -s /etc/nginx/sites-available/{{ mattermost_instance_id }}.conf /etc/nginx/sites-enabled/{{ mattermost_instance_id }}
+systemctl reload nginx

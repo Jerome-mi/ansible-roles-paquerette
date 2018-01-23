@@ -1,0 +1,79 @@
+---
+
+  - name: "install nginx"
+    apt:
+      name: nginx
+      state: present
+      update_cache: yes
+
+  - name: "ufw: Allow Nginx Full"
+    ufw:
+      rule: allow
+      name: Nginx Full
+
+  - name: "Move /var/www {{ nginx_www_root }}"
+    command: "/bin/mv /var/www {{ nginx_www_root }}"
+    args:
+      creates: "{{ nginx_www_root }}"
+
+  - name: "link /var/www to {{ nginx_www_root }}"
+    file:
+      state: link
+      src: "{{ nginx_www_root }}"
+      path: "/var/www"
+
+  - name: "log dest {{ nginx_log_dest }}"
+    file:
+      state: directory
+      path: "{{ nginx_log_dest }}"
+
+  - name: "cron stop nginx for backup"
+    cron:
+      name: "stop nginx"
+      hour: "{{ backup_web_stop_hour }}"
+      minute: "{{ backup_web_stop_minute }}"
+      job: "/bin/systemctl stop nginx.service"
+
+  - name: "cron start nginx for backup"
+    cron:
+      name: "start nginx"
+      hour: "{{ backup_web_start_hour | mandatory }}"
+      job: "/bin/systemctl start nginx.service"
+
+  - name: "template for backup"
+    template:
+      src: backupninja.nginx.j2
+      dest: "{{ backup_item_dir }}/10-nginx.sh"
+      mode: 0640
+
+# https://www.digitalocean.com/community/tutorials/how-to-set-up-let-s-encrypt-certificates-for-multiple-apache-virtual-hosts-on-ubuntu-16-04
+# https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-16-04
+
+  - name: "letsencrypt certbot repository"
+    apt_repository:
+      repo: "ppa:certbot/certbot"
+
+  - name: "letsencrypt certbot package"
+    apt:
+      name: certbot
+      update_cache: yes
+
+  - name: "cron for automatic letsencrypt renew"
+    cron:
+      name: "letsencrypt certbot automatic renew"
+      weekday: 1
+      hour: "{{ renew_cert_web_stop_hour | mandatory}}"
+      minute: "{{ renew_cert_web_stop_minute | mandatory }}"
+      job: '/usr/bin/certbot renew --quiet --renew-hook "/bin/systemctl reload nginx"'
+
+  - name: "monit.nginx.j2"
+    template:
+      src: "monit.nginx.j2"
+      dest: "/etc/monit/conf.d/nginx.conf"
+    notify: reload monit
+
+#  - name: "desabling default website"
+#    file:
+#      state: absent
+#      path: "/etc/nginx/sites-enabled/default"
+#    notify: reload nginx

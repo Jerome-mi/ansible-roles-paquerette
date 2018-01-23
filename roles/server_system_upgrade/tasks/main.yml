@@ -10,3 +10,8 @@
     register: out
 
   - debug: var=out.stdout_lines
+
+  - name: "Upgrade system safe"
+    apt:
+      update_cache: yes
+      upgrade: yes

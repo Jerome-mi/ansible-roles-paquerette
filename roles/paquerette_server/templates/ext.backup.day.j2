@@ -1,0 +1,14 @@
+# Note: the spaces around the equal sign ('=') are optional.
+when = everyday at {{ ext_backup_time | mandatory }}
+
+export LANG=fr_FR.utf8
+
+jour=$(date "+%A")
+
+tar -czf {{ base_tmp_path }}/prod.$jour.tar.gz {{ backup_prod_dir | mandatory}}
+rc=$?; if [[ $rc != 0 ]]; then error "$jour prod archive" ; fi
+
+scp -i {{ ext_backup_key_file | mandatory | quote }} {{ base_tmp_path }}/prod.$jour.tar.gz {{ ext_backup_user | mandatory }}@{{ ext_backup_host | mandatory }}:{{ ext_backup_dir | mandatory }}
+rc=$?; if [[ $rc != 0 ]]; then error "$jour prod ext copy" ; fi
+
+rm {{ base_tmp_path }}/prod.$jour.tar.gz

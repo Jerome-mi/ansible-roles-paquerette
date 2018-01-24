@@ -10,7 +10,6 @@ log dest {{ nginx_log_dest }}/{{ mattermost_instance_id }}
 backup prod {{ backup_prod_dir }}/{{ mattermost_instance_id }}
 backup prod data {{ backup_prod_dir }}/{{ mattermost_instance_id }}.data
 
-
 mattermost_instance_id: {{ mattermost_instance_id }}
 mattermost_root_instance: {{ mattermost_root_instance }}
 mattermost_port: {{ mattermost_port }}

@@ -5,7 +5,7 @@ dependencies:
 
   - { role: nextcloud_platform_def }
 
-  - { role: apache_server }
+  - { role: apache2_server }
 
   - { role: php7_apache }
 

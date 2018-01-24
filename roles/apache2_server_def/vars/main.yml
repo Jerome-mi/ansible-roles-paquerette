@@ -1,10 +1,5 @@
 ---
 
-  #deprecated
-  apache_www_root: "{{ www_root }}"
-  apache_log_dest: "{{ www_log }}"
-  ##
-
   apache_default_domain: "{{ ansible_fqdn }}"
 
   letsencrypt_cert_root: "/etc/letsencrypt/live/"

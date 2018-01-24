@@ -137,6 +137,7 @@
 
   renew_cert_web_stop_hour: "2"
   renew_cert_web_stop_minute: "45"
+  letsencrypt_cert_root: "/etc/letsencrypt/live/"
 
 #############################################
 #  WWW

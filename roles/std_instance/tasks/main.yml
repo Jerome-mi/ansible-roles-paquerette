@@ -116,11 +116,11 @@
       dest: "/etc/{{ rev_proxy }}/sites-available/{{ app_instance_id }}.conf"
     notify: reload {{ rev_proxy }}
 
-#  - name: "logrotate for log {{ {{ rev_proxy }}_log_dest }}/{{ app_instance_id }}"
-#    template:
-#      src: app_logrotate.j2
-#      dest: "/etc/logrotate.d/{{ app_instance_id }}"
-#      mode: 0644
+  - name: "logrotate for log {{ {{ rev_proxy }}_log_dest }}/{{ app_instance_id }}"
+    template:
+      src: app_logrotate_{{ rev_proxy }}.j2
+      dest: "/etc/logrotate.d/{{ app_instance_id }}"
+      mode: 0644
 
   - name: "enable site for {{ app_domain }}"
     file:

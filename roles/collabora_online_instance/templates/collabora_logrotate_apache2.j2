@@ -1,11 +1,11 @@
-{{ nginx_log_dest | mandatory }}/{{ collabora_domain }}/*.log {
+{{ www_log | mandatory }}/{{ collabora_domain }}/*.log {
         weekly
         missingok
         rotate 54
         compress
         delaycompress
         notifempty
-	    create 0640 www-data adm
+        create 0640 www-data adm
         sharedscripts
         prerotate
                 if [ -d /etc/logrotate.d/httpd-prerotate ]; then \
@@ -13,6 +13,8 @@
                 fi \
         endscript
         postrotate
-                invoke-rc.d nginx rotate >/dev/null 2>&1
-        endscript
+                if /etc/init.d/apache2 status > /dev/null ; then \
+                    /etc/init.d/apache2 reload > /dev/null; \
+                fi;
+	    endscript
 }

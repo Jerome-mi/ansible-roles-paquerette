@@ -89,17 +89,17 @@
   - name: "enable site for {{ collabora_domain }}"
     file:
       state: link
-      path: "/etc/nginx/sites-enabled/{{ collabora_domain }}"
-      src: "/etc/nginx/sites-available/{{ collabora_domain }}"
-    notify: reload nginx
+      path: "/etc/{{ rev_proxy }}/sites-enabled/{{ collabora_domain }}"
+      src: "/etc/{{ rev_proxy }}/sites-available/{{ collabora_domain }}"
+    notify: reload {{ rev_proxy }}
     when: rev_proxy == "nginx"
 
   - name: "enable site for {{ collabora_domain }}"
     file:
       state: link
-      path: "/etc/apache2/sites-enabled/{{ collabora_domain }}.conf"
-      src: "/etc/apache2/sites-available/{{ collabora_domain }}.conf"
-    notify: reload apache2
+      path: "/etc/{{ rev_proxy }}/sites-enabled/{{ collabora_domain }}.conf"
+      src: "/etc/{{ rev_proxy }}/sites-available/{{ collabora_domain }}.conf"
+    notify: reload {{ rev_proxy }}
     when: rev_proxy == "apache2"
 
   - name: "copy letsencrypt cert.pem"
@@ -139,7 +139,6 @@
   - name: "start loolwsd service"
     service: name=loolwsd state=restarted
 
-  # todo : logrotate fro apache2
   - name: "logrotate for log {{ www_log }}/{{ collabora_domain }}"
     template:
       src: "collabora_logrotate_{{ rev_proxy }}.j2"

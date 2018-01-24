@@ -40,17 +40,6 @@
     vars:
       ansible_ssh_pipelining: true
 
-#  - name: "grant on database"
-#    postgresql_privs:
-#      db: "{{ instance_database_name }}"
-#      role: "{{ instance_database_user }}"
-#      privs: ALL
-#      type: database
-#      state: present
-#    become_user: postgres
-#    vars:
-#      ansible_ssh_pipelining: true
-
   - name: create temporary download directory
     tempfile:
       state: directory
@@ -75,7 +64,7 @@
       mode: 0755
 
   - name: "Move {{ _tmp_new_app.path }}/{{ app_src_root_name }} to {{ app_instance_root }}"
-    command: "/bin/mv {{ _tmp_new_app.path }}/{{ app_src_root_name }} {{ app_instance_rootd }}"
+    command: "/bin/mv {{ _tmp_new_app.path }}/{{ app_src_root_name }} {{ app_instance_root }}"
     args:
       creates: "{{ app_instance_root }}"
 
@@ -116,7 +105,7 @@
       dest: "/etc/{{ rev_proxy }}/sites-available/{{ app_instance_id }}.conf"
     notify: reload {{ rev_proxy }}
 
-  - name: "logrotate for log {{ {{ rev_proxy }}_log_dest }}/{{ app_instance_id }}"
+  - name: "logrotate for log {{ rev_proxy }} log_dest /{{ app_instance_id }}"
     template:
       src: app_logrotate_{{ rev_proxy }}.j2
       dest: "/etc/logrotate.d/{{ app_instance_id }}"

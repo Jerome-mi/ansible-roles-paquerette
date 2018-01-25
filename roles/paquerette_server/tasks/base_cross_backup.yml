@@ -48,4 +48,5 @@
       src: cross.backup.j2
       dest: "{{ backup_item_dir }}/70-ext-cross.sh"
       mode: 0640
+    when: do_cross_backup == "yes"
 

@@ -13,6 +13,11 @@
       state: present
       backup: yes
     notify: restart apache2
+    register: ServerNameChanged
+
+  - name: restart apache2
+    service: name=apache2 state=restarted
+    when: ServerNameChanged.changed
 
   - apache2_module:
       name: "{{ item }}"

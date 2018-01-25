@@ -3,5 +3,8 @@
 - name: restart apache2
   service: name=apache2 state=restarted
 
+- name: reload apache2
+  service: name=apache2 state=reloaded
+
 - name: reload monit
   service: name=monit state=reloaded

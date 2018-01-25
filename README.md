@@ -36,7 +36,4 @@ C'est la partie qui permet de mettre à jour une instance applicative. La mise �
 - mise à jour du logiciel et de la base de données
 - redémarrage du service
 
-![Logo paquerette](https://paquerette.eu/wp-content/uploads/2017/09/logo-paquerette.png)
-
-
 [paquerette.eu](http://paquerette.eu)

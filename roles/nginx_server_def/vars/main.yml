@@ -1,13 +1,5 @@
 ---
 # certbot certonly --agree-tos --webroot -n -m {{ base_postmaster }} --webroot-path=/var/www/html -d
-# certbot certonly --dry-run --test-cert --agree-tos --webroot -m postmaster@paquerette.eu --webroot-path=/var/www/html -d test-server.paquerette.eu
-
-  # to be deprecated
-  nginx_www_root: "{{ www_root }}"
-  nginx_log_dest: "{{ www_log }}"
-  ##
-
-  letsencrypt_cert_root: "/etc/letsencrypt/live/"
 
   # certbot certonly --agree-tos --webroot -n -m postmaster@paquerette.eu --webroot-path={{  }} -d "test-server.paquerette.eu"
   # definir letsencrypt_instance_path et letsencrypt_domain avant l'appel

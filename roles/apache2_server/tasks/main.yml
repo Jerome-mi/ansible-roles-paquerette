@@ -13,6 +13,11 @@
       state: present
       backup: yes
     notify: restart apache2
+    register: ServerNameChanged
+
+  - name: restart apache2
+    service: name=apache2 state=restarted
+    when: ServerNameChanged.changed
 
   - apache2_module:
       name: "{{ item }}"
@@ -67,9 +72,6 @@
       dest: "/etc/monit/conf.d/apache.conf"
     notify: reload monit
 
-# https://www.digitalocean.com/community/tutorials/how-to-set-up-let-s-encrypt-certificates-for-multiple-apache-virtual-hosts-on-ubuntu-16-04
-# https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-16-04
-
   - name: "letsencrypt certbot repository"
     apt_repository:
       repo: "ppa:certbot/certbot"
@@ -80,11 +82,17 @@
       state: present
       update_cache: yes
 
-#  - name: "disable site 000-default-le-ssl.conf"
-#    file:
-#      state: absent
-#      path: "/etc/apache2/sites-enabled/000-default-le-ssl.conf"
-#    notify: reload apache2
+  - name: "disable site 000-default.conf"
+    file:
+      state: absent
+      path: "/etc/apache2/sites-enabled/000-default.conf"
+    notify: reload apache2
+
+  - name: "disable site 000-default-le-ssl.conf"
+    file:
+      state: absent
+      path: "/etc/apache2/sites-enabled/000-default-le-ssl.conf"
+    notify: reload apache2
 
   - name: "cron for automatic letsencrypt renew"
     cron:

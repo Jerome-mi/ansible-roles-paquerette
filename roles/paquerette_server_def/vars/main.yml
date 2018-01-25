@@ -98,6 +98,7 @@
   ext_backup_dir: "{{ ext_backup_root_dir }}/{{ ansible_hostname }}"
 
 # local storage for downloading from ext backup host other backups in local backup storage
+# do_cross_backup: "yes/no" in inventory
   cross_backup_dir: "{{ backup_base_dir }}/cross"
 
   ext_backup_time: "04:00"
@@ -137,6 +138,7 @@
 
   renew_cert_web_stop_hour: "2"
   renew_cert_web_stop_minute: "45"
+  letsencrypt_cert_root: "/etc/letsencrypt/live/"
 
 #############################################
 #  WWW

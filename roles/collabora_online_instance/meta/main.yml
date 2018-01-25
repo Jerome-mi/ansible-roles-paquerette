@@ -5,6 +5,6 @@ dependencies:
 
   #- { role: nginx_server_def }
 
-  #- { role: apache_server_def }
+  #- { role: apache2_server_def }
 
 

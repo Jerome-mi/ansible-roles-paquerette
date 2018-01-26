@@ -127,6 +127,12 @@
       remote_src: yes
       backup: yes
 
+  # cron task or something ? may log while migrating
+  - name: "remove default data directory"
+    file:
+      state: absent
+      path: "{{ www_root }}/{{ nextcloud_instance_id }}/data"
+
   - name: "link to data directory"
     file:
       state: link

@@ -7,8 +7,8 @@
     # needed for ansible apt
     "aptitude",
     "apt-transport-https",
+    # backup solution
     "backupninja",
-    # needed to send sms
     "curl",
     # needed for timezone
     "dbus",
@@ -16,7 +16,7 @@
     "htop",
     "iftop",
     "iotop",
-    # needed for stmp ssl
+    # needed for smtp ssl
     "libsasl2-modules",
     "monit",
     # needed for human beings

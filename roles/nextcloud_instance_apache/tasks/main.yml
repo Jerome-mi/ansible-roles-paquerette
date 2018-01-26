@@ -112,8 +112,6 @@
     args:
       creates: "{{ nextcloud_root_instance }}/{{ nextcloud_instance_id }}/ansible_base_install.done"
 
-    # crontab -u www-data -e
-    #*/15  *  *  *  *
   - name: "cron mode for background jobs"
     cron:
       name: "{{ nextcloud_root_instance }}/{{ nextcloud_instance_id }}/cron.php >/dev/null 2>&1"

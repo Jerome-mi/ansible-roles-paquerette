@@ -43,7 +43,7 @@
 
   base_root_opt: "{{ base_prod_path }}/opt-root"
 
-  base_backup_host: "backup-store.paquerette.eu"
+  #base_backup_host: "my.external.host"
 
   base_tmp_path: "{{ base_prod_path }}/tmp"
 
@@ -51,7 +51,6 @@
 # SMTP Postmaster@paquerette.eu
 #############################################
   base_postmaster: "postmaster@paquerette.eu"
-  base_supportmail: "support@paquerette.eu"
 
   smtp_shortfrom: "postmaster"
   smtp_domain: "paquerette.eu"

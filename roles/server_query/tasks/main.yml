@@ -5,4 +5,3 @@
     register: out
 
   - debug: var=out.stdout_lines
-

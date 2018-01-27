@@ -1,8 +1,6 @@
 ---
 dependencies:
 
-  - { role: base_server_def }
-
   - { role: nextcloud_platform_def }
 
   - { role: apache2_server }

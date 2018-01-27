@@ -1,14 +1,19 @@
-.idea/
+# ignore eveything
+/*
 
-hosts
+# except
+!.gitgnore
+!README.md
+!hosts.example
 
-group_vars/
-host_vars/
+# except roles directory with no exception
+!roles/
 
-Utils_Test/*
-Utils_prod/*
+# except group_vars directory
+!group_vars/
 
+# ignore everything in group_vars directory
+group_vars/*
 
-/*.yml
-/*.retry
-/*.log
+# except base server directory
+!group_vars/base_server/

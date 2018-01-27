@@ -1,5 +1,4 @@
 ---
 dependencies:
 
-  - { role: base_server_def }
   - { role: nginx_server_def }

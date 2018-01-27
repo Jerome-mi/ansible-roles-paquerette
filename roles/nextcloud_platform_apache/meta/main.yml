@@ -1,7 +1,7 @@
 ---
 dependencies:
 
-  - { role: paquerette_server_def }
+  - { role: base_server_def }
 
   - { role: nextcloud_platform_def }
 

@@ -1,7 +1,7 @@
 ---
 dependencies:
 
-  - { role: paquerette_server_def }
+  - { role: base_server_def }
 
   - { role: nginx_server_def }
 

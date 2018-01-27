@@ -1,8 +1,8 @@
 ---
 dependencies:
 
-  - { role: paquerette_server_def }
+  - { role: base_server_def }
 
-  #- { role: paquerette_server }
+  #- { role: base_server }
 
 

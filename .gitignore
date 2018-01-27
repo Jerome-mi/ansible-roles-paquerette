@@ -4,4 +4,6 @@
 
 !roles/
 
+group_vars/*
+
 !group_vars/base_server

@@ -1,0 +1,22 @@
+
+### hosts
+
+prodhost1 hostvar=...
+prodhost2 hostvar=...
+
+testhost1 hostvar=...
+
+### groups
+
+[test]
+testhost1
+
+[prod]
+prodhost1
+prodhost2
+
+### group hierarchy
+
+[base_server:children]
+prod
+test

@@ -4,6 +4,7 @@
 # except
 !.gitgnore
 !README.md
+!hosts.example
 
 # except roles directory with no exception
 !roles/

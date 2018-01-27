@@ -1,4 +1,4 @@
-{{ nginx_log_dest | mandatory }}/{{ collabora_domain }}/*.log {
+{{ www_log | mandatory }}/{{ collabora_domain }}/*.log {
         weekly
         missingok
         rotate 54

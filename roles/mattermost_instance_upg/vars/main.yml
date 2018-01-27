@@ -8,8 +8,8 @@
 #
 #  mattermost_instance_id: "mat_paq_test"
 #
-#  mattermost_user_instance: "{{ mattermost_instance_id }}"
-#  mattermost_instance_service: "{{ mattermost_instance_id }}"
+  mattermost_user_instance: "{{ mattermost_instance_id }}"
+  mattermost_instance_service: "{{ mattermost_instance_id }}"
 #
   mattermost_root_instance: '{{ www_root | default("/mnt/vdb/www") }}'
 #

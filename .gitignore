@@ -3,3 +3,5 @@
 !README.md
 
 !roles/
+
+!group_vars/base_server

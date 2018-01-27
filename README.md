@@ -4,6 +4,8 @@
 
 Systèmes supportés : **Ubuntu 16.04 LTS**
 
+**REFONTE : Je suis en train de mettre en place un inventaire structuré afin de simplifier les dépendances et al variabilisation, ce qui donnera une cinquième catégorie.**
+
 **L'organisation des rôles se fait en 4 catégories :**
 
 ## Le serveur

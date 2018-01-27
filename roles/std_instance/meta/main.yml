@@ -1,6 +1,5 @@
 ---
 dependencies:
 
-  - { role: base_server_def }
   - { role: 'nginx_server_def', when: rev_proxy == 'nginx' }
   - { role: 'apache2_server_def', when: rev_proxy == 'apache2' }

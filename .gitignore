@@ -1,9 +1,18 @@
-*
+# ignore eveything
+/*
 
+# except
+!.gitgnore
 !README.md
 
+# except roles directory with no exception
 !roles/
 
+# except group_vars directory
+!group_vars/
+
+# ignore everything in group_vars directory
 group_vars/*
 
-!group_vars/base_server
+# except base server directory
+!group_vars/base_server/

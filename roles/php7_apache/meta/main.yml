@@ -1,5 +1,4 @@
 ---
 dependencies:
 
-  - { role: base_server_def }
   - { role: apache2_server_def }

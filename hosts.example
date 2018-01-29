@@ -20,3 +20,6 @@ prodhost2
 [base_server:children]
 prod
 test
+
+[secret:children]
+base_server

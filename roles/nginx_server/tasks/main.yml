@@ -11,15 +11,15 @@
       rule: allow
       name: Nginx Full
 
-  - name: "Move /var/www {{ nginx_www_root }}"
-    command: "/bin/mv /var/www {{ nginx_www_root }}"
+  - name: "Move /var/www {{ www_root }}"
+    command: "/bin/mv /var/www {{ www_root }}"
     args:
-      creates: "{{ nginx_www_root }}"
+      creates: "{{ www_root }}"
 
-  - name: "link /var/www to {{ nginx_www_root }}"
+  - name: "link /var/www to {{ www_root }}"
     file:
       state: link
-      src: "{{ nginx_www_root }}"
+      src: "{{ www_root }}"
       path: "/var/www"
 
   - name: "log dest {{ nginx_log_dest }}"

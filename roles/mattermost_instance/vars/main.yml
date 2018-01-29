@@ -7,7 +7,7 @@
 #  mattermost_port: 8065
 #  mattermost_instance_id: mat_paq_test
 
-  mattermost_root_instance: '{{ www_root | default("/mnt/vdb/www") }}'
+  mattermost_root_instance: '{{ www_root | mandatory }}'
 
   mattermost_database_name: "{{ mattermost_instance_id }}_db"
   mattermost_database_user: "{{ mattermost_instance_id }}_usr"

@@ -1,5 +1,4 @@
 
 rev_proxy: "apache2"
 
-nextcloud_root_instance: '{{ apache_www_root | default("/mnt/vdb/www") }}'
-
+nextcloud_root_instance: '{{ www_root | mandatory }}'

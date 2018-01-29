@@ -10,8 +10,8 @@ loolwsd log dest: {{ loolwsd_log_dest }}
 
 [Cleanup]
 
-{{ certbot_revoke_command }} {{ letsencrypt_cert_root }}/{{ collabora_domain }}/cert.pem
-{{ cert_delete_command }} {{ letsencrypt_cert_root }}/{{ collabora_domain }}/cert.pem
+# {{ certbot_revoke_command }} {{ letsencrypt_cert_root }}/{{ collabora_domain }}/cert.pem
+# {{ cert_delete_command }} {{ letsencrypt_cert_root }}/{{ collabora_domain }}/cert.pem
 
 [Backup]
 

@@ -5,10 +5,4 @@
   # definir letsencrypt_instance_path et letsencrypt_domain avant l'appel
   certbot_grant_command: "certbot certonly --agree-tos --webroot -n -m {{ base_postmaster }} --webroot-path=/var/www/html -d {{ letsencrypt_domain | mandatory }} "
 
-  # certbot revoke --cert-path /etc/letsencrypt/live/test-server.paquerette.eu/cert.pem
-  certbot_revoke_command: "certbot revoke --cert-path /etc/letsencrypt/live/{{ letsencrypt_domain | mandatory | quote }}/cert.pem"
-
-  ### ???
-  cert_delete_command: "certbot delete --cert-name "
-
 

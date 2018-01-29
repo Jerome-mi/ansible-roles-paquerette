@@ -11,21 +11,21 @@
       rule: allow
       name: Nginx Full
 
-  - name: "Move /var/www {{ nginx_www_root }}"
-    command: "/bin/mv /var/www {{ nginx_www_root }}"
+  - name: "Move /var/www {{ www_root }}"
+    command: "/bin/mv /var/www {{ www_root }}"
     args:
-      creates: "{{ nginx_www_root }}"
+      creates: "{{ www_root }}"
 
-  - name: "link /var/www to {{ nginx_www_root }}"
+  - name: "link /var/www to {{ www_root }}"
     file:
       state: link
-      src: "{{ nginx_www_root }}"
+      src: "{{ www_root }}"
       path: "/var/www"
 
-  - name: "log dest {{ nginx_log_dest }}"
+  - name: "log dest {{ www_log }}"
     file:
       state: directory
-      path: "{{ nginx_log_dest }}"
+      path: "{{ www_log }}"
 
   - name: "cron stop nginx for backup"
     cron:
@@ -46,9 +46,6 @@
       dest: "{{ backup_item_dir }}/10-nginx.sh"
       mode: 0640
 
-# https://www.digitalocean.com/community/tutorials/how-to-set-up-let-s-encrypt-certificates-for-multiple-apache-virtual-hosts-on-ubuntu-16-04
-# https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-16-04
-
   - name: "letsencrypt certbot repository"
     apt_repository:
       repo: "ppa:certbot/certbot"
@@ -64,7 +61,7 @@
       weekday: 1
       hour: "{{ renew_cert_web_stop_hour | mandatory}}"
       minute: "{{ renew_cert_web_stop_minute | mandatory }}"
-      job: '/usr/bin/certbot renew --quiet --renew-hook "/bin/systemctl reload nginx"'
+      job: "/usr/bin/certbot renew --quiet"
 
   - name: "monit.nginx.j2"
     template:
@@ -72,7 +69,7 @@
       dest: "/etc/monit/conf.d/nginx.conf"
     notify: reload monit
 
-#  - name: "desabling default website"
+#  - name: "disabling default website"
 #    file:
 #      state: absent
 #      path: "/etc/nginx/sites-enabled/default"

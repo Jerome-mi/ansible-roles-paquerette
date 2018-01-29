@@ -16,10 +16,7 @@ nextcloud_database_name: {{ nextcloud_database_name }}
 nextcloud_database_user: {{ nextcloud_database_user }}
 nextcloud_database_password: {{ nextcloud_database_password }}
 
-
-
 [Inventory]
-
 
 [Cleanup]
 
@@ -34,7 +31,7 @@ rm -r {{ apache_log_dest }}/{{ nextcloud_instance_id }}
 #rm -r {{ backup_prod_dir }}/{{ nextcloud_instance_id }}.data
 crontab -e -u www-data -> {{ nextcloud_instance_id }}
 
-#{{ certbot_revoke_command }}
+#{{ certbot_revoke_command }} {{ letsencrypt_cert_root }}/{{ nextcloud_domain }}/cert.pem
 #{{ cert_delete_command }} {{ letsencrypt_cert_root }}/{{ nextcloud_domain }}/cert.pem
 #rm /etc/monit/conf.d/{{ nextcloud_instance_id }}.conf
 #rm {{ backup_item_dir }}/20-{{ nextcloud_instance_id }}.sh

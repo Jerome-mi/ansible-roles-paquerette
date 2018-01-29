@@ -57,12 +57,6 @@
     args:
       creates: "{{ app_instance_root }}"
 
-  - name: "dir {{ www_root }}"
-    file:
-      path: "{{ www_root }}"
-      state: directory
-      mode: 0755
-
   - name: "Move {{ _tmp_new_app.path }}/{{ app_src_root_name }} to {{ app_instance_root }}"
     command: "/bin/mv {{ _tmp_new_app.path }}/{{ app_src_root_name }} {{ app_instance_root }}"
     args:

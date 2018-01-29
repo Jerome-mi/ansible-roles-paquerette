@@ -1,8 +1,5 @@
 ---
-# certbot certonly --agree-tos --webroot -n -m {{ base_postmaster }} --webroot-path=/var/www/html -d
 
-  # certbot certonly --agree-tos --webroot -n -m postmaster@paquerette.eu --webroot-path={{  }} -d "test-server.paquerette.eu"
-  # definir letsencrypt_instance_path et letsencrypt_domain avant l'appel
   certbot_grant_command: "certbot certonly --agree-tos --webroot -n -m {{ base_postmaster }} --webroot-path=/var/www/html -d {{ letsencrypt_domain | mandatory }} "
 
 

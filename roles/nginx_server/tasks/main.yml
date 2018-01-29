@@ -22,10 +22,10 @@
       src: "{{ www_root }}"
       path: "/var/www"
 
-  - name: "log dest {{ nginx_log_dest }}"
+  - name: "log dest {{ www_log }}"
     file:
       state: directory
-      path: "{{ nginx_log_dest }}"
+      path: "{{ www_log }}"
 
   - name: "cron stop nginx for backup"
     cron:
@@ -69,7 +69,7 @@
       dest: "/etc/monit/conf.d/nginx.conf"
     notify: reload monit
 
-#  - name: "desabling default website"
+#  - name: "disabling default website"
 #    file:
 #      state: absent
 #      path: "/etc/nginx/sites-enabled/default"

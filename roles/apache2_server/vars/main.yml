@@ -1,0 +1,18 @@
+---
+
+  apache_default_domain: "{{ ansible_fqdn }}"
+
+  apache_module_list: [
+    "proxy",
+    "proxy_http",
+    "proxy_connect",
+    "proxy_wstunnel",
+    "ssl",
+    "dir",
+    "env",
+    "headers",
+    "mime",
+    "proxy_fcgi",
+    "rewrite",
+    "setenvif",
+    ]

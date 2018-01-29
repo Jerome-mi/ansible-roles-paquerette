@@ -4,9 +4,19 @@
 
 Systèmes supportés : **Ubuntu 16.04 LTS**
 
-**REFONTE : Je suis en train de mettre en place un inventaire structuré afin de simplifier les dépendances et la variabilisation, ce qui donnera une cinquième catégorie.**
+**REFONTE en cours : nettoyage, simplification**
 
-**L'organisation des rôles se fait en 4 catégories :**
+**L'organisation des rôles se fait en 5 catégories :**
+
+## L'inventaire
+C'est la partie qui liste les machines pilotées et organise la définition des variables.
+- secret : les variables qui doivent rester secretes (mot de passe etc...)
+- - base_server : toutes les variables communes non secrètes
+- - - test : toutes les variables propres aux machines de test
+- - - prod : toutes les variables propres aux machines de prodution
+
+*cf hosts.example*
+
 
 ## Le serveur
 C'est la partie qui définit les base du serveur, elle est la couche basse. Elle met en oeuvre :

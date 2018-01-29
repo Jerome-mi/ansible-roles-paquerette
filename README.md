@@ -10,10 +10,10 @@ Systèmes supportés : **Ubuntu 16.04 LTS**
 
 ## L'inventaire
 C'est la partie qui liste les machines pilotées et organise la définition des variables.
-- secret : les variables qui doivent rester secretes (mot de passe etc...)
+- secret : les variables qui doivent rester secrètes (mot de passe etc...)
 - - base_server : toutes les variables communes non secrètes
 - - - test : toutes les variables propres aux machines de test
-- - - prod : toutes les variables propres aux machines de prodution
+- - - prod : toutes les variables propres aux machines de production
 
 *cf hosts.example*
 

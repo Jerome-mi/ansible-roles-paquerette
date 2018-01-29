@@ -43,28 +43,26 @@
 
   base_root_opt: "{{ base_prod_path }}/opt-root"
 
-  #base_backup_host: "my.external.host"
-
   base_tmp_path: "{{ base_prod_path }}/tmp"
 
 #############################################
-# SMTP Postmaster@paquerette.eu
+# SMTP postmaster@mydomain.org
 #############################################
-  base_postmaster: "postmaster@paquerette.eu"
-
-  smtp_shortfrom: "postmaster"
-  smtp_domain: "paquerette.eu"
-  smtp_authtype: "PLAIN"
-  smtp_secure_starttls: "STARTTLS"
-  smtp_tlsv1: "tlsv1"
-  smtp_use_tls: "True"
-  smtp_secure: "tls"
-  smtp_auth: "1"
-  smtp_host: "mail.infomaniak.com"
-  smtp_port: "587"
-  smtp_user: "postmaster@paquerette.eu"
-  #### in group vars
-  #smtp_password: "moved"
+# in ../secret/base_smtp.yml
+#  base_postmaster: "postmaster@mydomain.org"
+#
+#  smtp_shortfrom: "postmaster"
+#  smtp_domain: "mydomain.org"
+#  smtp_authtype: "PLAIN"
+#  smtp_secure_starttls: "STARTTLS"
+#  smtp_tlsv1: "tlsv1"
+#  smtp_use_tls: "True"
+#  smtp_secure: "tls"
+#  smtp_auth: "1"
+#  smtp_host: "my.smtphost.org"
+#  smtp_port: "587"
+#  smtp_user: "postmaster@mydomain.org"
+#  smtp_password: "verysecret"
 
 #############################################
 # BACKUP
@@ -76,25 +74,28 @@
   backup_version_dir: "{{ backup_base_dir }}/version"
   backup_opt_dir: "{{ backup_base_dir }}/opt"
 
-# backup stop and start web services
+# stop and start web services for backup
   backup_web_stop_hour: "2"
   backup_web_stop_minute: "55"
   backup_web_start_hour: "3"
   backup_web_start_minute: "15"
-#
+
+# stop and start base services for backup
   backup_base_service_conf_time: "02:57"
   backup_app_service_conf_time: "03:00"
   backup_day_conf_time: "03:30"
   backup_month_conf_time: "{{ backup_day_conf_time }}"
 
 # external backup storage
-  ext_backup_host: "{{ base_backup_host }}"
-  ext_backup_user: "ansible"
-  ext_backup_key_path: "/home/{{ ext_backup_user }}/.ssh/backup"
-  ext_backup_key_file: "{{ ext_backup_key_path }}/id_rsa"
-  src_key_file: "~/.ssh/backup-store/id_rsa"
-  ext_backup_root_dir: "/home/{{ ext_backup_user }}/backup"
-  ext_backup_dir: "{{ ext_backup_root_dir }}/{{ ansible_hostname }}"
+# in ../secret/base_backup.yml
+#  ext_backup_host: "my.backup.host"
+#  ext_backup_user: "my_backup_user"
+#  ext_backup_key_path: "/home/{{ ext_backup_user }}/.ssh/backup"
+#  ext_backup_key_file: "{{ ext_backup_key_path }}/id_rsa"
+#  ext_backup_root_dir: "/home/{{ ext_backup_user }}/backup"
+#  ext_backup_dir: "{{ ext_backup_root_dir }}/{{ ansible_hostname }}"
+
+#  src_key_file: "mypath/id_rsa"
 
 # local storage for downloading from ext backup host other backups in local backup storage
 # do_cross_backup: "yes/no" in inventory

@@ -1,24 +1,5 @@
 ---
 
-  apache_default_domain: "{{ ansible_fqdn }}"
-
-  letsencrypt_cert_root: "/etc/letsencrypt/live/"
-
   #certbot_grant_command: "certbot --agree-tos --apache -n -m {{ base_postmaster }} -d {{ letsencrypt_domain | mandatory }} "
   certbot_grant_command: 'certbot --agree-tos --authenticator standalone --installer apache --pre-hook "service apache2 stop" --post-hook "service apache2 start"
   -n -m {{ base_postmaster | mandatory }} -d {{ letsencrypt_domain | mandatory }} '
-
-  apache_module_list: [
-    "proxy",
-    "proxy_http",
-    "proxy_connect",
-    "proxy_wstunnel",
-    "ssl",
-    "dir",
-    "env",
-    "headers",
-    "mime",
-    "proxy_fcgi",
-    "rewrite",
-    "setenvif",
-    ]

@@ -1,0 +1,28 @@
+---
+  # Nextcloud
+  nextcloud_domain: "mynextcloud.mydomain.org"
+  nextcloud_oldversion: 12.0.4
+  nextcloud_version: 12.0.5
+  nextcloud_instance_id: "nc_mydomain"
+  nextcloud_database_name: "{{ nextcloud_instance_id }}_db"
+
+  # Mattermost
+  mattermost_domain: "team.mydomain.org"
+
+  mattermost_oldversion: 4.1.0
+  mattermost_version: 4.6.0
+
+  mattermost_instance_id: "mat_mydomain"
+
+  #Collabora
+  collabora_version: "2.1"
+
+  collabora_domain: "mycollabora.mydomain.org"
+  collabora_client_domain: "mynextcloud\\.mydomain\\.org"
+
+  #collabora_secret: "Veryverysecret"
+
+  collabora_port: 9980
+
+  collabora_admin_user: "MelindaGates"
+  #collabora_admin_password: "letyouguess"

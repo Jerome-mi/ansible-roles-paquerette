@@ -1,4 +1,0 @@
----
-dependencies:
-
-  - { role: mattermost_platform_def }

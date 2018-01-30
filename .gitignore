@@ -15,11 +15,20 @@
 # ignore everything in group_vars directory
 group_vars/*
 
-# except base server directory
-!group_vars/base_server/
-
-# except apache2 server directory
+# except common groups
 !group_vars/apache2_server/
-
-# except nginx server directory
+!group_vars/base_server/
+!group_vars/docker_server/
+!group_vars/mariadb_mysql_server/
 !group_vars/nginx_server/
+!group_vars/php_server/
+!group_vars/postgres_server/
+
+# except host_vars directory
+!host_vars/
+
+# ignore everything in host_vars directory
+host_vars/*
+
+# except example file
+!host_vars/host.example.yml

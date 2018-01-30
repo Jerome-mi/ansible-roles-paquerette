@@ -10,13 +10,13 @@
     with_items: "{{ apache_module_list }}"
     notify: restart apache2
 
+# TODO : review
 #  - name: "a2enconf php{{ php_version }}"
 #    command: "a2enconf php{{ php_version }}"
 #    register: __a2enconf_rc
 #    changed_when: '"service apache2 reload" in __a2enconf_rc.stdout'
 #    notify: restart apache2
 
-# TODO : review
 #  - name: "template for monitoring php{{ php_version }}-fpm"
 #    template:
 #      src: "php{{ php_version }}.monit.base"

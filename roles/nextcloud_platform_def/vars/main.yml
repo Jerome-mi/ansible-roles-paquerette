@@ -1,4 +1,0 @@
-
-rev_proxy: "apache2"
-
-nextcloud_root_instance: '{{ www_root | mandatory }}'

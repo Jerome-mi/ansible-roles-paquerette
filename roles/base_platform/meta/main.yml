@@ -1,0 +1,16 @@
+---
+dependencies:
+
+  - { role: "base_server" }
+
+  - { role: "docker_server", when: docker_server == "yes" }
+
+  - { role: "nginx_server", when: rev_proxy == "nginx" }
+  - { role: "apache2_server", when: rev_proxy == "apache2" }
+
+  - { role: "postgres_server", when: postgres_server == "yes" }
+  - { role: "mariadb_mysql_server", when: mariadb_mysql_server == "yes" }
+
+  - { role: "php7_apache2", when: (php_server == "yes") and (rev_proxy == "apache2") }
+  - { role: "php7_nginx", when: (php_server == "yes") and (rev_proxy == "nginx") }
+

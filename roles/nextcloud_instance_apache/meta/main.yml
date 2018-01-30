@@ -1,6 +1,0 @@
----
-dependencies:
-
-  - { role: nextcloud_platform_def }
-
-

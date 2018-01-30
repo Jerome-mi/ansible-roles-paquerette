@@ -18,5 +18,3 @@ group_vars/*
 # except base server directory
 !group_vars/base_server/
 
-# ignore everything in host_vars directory
-host_vars/*

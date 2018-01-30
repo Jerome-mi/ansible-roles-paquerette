@@ -1,4 +1,0 @@
----
-dependencies:
-
-  - { role: apache2_server_def }

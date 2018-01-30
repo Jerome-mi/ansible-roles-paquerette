@@ -1,7 +1,7 @@
 ---
 
-  - name: "apt list --installed"
-    shell: "apt list --installed"
-    register: out
+#  - name: "apt list --installed"
+#    shell: "apt list --installed"
+#    register: out
 
-  - debug: var=out.stdout_lines
+  - debug: var=rev_proxy

@@ -18,3 +18,8 @@ group_vars/*
 # except base server directory
 !group_vars/base_server/
 
+# except apache2 server directory
+!group_vars/apache2_server/
+
+# except nginx server directory
+!group_vars/nginx_server/

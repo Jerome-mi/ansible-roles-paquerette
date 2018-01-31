@@ -16,13 +16,13 @@
 group_vars/*
 
 # except common groups
-!group_vars/apache2_server/
-!group_vars/base_server/
-!group_vars/docker_server/
-!group_vars/mariadb_mysql_server/
-!group_vars/nginx_server/
-!group_vars/php_server/
-!group_vars/postgres_server/
+!group_vars/base_server
+!group_vars/apache2_server.yml
+!group_vars/docker_server.yml
+!group_vars/mariadb_mysql_server.yml
+!group_vars/nginx_server.yml
+!group_vars/php_server.yml
+!group_vars/postgres_server.yml
 
 # except host_vars directory
 !host_vars/

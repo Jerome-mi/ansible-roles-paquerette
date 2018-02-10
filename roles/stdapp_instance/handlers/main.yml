@@ -5,9 +5,3 @@
 
 - name: reload {{ rev_proxy }}
   service: name={{ rev_proxy }} state=reloaded
-
-- name: reload apache2
-  service: name=apache2 state=reloaded
-
-- name: reload nginx
-  service: name=nginx state=reloaded

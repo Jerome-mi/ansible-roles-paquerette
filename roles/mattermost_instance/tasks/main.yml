@@ -163,7 +163,7 @@
     notify: reload monit
 
   - name: "letsencrypt certificate for {{ mattermost_domain }}"
-    command: "{{ certbot_grant_command }}"
+    command: "{{ certbot_grant_command_nginx }}"
     args:
       creates: "{{ letsencrypt_cert_root }}/{{ mattermost_domain | quote }}"
     vars:

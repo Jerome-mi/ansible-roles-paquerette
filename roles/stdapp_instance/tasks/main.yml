@@ -12,11 +12,20 @@
       flat: yes
 
   - name: "letsencrypt certificate for {{ app_domain }}"
-    command: "{{ certbot_grant_command }}"
+    command: "{{ certbot_grant_command_nginx }}"
     args:
       creates: "{{ letsencrypt_cert_root }}/{{ app_domain | quote }}"
     vars:
       letsencrypt_domain: "{{ app_domain }}"
+    when: rev_proxy == "nginx"
+
+  - name: "letsencrypt certificate for {{ app_domain }}"
+    command: "{{ certbot_grant_command_apache2 }}"
+    args:
+      creates: "{{ letsencrypt_cert_root }}/{{ app_domain | quote }}"
+    vars:
+      letsencrypt_domain: "{{ app_domain }}"
+    when: rev_proxy == "apache2"
 
   - name: "create database user {{ instance_database_user }}"
     postgresql_user:

@@ -1,0 +1,118 @@
+---
+
+  - name: "template check log"
+    template:
+      src: app_upg_check.j2
+      dest: "{{ base_prod_ansible_log }}/{{ app_instance_id }}.upg.{{ app_version }}.log"
+
+  - name: "fetch check log"
+    fetch:
+      src: "{{ base_prod_ansible_log }}/{{ app_instance_id }}.upg.{{ app_version }}.log"
+      dest: "{{ app_instance_id }}.upg.{{ app_version }}.log"
+      flat: yes
+
+  - name: "create temporary download directory"
+    tempfile:
+      state: directory
+      suffix: "_app_new"
+    register: _tmp_new_app
+    changed_when: False
+
+  - name: "retrieving app version {{ app_version }} in {{ _tmp_new_app.path }}"
+    unarchive:
+      src: "{{ app_src }}"
+      dest: "{{ _tmp_new_app.path }}"
+      remote_src: True
+      group: "www-data"
+      owner: "www-data"
+
+  - name: "disable site for {{ app_domain }}"
+    file:
+      state: absent
+      path: "/etc/nginx/sites-enabled/{{ app_instance_id }}"
+    when: rev_proxy == "nginx"
+
+  - name: "disable site for {{ app_domain }}"
+    file:
+      state: absent
+      path: "/etc/apache2/sites-enabled/{{ app_instance_id }}.conf"
+    when: rev_proxy == "apache2"
+
+  - name: "reload {{ rev_proxy }}"
+    service: name={{ rev_proxy }} state=reloaded
+
+  - name: "create dir for backup current version {{ backup_version_dir | mandatory }}/{{ app_instance_id | mandatory }}/{{ app_oldversion | mandatory }}"
+    file:
+      path: "{{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}"
+      state: directory
+      mode: 0777
+
+  - name: "create {{ rev_proxy }} dir for backup current version {{ backup_version_dir | mandatory }}/{{ app_instance_id | mandatory }}/{{ app_oldversion | mandatory }}"
+    file:
+      path: "{{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}/{{ rev_proxy }}"
+      state: directory
+      mode: 0777
+
+  - name: "create app dir for backup current version {{ backup_version_dir | mandatory }}/{{ app_instance_id | mandatory }}/{{ app_oldversion | mandatory }}"
+    file:
+      path: "{{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}/app"
+      state: directory
+      mode: 0777
+
+  - name: "create sql dir for backup current version {{ backup_version_dir | mandatory }}/{{ app_instance_id | mandatory }}/{{ app_oldversion | mandatory }}"
+    file:
+      path: "{{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}/sql"
+      state: directory
+      mode: 0777
+
+  - name: "backup nginx config"
+    command: "cp /etc/nginx/sites-available/{{ app_instance_id }} {{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}/{{ rev_proxy }}"
+    args:
+      creates: "{{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}/{{ rev_proxy }}/{{ app_instance_id }}"
+    when: rev_proxy == "nginx"
+
+  - name: "backup apache2 config"
+    command: "cp /etc/apache2/sites-available/{{ app_instance_id }}.conf {{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}/{{ rev_proxy }}"
+    args:
+      creates: "{{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}/{{ rev_proxy }}/{{ app_instance_id }}.conf"
+    when: rev_proxy == "apache2"
+
+  - name: "backup app"
+    command: "rsync -aAx --del {{ www_root }}/{{ app_instance_id}} {{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}/app"
+    args:
+      creates: "{{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}/app/{{ app_instance_id }}"
+
+  - name: "backup database"
+    shell: "/usr/bin/pg_dump {{ app_database_name }} > {{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}/sql/{{ app_database_name }}.sql"
+    become_user: "postgres"
+    vars:
+      ansible_ssh_pipelining: true
+    args:
+      creates: "{{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}/sql/{{ app_database_name }}.sql"
+
+  - name: "Copy {{ _tmp_new_app.path }}/{{ app_src_root_name }}/ to {{ app_instance_root }}"
+    command: "rsync -ax {{ _tmp_new_app.path }}/{{ app_src_root_name }}/ {{ app_instance_root }}"
+
+  - name: "remove {{ _tmp_new_app.path }}"
+    file:
+      path: "{{ _tmp_new_app.path }}"
+      state: absent
+    changed_when: False
+
+  - name: "enable site for {{ app_domain }}"
+    file:
+      state: link
+      path: "/etc/nginx/sites-enabled/{{ app_instance_id }}"
+      src: "/etc/nginx/sites-available/{{ app_instance_id }}"
+    when: rev_proxy == "nginx"
+
+  - name: "enable site for {{ app_domain }}"
+    file:
+      state: link
+      path: "/etc/apache2/sites-enabled/{{ app_instance_id }}.conf"
+      src: "/etc/apache2/sites-available/{{ app_instance_id }}.conf"
+    when: rev_proxy == "apache2"
+
+  - name: "reload {{ rev_proxy }}"
+    service: name={{ rev_proxy }} state=reloaded
+

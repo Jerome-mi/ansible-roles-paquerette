@@ -2,13 +2,11 @@
 
   app_domain: "{{ dolibarr_domain | mandatory }}"
   app_version: "{{ dolibarr_version | mandatory }}"
+  app_oldversion: "{{ dolibarr_oldversion | mandatory }}"
   app_instance_id: "{{ dolibarr_instance_id | mandatory }}"
 
   app_src: "https://sourceforge.net/projects/dolibarr/files/Dolibarr%20ERP-CRM/{{ app_version }}/dolibarr-{{ app_version }}.tgz/download"
   app_src_root_name: "dolibarr-{{ app_version }}"
   app_instance_root: "{{ www_root }}/{{ app_instance_id }}"
-  app_instance_www_root: "{{ app_instance_root }}/htdocs"
 
-  instance_database_name: "{{ app_instance_id }}_db"
-  instance_database_user: "{{ app_instance_id }}_usr"
-  instance_database_password: "{{ app_instance_id }}_pwd"
+  app_database_name: "{{ app_instance_id }}_db"

@@ -83,7 +83,7 @@ GRANT ALL PRIVILEGES ON DATABASE {{ mattermost_database_name }} TO {{ mattermost
 
 su -c "psql -f {{ mattermost_database_name }}.sql -d {{ mattermost_database_name }} " postgres
 
-#{{ certbot_grant_command }}
+#{{ certbot_grant_command_nginx }}
 #cp {{ mattermost_instance_id }}.conf /etc/nginx/sites-available/{{ mattermost_instance_id }}.conf
 
 ln -s /etc/nginx/sites-available/{{ mattermost_instance_id }}.conf /etc/nginx/sites-enabled/{{ mattermost_instance_id }}

@@ -66,11 +66,20 @@
     when: rev_proxy == "apache2"
 
   - name: "letsencrypt certificate for {{ collabora_domain }}"
-    command: "{{ certbot_grant_command }}"
+    command: "{{ certbot_grant_command_apache2 }}"
     args:
       creates: "{{ letsencrypt_cert_root }}/{{ collabora_domain | quote }}"
     vars:
        letsencrypt_domain: "{{ collabora_domain | quote }}"
+    when: rev_proxy == "apache2"
+
+  - name: "letsencrypt certificate for {{ collabora_domain }}"
+    command: "{{ certbot_grant_command_nginx }}"
+    args:
+      creates: "{{ letsencrypt_cert_root }}/{{ collabora_domain | quote }}"
+    vars:
+       letsencrypt_domain: "{{ collabora_domain | quote }}"
+    when: rev_proxy == "nginx"
 
   - name: "template nginx_collabora.j2 {{ collabora_domain }}"
     template:

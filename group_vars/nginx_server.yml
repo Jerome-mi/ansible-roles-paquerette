@@ -1,4 +1,0 @@
----
-  rev_proxy: "nginx"
-
-  certbot_grant_command: "certbot certonly --agree-tos --webroot -n -m {{ base_postmaster }} --webroot-path=/var/www/html -d {{ letsencrypt_domain | mandatory }} "

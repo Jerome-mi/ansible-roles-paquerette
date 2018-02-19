@@ -1,8 +1,8 @@
 ---
 
-  #- name: "role base_server"
-  #  import_role:
-  #    name: "base_serer"
+  - name: "role base_server"
+    import_role:
+      name: "base_server"
 
   - name: "role docker_server"
     import_role:
@@ -12,12 +12,12 @@
   - name: "role nginx_server"
     import_role:
       name: "nginx_server"
-    when: nginx_server == "yes"
+    when: rev_proxy == "nginx"
 
   - name: "role apache2_server"
     import_role:
       name: "apache2_server"
-    when: apache2_server == "yes"
+    when: rev_proxy == "apache2"
 
   - name: "role postgres_server"
     import_role:

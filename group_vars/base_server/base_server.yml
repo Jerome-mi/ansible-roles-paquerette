@@ -149,13 +149,17 @@
   www_log: "{{ base_prod_log }}/{{ rev_proxy }}"
 
 #############################################
-# Composition default values
+# PLATFORM
 #############################################
   docker_server: "no"
-  nginx_server: "no"
-  apache2_server: "no"
   rev_proxy: "none"
   postgres_server: "no"
   mariadb_mysql_server: "no"
   php_server: "no"
+
+  certbot_grant_command_apache2: 'certbot --agree-tos --authenticator standalone --installer apache --pre-hook "service apache2 stop" --post-hook "service apache2 start"
+  -n -m {{ base_postmaster | mandatory }} -d {{ letsencrypt_domain | mandatory }} '
+
+  certbot_grant_command_nginx: "certbot certonly --agree-tos --webroot -n -m {{ base_postmaster }} --webroot-path=/var/www/html -d {{ letsencrypt_domain | mandatory }} "
+
 

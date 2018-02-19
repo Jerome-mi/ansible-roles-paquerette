@@ -9,7 +9,7 @@
     update_cache: yes
     upgrade: yes
 
-- name: Failtoban based on ufw limit
+- name: Ufw limit for ssh
   ufw:
     rule: limit
     port: ssh

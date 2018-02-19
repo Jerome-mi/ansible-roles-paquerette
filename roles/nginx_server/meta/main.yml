@@ -1,6 +1,0 @@
----
-dependencies:
-
-  - { role: nginx_server_def }
-
-

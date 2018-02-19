@@ -1,0 +1,33 @@
+<VirtualHost *:80>
+   ServerName {{ app_domain | mandatory }}
+
+   RewriteEngine On
+   RewriteCond %{HTTPS} off
+   RewriteRule ^(.*)$ https://%{HTTP_HOST}$1 [R=301,L]
+</VirtualHost>
+
+<IfModule mod_ssl.c>
+   <VirtualHost *:443>
+
+     ServerName {{ app_domain }}
+     DocumentRoot {{ app_instance_www_root }}
+
+     CustomLog {{ www_log }}/{{ app_instance_id }}/access.log combined
+     ErrorLog {{ www_log }}/{{ app_instance_id }}/error.log
+
+     <Directory {{ app_instance_www_root }}>
+       Options +FollowSymlinks
+       AllowOverride All
+       Require all granted
+     </Directory>
+
+     <IfModule mod_headers.c>
+          Header always set Strict-Transport-Security "max-age=15768000; preload"
+     </IfModule>
+
+     SSLEngine on
+     SSLCertificateFile /etc/letsencrypt/live/{{ app_domain }}/fullchain.pem
+     SSLCertificateKeyFile /etc/letsencrypt/live/{{ app_domain }}/privkey.pem
+     
+     </VirtualHost>
+</IfModule>

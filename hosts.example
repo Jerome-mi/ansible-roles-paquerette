@@ -17,15 +17,6 @@ testhost1
 prodhost1
 prodhost2
 
-# groups covered by platform role
-[apache2_server]
-prodhost1
-testhost1
-
-[nginx_server]
-prodhost2
-
-# etc...
 
 ### group hierarchy
 

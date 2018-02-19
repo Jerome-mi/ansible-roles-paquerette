@@ -1,0 +1,40 @@
+---
+
+  #- name: "role base_server"
+  #  import_role:
+  #    name: "base_serer"
+
+  - name: "role docker_server"
+    import_role:
+      name: "docker_server"
+    when: docker_server == "yes"
+
+  - name: "role nginx_server"
+    import_role:
+      name: "nginx_server"
+    when: nginx_server == "yes"
+
+  - name: "role apache2_server"
+    import_role:
+      name: "apache2_server"
+    when: apache2_server == "yes"
+
+  - name: "role postgres_server"
+    import_role:
+      name: "postgres_server"
+    when: postgres_server == "yes"
+
+  - name: "role mariadb_mysql_server"
+    import_role:
+      name: "mariadb_mysql_server"
+    when: mariadb_mysql_server == "yes"
+
+  - name: "role php7_nginx"
+    import_role:
+      name: "php7_nginx"
+    when: (php_server == "yes") and (rev_proxy == "nginx")
+
+  - name: "role php7_apache2"
+    import_role:
+      name: "php7_apache2"
+    when: (php_server == "yes") and (rev_proxy == "apache2")

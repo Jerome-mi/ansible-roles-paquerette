@@ -1,9 +1,5 @@
 ---
 
-  # collabora_domain: moved www.mydomain.com
-  # https://collabora_domain/hosting/discovery
-  # https://collabora_domain/loleaflet/dist/admin/admin.html
-
   #collabora_client_domain: moved
   # todo : template for client list
   #collabora_client_domains: www\\.mydomain\\.com|www\\.mydomain\\.com
@@ -11,6 +7,7 @@
   #### in group vars
   #collabora_secret: "Moved"
 
+  #### in host var
   #collabora_port: 9980
 
   loolwsd_log_dest: "{{ base_prod_path }}/log/loolwsd"

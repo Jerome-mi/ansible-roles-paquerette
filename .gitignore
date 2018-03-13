@@ -1,34 +1,28 @@
 # ignore eveything
 /*
 
-# except
+# include
 !.gitgnore
 !README.md
 !hosts.example
 
-# except roles directory with no exception
+# include roles directory with no exception
 !roles/
 
-# except group_vars directory
+# include group_vars directory
 !group_vars/
 
 # ignore everything in group_vars directory
 group_vars/*
 
-# except common groups
+# include common groups
 !group_vars/base_server
-!group_vars/apache2_server.yml
-!group_vars/docker_server.yml
-!group_vars/mariadb_mysql_server.yml
-!group_vars/nginx_server.yml
-!group_vars/php_server.yml
-!group_vars/postgres_server.yml
 
-# except host_vars directory
+# include host_vars directory
 !host_vars/
 
 # ignore everything in host_vars directory
 host_vars/*
 
-# except example file
+# include example file
 !host_vars/host.example.yml

@@ -31,6 +31,25 @@
     ]
 
 #############################################
+# SCHEDULING BACKUP AND LETSENCRYPT
+#############################################
+
+# 03:05 backup_monit_stop
+# 03:06 backup_web_stop
+# 03:07 backup_base_service_conf_time
+# 03:10 backup_app_service_conf_time
+# 03:10 renew_cert_web_stop
+# 03:15 backup_web_start
+# 03:17 backup_monit_start_hour
+# 03:30 backup_day_conf_time
+# 03:30 backup_month_conf_time
+# 04:00 ext_backup_time
+# 04:30 cross_backup_time
+# 06:00 monit_start_anyway_time
+
+
+
+#############################################
 # FILE SYSTEM
 #############################################
   base_prod_path: "/mnt/vdb"
@@ -75,14 +94,14 @@
   backup_opt_dir: "{{ backup_base_dir }}/opt"
 
 # stop and start web services for backup
-  backup_web_stop_hour: "2"
-  backup_web_stop_minute: "55"
+  backup_web_stop_hour: "3"
+  backup_web_stop_minute: "06"
   backup_web_start_hour: "3"
   backup_web_start_minute: "15"
 
 # stop and start base services for backup
-  backup_base_service_conf_time: "02:57"
-  backup_app_service_conf_time: "03:00"
+  backup_base_service_conf_time: "03:07"
+  backup_app_service_conf_time: "03:10"
   backup_day_conf_time: "03:30"
   backup_month_conf_time: "{{ backup_day_conf_time }}"
 
@@ -108,8 +127,8 @@
 #  MONITORING
 #############################################
 
-  backup_monit_stop_hour: "2"
-  backup_monit_stop_minute: "53"
+  backup_monit_stop_hour: "3"
+  backup_monit_stop_minute: "05"
   backup_monit_start_hour: "3"
   backup_monit_start_minute: "17"
 
@@ -137,7 +156,7 @@
 #############################################
 
   renew_cert_web_stop_hour: "3"
-  renew_cert_web_stop_minute: "00"
+  renew_cert_web_stop_minute: "10"
   letsencrypt_cert_root: "/etc/letsencrypt/live/"
   certbot_revoke_command: "certbot revoke --cert-path "
   cert_delete_command: "certbot delete --cert-name "
@@ -157,8 +176,9 @@
   mariadb_mysql_server: "no"
   php_server: "no"
 
-  certbot_grant_command_apache2: 'certbot --agree-tos --authenticator standalone --installer apache --pre-hook "service apache2 stop" --post-hook "service apache2 start"
-  -n -m {{ base_postmaster | mandatory }} -d {{ letsencrypt_domain | mandatory }} '
+#  certbot_grant_command_apache2: 'certbot --agree-tos --authenticator standalone --installer apache --pre-hook "service apache2 stop" --post-hook "service apache2 start"
+#  -n -m {{ base_postmaster | mandatory }} -d {{ letsencrypt_domain | mandatory }} '
+  certbot_grant_command_apache2: 'certbot --agree-tos --authenticator standalone --installer apache -n -m {{ base_postmaster | mandatory }} -d {{ letsencrypt_domain | mandatory }} '
 
   certbot_grant_command_nginx: "certbot certonly --agree-tos --webroot -n -m {{ base_postmaster }} --webroot-path=/var/www/html -d {{ letsencrypt_domain | mandatory }} "
 

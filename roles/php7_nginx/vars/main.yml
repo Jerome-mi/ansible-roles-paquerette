@@ -23,7 +23,6 @@
     "php{{ php_version }}-pgsql",
     "php-redis",
     "php{{ php_version }}-sqlite3",
-    "php{{ php_version }}-sqlite3",
     "php{{ php_version }}-xml",
     "php{{ php_version }}-zip",
     ]
@@ -31,3 +30,6 @@
   php_ini_file: "/etc/php/{{ php_version }}/fpm/php.ini"
 
   php_www_conf_file: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
+
+
+      apt install php7.0 php7.0-common php7.0-curl php7.0-fpm php7.0-gd php7.0-gmp php7.0-intl php7.0-json php7.0-mbstring php7.0-mcrypt php7.0-mysql php7.0-pgsql php7.0-sqlite3  php7.0-zip

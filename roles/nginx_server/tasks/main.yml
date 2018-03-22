@@ -38,6 +38,7 @@
     cron:
       name: "start nginx"
       hour: "{{ backup_web_start_hour | mandatory }}"
+      minute: "{{ backup_web_start_minute | mandatory }}"
       job: "/bin/systemctl start nginx.service"
 
   - name: "template for backup"

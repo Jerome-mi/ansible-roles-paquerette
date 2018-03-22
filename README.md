@@ -23,9 +23,6 @@ C'est la partie qui définit la liste des machines pilotées, leur composition e
 - - - **test** : toutes les variables propres aux machines de test
 - - - **prod** : toutes les variables propres aux machines de production
 
-- apache2_server : toutes les variables propres à apache2
-- nginx : toutes les variables propres à nginx
-
 etc...
 
 fichiers dans group_vars
@@ -40,6 +37,7 @@ C'est la partie qui définit les base du serveur, elle est la couche basse. Elle
 - la stratégie de monitoring
 
 rôle : base_server
+
 utilitaires : server_\<...\>
 
 ## La plateforme applicative
@@ -50,7 +48,6 @@ C'est la partie qui définit l'ensemble des services ou composants nécessaire a
 - le monitoring associé
 
 rôle : base_platform
-dépendances : \<service\>_server, \<service\>_\<service\>
 
 ## L'instance applicative
 C'est la partie qui définit la méthode de déploiement d'une instance applicative. Certaines sont multi instance, d'autres pas. Elle met en oeuvre:
@@ -67,18 +64,18 @@ C'est la partie qui permet de mettre à jour une instance applicative. La mise �
 - téléchargement de la nouvelle version
 - arrêt du service
 - sauvegarde de la version courante
-- mise à jour du logiciel et de la base de données
+- mise à jour du logiciel et de la base de données + ou - automatisée selon l'application
 - redémarrage du service
 
 rôles : \<application\>_upg
 
 TODO : 
 
-- fusionner php7_apache2 et php7_nginx
+- fusionner les rôles php7_apache2 et php7_nginx
 - finaliser mariadb_mysql, **sécurisation**,cohabitation possible ?
 - failtoban pour les services
 - finaliser letsencrypt sans coupure de service. (fonctionne avec coupure)
-- étudier les listes d'instances dans les fichiers host_vars et les lancement des scripts instance et instance_upg en boucle
+- étudier les listes d'instances dans les fichiers host_vars et les lancements de scripts instance et instance_upg en boucle
 - améliorer les logs ansible et l'inventaire 
 
 [paquerette.eu](http://paquerette.eu)

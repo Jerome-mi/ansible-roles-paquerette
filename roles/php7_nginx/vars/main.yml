@@ -23,7 +23,6 @@
     "php{{ php_version }}-pgsql",
     "php-redis",
     "php{{ php_version }}-sqlite3",
-    "php{{ php_version }}-sqlite3",
     "php{{ php_version }}-xml",
     "php{{ php_version }}-zip",
     ]

@@ -15,4 +15,5 @@
     "proxy_fcgi",
     "rewrite",
     "setenvif",
+    "fastcgi",
     ]

@@ -95,22 +95,6 @@
     notify: reload apache2
     when: rev_proxy == "apache2"
 
-  - name: "enable site for {{ collabora_domain }}"
-    file:
-      state: link
-      path: "/etc/{{ rev_proxy }}/sites-enabled/{{ collabora_domain }}"
-      src: "/etc/{{ rev_proxy }}/sites-available/{{ collabora_domain }}"
-    notify: reload {{ rev_proxy }}
-    when: rev_proxy == "nginx"
-
-  - name: "enable site for {{ collabora_domain }}"
-    file:
-      state: link
-      path: "/etc/{{ rev_proxy }}/sites-enabled/{{ collabora_domain }}.conf"
-      src: "/etc/{{ rev_proxy }}/sites-available/{{ collabora_domain }}.conf"
-    notify: reload {{ rev_proxy }}
-    when: rev_proxy == "apache2"
-
   - name: "copy letsencrypt cert.pem"
     copy:
       src: "/etc/letsencrypt/live/{{ collabora_domain }}/cert.pem"
@@ -139,6 +123,21 @@
       mode: "0744"
       remote_src: yes
 
+  - name: "script for copy certificates after renew"
+    template:
+      src: letsencrypt_cert_collabora.j2
+      dest: "{{ base_prod_options }}/collabora-renew-cert.sh"
+      mode: 0700
+      backup: yes
+
+  - name: "cron for copy certificates after renew"
+    cron:
+      name: "collabora : copy certificates after renew"
+      weekday: 1
+      hour: "{{ renew_cert_web_stop_hour }}"
+      minute: "{{ renew_cert_copy_minute }}"
+      job: "{{ base_prod_options }}/collabora-renew-cert.sh"
+
   - name: "template for loolwsd.wml"
     template:
       src: loolwsd_xml.j2
@@ -147,6 +146,22 @@
 
   - name: "start loolwsd service"
     service: name=loolwsd state=restarted
+
+  - name: "enable site for {{ collabora_domain }}"
+    file:
+      state: link
+      path: "/etc/{{ rev_proxy }}/sites-enabled/{{ collabora_domain }}"
+      src: "/etc/{{ rev_proxy }}/sites-available/{{ collabora_domain }}"
+    notify: reload {{ rev_proxy }}
+    when: rev_proxy == "nginx"
+
+  - name: "enable site for {{ collabora_domain }}"
+    file:
+      state: link
+      path: "/etc/{{ rev_proxy }}/sites-enabled/{{ collabora_domain }}.conf"
+      src: "/etc/{{ rev_proxy }}/sites-available/{{ collabora_domain }}.conf"
+    notify: reload {{ rev_proxy }}
+    when: rev_proxy == "apache2"
 
   - name: "logrotate for log {{ www_log }}/{{ collabora_domain }}"
     template:

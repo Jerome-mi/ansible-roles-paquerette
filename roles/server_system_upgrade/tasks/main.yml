@@ -1,6 +1,5 @@
 ---
 
-
   - name: "apt update"
     apt:
       update_cache: yes
@@ -10,6 +9,10 @@
     register: out
 
   - debug: var=out.stdout_lines
+
+  - name: "Pause before upgrade"
+    pause:
+      prompt: "Pause before upgrade"
 
   - name: "Upgrade system safe"
     apt:

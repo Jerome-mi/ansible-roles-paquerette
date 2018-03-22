@@ -37,5 +37,6 @@
   - name: "cron start monit anyway"
     cron:
       name: "start monit anyway"
-      hour: "{{ monit_start_anyway_time | mandatory }}"
+      hour: "{{ monit_start_anyway_hour | mandatory }}"
+      minute: "{{ monit_start_anyway_minute | mandatory }}"
       job: "/bin/systemctl start monit.service"

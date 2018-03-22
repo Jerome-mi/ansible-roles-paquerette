@@ -45,7 +45,7 @@
 # 03:30 backup_month_conf_time
 # 04:00 ext_backup_time
 # 04:30 cross_backup_time
-# 06:00 monit_start_anyway_time
+# 06:00 monit_start_anyway_hour
 
 
 
@@ -132,7 +132,8 @@
   backup_monit_start_hour: "3"
   backup_monit_start_minute: "17"
 
-  monit_start_anyway_time: "6"
+  monit_start_anyway_hour: "6"
+  monit_start_anyway_minute: "00"
 
   # in seconds
   monit_cycle_duration: "300"

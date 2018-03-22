@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Copy certificates files from lestencrypt to /etc/loowsd after renew of {{ collabora_domain }}
+
+cp "/etc/letsencrypt/live/{{ collabora_domain }}/cert.pem" "/etc/loolwsd/cert.pem"
+chmod 0744 "/etc/loolwsd/cert.pem"
+
+cp "/etc/letsencrypt/live/{{ collabora_domain }}/privkey.pem" "/etc/loolwsd/key.pem"
+chmod 0744 "/etc/loolwsd/key.pem"
+
+cp "/etc/letsencrypt/live/{{ collabora_domain }}/chain.pem" "/etc/loolwsd/chain.pem"
+chmod 0744 "/etc/loolwsd/chain.pem"
+
+cp "/etc/letsencrypt/live/{{ collabora_domain }}/fullchain.pem" "/etc/loolwsd/ca-chain.cert.pem"
+chmod 0744 "/etc/loolwsd/ca-chain.cert.pem"
+

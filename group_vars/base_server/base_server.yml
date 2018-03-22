@@ -158,6 +158,7 @@
 
   renew_cert_web_stop_hour: "3"
   renew_cert_web_stop_minute: "10"
+  renew_cert_copy_minute: "12"
   letsencrypt_cert_root: "/etc/letsencrypt/live/"
   certbot_revoke_command: "certbot revoke --cert-path "
   cert_delete_command: "certbot delete --cert-name "

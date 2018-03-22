@@ -14,6 +14,6 @@
   mattermost_database_password: "{{ mattermost_instance_id }}_pwd"
 
   mattermost_user_instance: "{{ mattermost_instance_id }}"
-  mattermost_instance_service: "{{ mattermost_instance_id }}"
+  mattermost_instance_service: "{{ mattermost_instance_id }}.service"
 
 

@@ -117,11 +117,11 @@
   - name: "template mattermost_service.j2 {{ mattermost_instance_id }}"
     template:
       src: mattermost_service.{{ mattermost_version }}.j2
-      dest: "/lib/systemd/system/{{ mattermost_instance_id }}.service"
+      dest: "/lib/systemd/system/{{ mattermost_instance_service }}"
 
-  - name: "start and enable service {{ mattermost_instance_id }}.service"
+  - name: "start and enable service {{ mattermost_instance_service }}"
     systemd:
-      name: "{{ mattermost_instance_id }}.service"
+      name: "{{ mattermost_instance_service }}"
       state: started
       daemon_reload: yes
       enabled: yes

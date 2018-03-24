@@ -6,7 +6,7 @@ instance : {{ mattermost_root_instance }}/{{ mattermost_instance_id }}
 mattermost_port: {{ mattermost_port }}
 
 data in {{ mattermost_root_instance }}/{{ mattermost_instance_id }}.data
-log dest {{ nginx_log_dest }}/{{ mattermost_instance_id }}
+log dest {{ www_log }}/{{ mattermost_instance_id }}
 backup prod {{ backup_prod_dir }}/{{ mattermost_instance_id }}
 backup prod data {{ backup_prod_dir }}/{{ mattermost_instance_id }}.data
 
@@ -30,7 +30,7 @@ rm /etc/nginx/sites-available/{{ mattermost_instance_id }}
 
 rm -r {{ mattermost_root_instance }}/{{ mattermost_instance_id }}
 rm -r {{ mattermost_root_instance }}/{{ mattermost_instance_id }}.data
-rm -r {{ nginx_log_dest }}/{{ mattermost_instance_id }}
+rm -r {{ www_log }}/{{ mattermost_instance_id }}
 #rm -r {{ backup_prod_dir }}/{{ mattermost_instance_id }}
 #rm -r {{ backup_prod_dir }}/{{ mattermost_instance_id }}.data
 

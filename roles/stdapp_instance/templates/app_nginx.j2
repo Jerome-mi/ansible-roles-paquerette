@@ -21,8 +21,8 @@ server {
 
     root {{ app_instance_www_root }}/;
 
-    access_log {{ nginx_log_dest | mandatory }}/{{ app_instance_id }}/access.log;
-    error_log {{ nginx_log_dest | mandatory }}/{{ app_instance_id }}/error.log;
+    access_log {{ www_log | mandatory }}/{{ app_instance_id }}/access.log;
+    error_log {{ www_log | mandatory }}/{{ app_instance_id }}/error.log;
 
     location = /robots.txt {
         allow all;

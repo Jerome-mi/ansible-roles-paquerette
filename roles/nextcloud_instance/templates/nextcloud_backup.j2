@@ -1,10 +1,10 @@
 # Note: the spaces around the equal sign ('=') are optional.
 when = everyday at {{ backup_app_service_conf_time | mandatory }}
 
-rsync -aAx --del {{ nextcloud_root_instance }}/{{ nextcloud_instance_id | mandatory }} {{ backup_prod_dir | mandatory }}/{{ nextcloud_instance_id }}
+rsync -aAx --del {{ nextcloud_root }}/{{ nextcloud_instance_id | mandatory }} {{ backup_prod_dir | mandatory }}/{{ nextcloud_instance_id }}
 rc=$?; if [[ $rc != 0 ]]; then error "app" ; fi
 
-#rsync -aAx --del {{ nextcloud_root_instance }}/{{ nextcloud_instance_id | mandatory }}.data {{ backup_prod_dir | mandatory }}/{{ nextcloud_instance_id }}.data
+#rsync -aAx --del {{ nextcloud_root }}/{{ nextcloud_instance_id | mandatory }}.data {{ backup_prod_dir | mandatory }}/{{ nextcloud_instance_id }}.data
 #rc=$?; if [[ $rc != 0 ]]; then error "data" ; fi
 
 cd {{ backup_prod_dir | mandatory}}/{{ nextcloud_instance_id }}

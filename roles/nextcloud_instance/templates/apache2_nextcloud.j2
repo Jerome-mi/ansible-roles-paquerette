@@ -10,12 +10,12 @@
    <VirtualHost *:443>
 
      ServerName {{ nextcloud_domain }}
-     DocumentRoot {{ nextcloud_root_instance | mandatory }}/{{ nextcloud_instance_id | mandatory }}
+     DocumentRoot {{ nextcloud_root | mandatory }}/{{ nextcloud_instance_id | mandatory }}
 
-     CustomLog {{ apache_log_dest }}/{{ nextcloud_instance_id }}/access.log combined
-     ErrorLog {{ apache_log_dest }}/{{ nextcloud_instance_id }}/error.log
+     CustomLog {{ www_log }}/{{ nextcloud_instance_id }}/access.log combined
+     ErrorLog {{ www_log }}/{{ nextcloud_instance_id }}/error.log
 
-     <Directory {{ nextcloud_root_instance }}/{{ nextcloud_instance_id }}/>
+     <Directory {{ nextcloud_root }}/{{ nextcloud_instance_id }}/>
        Options +FollowSymlinks
        AllowOverride All
        Require all granted
@@ -24,8 +24,8 @@
         Dav off
       </IfModule>
 
-       SetEnv HOME {{ nextcloud_root_instance }}/{{ nextcloud_instance_id }}
-       SetEnv HTTP_HOME {{ nextcloud_root_instance }}/{{ nextcloud_instance_id }}
+       SetEnv HOME {{ nextcloud_root }}/{{ nextcloud_instance_id }}
+       SetEnv HTTP_HOME {{ nextcloud_root }}/{{ nextcloud_instance_id }}
      </Directory>
 
      <IfModule mod_headers.c>

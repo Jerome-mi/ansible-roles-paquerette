@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd {{ nextcloud_root_instance }}/{{ nextcloud_instance_id }}
+cd {{ nextcloud_root }}/{{ nextcloud_instance_id }}
 
 sudo -u www-data php occ maintenance:install --database "pgsql" --database-name "{{ nextcloud_database_name }}"  --database-user "{{ nextcloud_database_user }}" --database-pass "{{ nextcloud_database_password }}" --admin-user "{{ nextcloud_default_admin | mandatory}}" --admin-pass "{{ nextcloud_default_password | mandatory }}"
 
@@ -32,4 +32,4 @@ sudo -u www-data php occ user:setting admin settings lang "fr"
 
 sudo -u www-data php occ background:cron
 
-echo "Done" > {{ nextcloud_root_instance }}/{{ nextcloud_instance_id }}/ansible_base_install.done
+echo "Done" > {{ nextcloud_root }}/{{ nextcloud_instance_id }}/ansible_base_install.done

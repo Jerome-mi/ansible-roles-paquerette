@@ -132,10 +132,10 @@
       dest: "{{ backup_item_dir }}/20-{{ mattermost_instance_id }}.sh"
       mode: 0640
 
-  - name: "log dest {{ nginx_log_dest }}/{{ mattermost_instance_id }}"
+  - name: "log dest {{ www_log }}/{{ mattermost_instance_id }}"
     file:
       state: directory
-      path: "{{ nginx_log_dest }}/{{ mattermost_instance_id }}"
+      path: "{{ www_log }}/{{ mattermost_instance_id }}"
 
   - name: "template mattermost_nginx_ssl.j2 {{ mattermost_instance_id }}"
     template:
@@ -143,7 +143,7 @@
       dest: "/etc/nginx/sites-available/{{ mattermost_instance_id }}"
     notify: reload nginx
 
-  - name: "logrotate for log {{ nginx_log_dest }}/{{ mattermost_instance_id }}"
+  - name: "logrotate for log {{ www_log }}/{{ mattermost_instance_id }}"
     template:
       src: mattermost_logrotate.j2
       dest: "/etc/logrotate.d/{{ mattermost_instance_id }}"

@@ -1,11 +1,10 @@
 ---
 
-  nextcloud_domain: "nextcloud-test.paquerette.eu"
+  #nextcloud_domain: "nextcloud-test.paquerette.eu"
 
-  nextcloud_version: 12.0.3
-  #nextcloud_version: 11.0.3
+  #nextcloud_version: 12.0.3
 
-  nextcloud_instance_id: "nextcloud"
+  #nextcloud_instance_id: "nextcloud"
 
   nextcloud_database_name: "{{ nextcloud_instance_id }}_db"
   nextcloud_database_user: "{{ nextcloud_instance_id }}_usr"
@@ -13,3 +12,5 @@
 
   nextcloud_default_admin: "admin"
   nextcloud_default_password: "admin"
+
+  nextcloud_root: "{{ www_root }}"

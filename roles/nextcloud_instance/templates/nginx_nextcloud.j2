@@ -37,10 +37,10 @@ server {
     add_header Strict-Transport-Security "max-age=15768000";
 
     # Path to the root of your installation
-    root {{ nextcloud_root_instance }}/{{ nextcloud_instance_id }}/;
+    root {{ nextcloud_root }}/{{ nextcloud_instance_id }}/;
 
-    access_log {{ nginx_log_dest | mandatory }}/{{ nextcloud_instance_id }}/access.log;
-    error_log {{ nginx_log_dest | mandatory }}/{{ nextcloud_instance_id }}/error.log;
+    access_log {{ www_log | mandatory }}/{{ nextcloud_instance_id }}/access.log;
+    error_log {{ www_log | mandatory }}/{{ nextcloud_instance_id }}/error.log;
 
     location = /robots.txt {
         allow all;

@@ -180,8 +180,9 @@
 
 #  certbot_grant_command_apache2: 'certbot --agree-tos --authenticator standalone --installer apache --pre-hook "service apache2 stop" --post-hook "service apache2 start"
 #  -n -m {{ base_postmaster | mandatory }} -d {{ letsencrypt_domain | mandatory }} '
-  certbot_grant_command_apache2: 'certbot --agree-tos --authenticator standalone --installer apache -n -m {{ base_postmaster | mandatory }} -d {{ letsencrypt_domain | mandatory }} '
+  certbot_grant_command_apache2: 'certbot --agree-tos --authenticator standalone --installer apache -n -m {{ base_postmaster | mandatory }} -d {{ letsencrypt_domain | quote }} '
 
-  certbot_grant_command_nginx: "certbot certonly --agree-tos --webroot -n -m {{ base_postmaster }} --webroot-path=/var/www/html -d {{ letsencrypt_domain | mandatory }} "
+  certbot_grant_command_nginx: "certbot certonly --agree-tos --webroot -n -m {{ base_postmaster }} --webroot-path=/var/www/html -d {{ letsencrypt_domain | quote }} "
 
+  certbot_grant_command_standalone: "certbot certonly --standalone --agree-tos  -n -m {{ base_postmaster | mandatory }} -d {{ letsencrypt_domain | quote }} "
 

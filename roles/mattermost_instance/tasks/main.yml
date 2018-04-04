@@ -1,6 +1,4 @@
 ---
-# todo : check platform
-# https://docs.mattermost.com/install/install-ubuntu-1604.html
 
   - name: "template check log"
     template:
@@ -116,7 +114,7 @@
 
   - name: "template mattermost_service.j2 {{ mattermost_instance_id }}"
     template:
-      src: mattermost_service.{{ mattermost_version }}.j2
+      src: mattermost_service.j2
       dest: "/lib/systemd/system/{{ mattermost_instance_service }}"
 
   - name: "start and enable service {{ mattermost_instance_service }}"
@@ -132,18 +130,18 @@
       dest: "{{ backup_item_dir }}/20-{{ mattermost_instance_id }}.sh"
       mode: 0640
 
-  - name: "log dest {{ nginx_log_dest }}/{{ mattermost_instance_id }}"
+  - name: "log dest {{ www_log }}/{{ mattermost_instance_id }}"
     file:
       state: directory
-      path: "{{ nginx_log_dest }}/{{ mattermost_instance_id }}"
+      path: "{{ www_log }}/{{ mattermost_instance_id }}"
 
   - name: "template mattermost_nginx_ssl.j2 {{ mattermost_instance_id }}"
     template:
-      src: mattermost_nginx_ssl.{{ mattermost_version }}.j2
+      src: mattermost_nginx_ssl.j2
       dest: "/etc/nginx/sites-available/{{ mattermost_instance_id }}"
     notify: reload nginx
 
-  - name: "logrotate for log {{ nginx_log_dest }}/{{ mattermost_instance_id }}"
+  - name: "logrotate for log {{ www_log }}/{{ mattermost_instance_id }}"
     template:
       src: mattermost_logrotate.j2
       dest: "/etc/logrotate.d/{{ mattermost_instance_id }}"

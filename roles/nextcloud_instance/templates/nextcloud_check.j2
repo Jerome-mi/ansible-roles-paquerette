@@ -2,85 +2,18 @@
 hostname: {{ ansible_hostname }}
 domain: {{ nextcloud_domain }}
 version: {{ nextcloud_version }}
-instance : {{ nextcloud_root_instance }}/{{ nextcloud_instance_id }}
+instance : {{ nextcloud_root }}/{{ nextcloud_instance_id }}
 
-data in {{ nextcloud_root_instance }}/{{ nextcloud_instance_id }}.data
-log dest {{ apache_log_dest }}/{{ nextcloud_instance_id }}
+data in {{ nextcloud_root }}/{{ nextcloud_instance_id }}.data
+log dest {{ www_log }}/{{ nextcloud_instance_id }}
 backup prod app {{ backup_prod_dir }}/{{ nextcloud_instance_id }}
 backup prod data {{ backup_prod_dir }}/{{ nextcloud_instance_id }}.data
 
 nextcloud_instance_id: {{ nextcloud_instance_id }}
-nextcloud_root_instance: {{ nextcloud_root_instance }}
+nextcloud_root: {{ nextcloud_root }}
 
 nextcloud_database_name: {{ nextcloud_database_name }}
 nextcloud_database_user: {{ nextcloud_database_user }}
 nextcloud_database_password: {{ nextcloud_database_password }}
 
 [Inventory]
-
-[Cleanup]
-
-rm /etc/{{ rev_proxy }}/sites-enabled/{{ nextcloud_instance_id }}.conf
-systemctl reload {{ rev_proxy }}
-rm /etc/{{ rev_proxy }}/sites-available/{{ nextcloud_instance_id }}.conf
-
-rm -r {{ nextcloud_root_instance }}/{{ nextcloud_instance_id }}
-rm -r {{ nextcloud_root_instance }}/{{ nextcloud_instance_id }}.data
-rm -r {{ apache_log_dest }}/{{ nextcloud_instance_id }}
-#rm -r {{ backup_prod_dir }}/{{ nextcloud_instance_id }}
-#rm -r {{ backup_prod_dir }}/{{ nextcloud_instance_id }}.data
-crontab -e -u www-data -> {{ nextcloud_instance_id }}
-
-#{{ certbot_revoke_command }} {{ letsencrypt_cert_root }}/{{ nextcloud_domain }}/cert.pem
-#{{ cert_delete_command }} {{ letsencrypt_cert_root }}/{{ nextcloud_domain }}/cert.pem
-#rm /etc/monit/conf.d/{{ nextcloud_instance_id }}.conf
-#rm {{ backup_item_dir }}/20-{{ nextcloud_instance_id }}.sh
-
-su postgres
-psql
-DROP DATABASE {{ nextcloud_database_name }};
-DROP USER {{ nextcloud_database_user }};
- \q
-
-[Backup]
-
-cd BACKUPDEST
-chmod 777 .
-
-cp /etc/{{ rev_proxy }}/sites-available/{{ nextcloud_instance_id }}.conf .
-
-rsync -aAx --del {{ nextcloud_root_instance }}/{{ nextcloud_instance_id | mandatory }} .
-#rsync -aAx --del {{ nextcloud_root_instance }}/{{ nextcloud_instance_id | mandatory }}.data .
-
-su -c "/usr/bin/pg_dump {{ nextcloud_database_name }} > {{ nextcloud_database_name }}.sql" postgres
-
-[Recovery]
-
-cd BACKUPDEST
-cd {{ backup_prod_dir }}
-
-rm /etc/{{ rev_proxy }}/sites-enabled/{{ nextcloud_instance_id }}.conf
-systemctl reload {{ rev_proxy }}
-
-rm -r {{ nextcloud_root_instance }}/{{ nextcloud_instance_id }}
-#rm -r {{ nextcloud_root_instance }}/{{ nextcloud_instance_id }}.data
-
-rsync -aAx --del {{ nextcloud_instance_id }} {{ nextcloud_root_instance }}
-#rsync -aAx --del {{ nextcloud_instance_id }}.data {{ nextcloud_root_instance }}
-
-su postgres
-psql
-DROP DATABASE {{ nextcloud_database_name }};
-DROP USER {{ nextcloud_database_user }};
-CREATE DATABASE {{ nextcloud_database_name }} ENCODING 'UTF-8' LC_COLLATE 'fr_FR.UTF-8' LC_CTYPE 'fr_FR.UTF-8' TEMPLATE 'template0';
-CREATE USER  {{ nextcloud_database_user }} WITH PASSWORD '{{ nextcloud_database_password }}';
-GRANT ALL PRIVILEGES ON DATABASE {{ nextcloud_database_name }} TO {{ nextcloud_database_user }};
-\q
-
-su -c "psql -f {{ nextcloud_database_name }}.sql -d {{ nextcloud_database_name }} " postgres
-
-#{{ certbot_grant_command }}
-#cp {{ nextcloud_instance_id }}.conf /etc/{{ rev_proxy }}/sites-available/{{ nextcloud_instance_id }}.conf
-
-ln -s /etc/{{ rev_proxy }}/sites-available/{{ nextcloud_instance_id }}.conf /etc/{{ rev_proxy }}/sites-enabled/{{ nextcloud_instance_id }}.conf
-systemctl reload {{ rev_proxy }}

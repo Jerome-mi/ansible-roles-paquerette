@@ -1,4 +1,4 @@
-{{ nginx_log_dest | mandatory }}/{{ mattermost_instance_id }}/*.log {
+{{ www_log | mandatory }}/{{ mattermost_instance_id }}/*.log {
         weekly
         missingok
         rotate 54

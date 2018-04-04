@@ -86,7 +86,9 @@
         <filesystem allow="false" />
         <wopi desc="Allow/deny wopi storage. Mutually exclusive with webdav." allow="true">
             <host desc="Regex pattern of hostname to allow or deny." allow="true">localhost</host>
-            <host desc="Regex pattern of hostname to allow or deny." allow="true">{{ collabora_client_domain }}</host>
+{% for item in collabora_client_domains %}
+            <host desc="Regex pattern of hostname to allow or deny." allow="true">{{ item }}</host>
+{% endfor %}
             <host desc="Regex pattern of hostname to allow or deny." allow="true">10\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}</host>
             <host desc="Regex pattern of hostname to allow or deny." allow="true">172\.1[6789]\.[0-9]{1,3}\.[0-9]{1,3}</host>
             <host desc="Regex pattern of hostname to allow or deny." allow="true">172\.2[0-9]\.[0-9]{1,3}\.[0-9]{1,3}</host>

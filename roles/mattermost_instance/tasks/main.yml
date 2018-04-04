@@ -1,6 +1,4 @@
 ---
-# todo : check platform
-# https://docs.mattermost.com/install/install-ubuntu-1604.html
 
   - name: "template check log"
     template:
@@ -116,7 +114,7 @@
 
   - name: "template mattermost_service.j2 {{ mattermost_instance_id }}"
     template:
-      src: mattermost_service.{{ mattermost_version }}.j2
+      src: mattermost_service.j2
       dest: "/lib/systemd/system/{{ mattermost_instance_service }}"
 
   - name: "start and enable service {{ mattermost_instance_service }}"
@@ -139,7 +137,7 @@
 
   - name: "template mattermost_nginx_ssl.j2 {{ mattermost_instance_id }}"
     template:
-      src: mattermost_nginx_ssl.{{ mattermost_version }}.j2
+      src: mattermost_nginx_ssl.j2
       dest: "/etc/nginx/sites-available/{{ mattermost_instance_id }}"
     notify: reload nginx
 

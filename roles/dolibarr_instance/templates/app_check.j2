@@ -10,8 +10,8 @@ instance_www_root : {{ app_instance_www_root }}
 log dest {{ www_log }}/{{ app_instance_id }}
 backup prod app {{ backup_prod_dir }}/{{ app_instance_id }}
 
-instance_database_name: {{ instance_database_name }}
-instance_database_user: {{ instance_database_user }}
-instance_database_password: {{ instance_database_password }}
+database_name: {{ database_name }}
+database_user: {{ database_user }}
+database_password: {{ database_password }}
 
 [Inventory]

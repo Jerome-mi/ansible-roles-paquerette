@@ -9,6 +9,6 @@
   app_instance_root: "{{ www_root }}/{{ app_instance_id }}"
   app_instance_www_root: "{{ app_instance_root }}/htdocs"
 
-  instance_database_name: "{{ app_instance_id }}_db"
-  instance_database_user: "{{ app_instance_id }}_usr"
-  instance_database_password: "{{ app_instance_id }}_pwd"
+  database_name: "{{ app_instance_id }}_db"
+  database_user: "{{ app_instance_id }}_usr"
+  database_password: "{{ app_instance_id }}_pwd"

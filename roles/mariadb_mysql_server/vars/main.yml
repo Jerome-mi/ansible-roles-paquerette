@@ -10,9 +10,23 @@
 #      name: bobdata
 #      state: present
 #
-#  - name: "Create a new user with all priviliges on database name 'bobdata' "
+#  - name: "Create a new user with all privileges on database name 'bobdata' "
 #    mysql_user:
 #      name: bob
 #      password: 12345
 #      priv: 'bobdata.*:ALL,GRANT'
 #      state: present
+
+# systemctl stop mysql
+# mkdir /var/run/mysqld
+# chmod 777 /var/run/mysqld
+# chown
+# mysqld_safe  --skip-grant-tables &
+# UPDATE mysql.user SET authentication_string = PASSWORD('MyNewPass') WHERE User = 'root' AND Host = 'localhost';
+# flush privileges;
+
+
+# mysql -u root -p
+# CREATE DATABASE dolibarr_db DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+# GRANT ALL PRIVILEGES ON dolibarr_db.* TO dolibarr_usr@localhost IDENTIFIED BY 'PASSword987.';
+# FLUSH PRIVILEGES;

@@ -5,7 +5,7 @@ rsync -aAx --del {{ app_instance_root }} {{ backup_prod_dir | mandatory }}/{{ ap
 rc=$?; if [[ $rc != 0 ]]; then error "app" ; fi
 
 cd {{ backup_prod_dir | mandatory}}/{{ app_instance_id }}
-rm {{ backup_prod_dir | mandatory}}/{{ app_instance_id }}/{{ instance_database_name }}.sql
+rm {{ backup_prod_dir | mandatory}}/{{ app_instance_id }}/{{ database_name }}.sql
 chmod 777 {{ backup_prod_dir | mandatory}}/{{ app_instance_id }}
-su -c "/usr/bin/pg_dump {{ instance_database_name }} > {{ instance_database_name }}.sql" postgres
+su -c "/usr/bin/pg_dump {{ database_name }} > {{ database_name }}.sql" postgres
 rc=$?; if [[ $rc != 0 ]]; then fatal "sql" ; fi

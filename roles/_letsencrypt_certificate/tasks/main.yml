@@ -1,0 +1,27 @@
+---
+
+  - name: "test certificate presence"
+    stat:
+      path: "{{ letsencrypt_cert_root }}/{{ app_domain | quote }}"
+    register: cert
+
+  - name: "stop apache2"
+    service: name=apache2 state=stopped
+    when: (rev_proxy == "apache2") and not (cert.stat.exists)
+
+  - name: "stop nginx"
+    service: name=nginx state=stopped
+    when: (rev_proxy == "nginx") and not (cert.stat.exists)
+
+  - name: "letsencrypt certificate for {{ letsencrypt_domain }}"
+    command: "{{ certbot_grant_command_standalone }}"
+    when: not (cert.stat.exists)
+
+  - name: "start apache2"
+    service: name=apache2 state=started
+    when: (rev_proxy == "apache2") and not (cert.stat.exists)
+
+  - name: "start nginx"
+    service: name=nginx state=started
+    when: (rev_proxy == "nginx") and not (cert.stat.exists)
+

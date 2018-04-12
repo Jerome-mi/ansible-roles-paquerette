@@ -1,5 +1,7 @@
 ---
 
+  app_program: "Dolibarr"
+
   app_domain: "{{ dolibarr_domain | mandatory }}"
   app_version: "{{ dolibarr_version | mandatory }}"
   app_instance_id: "{{ dolibarr_instance_id | mandatory }}"
@@ -8,7 +10,9 @@
   app_src_root_name: "dolibarr-{{ app_version }}"
   app_instance_root: "{{ www_root }}/{{ app_instance_id }}"
   app_instance_www_root: "{{ app_instance_root }}/htdocs"
+  app_data: ""
 
+  database_type: "{{ dolibarr_database_type }}"
   database_name: "{{ app_instance_id }}_db"
   database_user: "{{ app_instance_id }}_usr"
   database_password: "{{ app_instance_id }}_pwd"

@@ -1,14 +1,8 @@
 ---
 
-  #collabora_client_domain: moved
-  # todo : template for client list
-  #collabora_client_domains: www\\.mydomain\\.com|www\\.mydomain\\.com
+  app_program: "Collabora"
 
-  #### in group vars
-  #collabora_secret: "Moved"
-
-  #### in host var
-  #collabora_port: 9980
+  app_domain: "{{ collabora_domain }}"
 
   loolwsd_log_dest: "{{ base_prod_path }}/log/loolwsd"
   # fatal, critical, error, warning, notice, information, debug, trace

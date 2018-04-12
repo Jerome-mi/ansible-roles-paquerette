@@ -1,13 +1,13 @@
 ---
 
-  - name: "template for backup"
+  - name: "template for backup - mysql"
     template:
       src: app_backup_mysql.j2
       dest: "{{ backup_item_dir }}/20-{{ app_instance_id }}.sh"
       mode: 0640
     when: database_type == "mysql"
 
-  - name: "template for backup"
+  - name: "template for backup - postgres"
     template:
       src: app_backup_postgres.j2
       dest: "{{ backup_item_dir }}/20-{{ app_instance_id }}.sh"

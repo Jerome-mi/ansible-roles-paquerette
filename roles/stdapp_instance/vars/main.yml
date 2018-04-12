@@ -7,7 +7,7 @@
 #  download url ex:
 #  app_src: "http://sourceforge.net/projects/..."
 #  app root name in archive
-#  app_src_root_name: "mayapp"
+#  app_src_root_name: "myapp"
 #
 #  app_version: 6.0.4
 #
@@ -15,8 +15,8 @@
 
 #  app_instance_root: "{{ www_root }}/{{ app_instance_id }}"
 
-  #app_instance_www_root: "{{ app_instance_root }}"
-  # when different from app_instance_root like Dolibarr
+#  app_instance_www_root: "{{ app_instance_root }}"
+# when different from app_instance_root like Dolibarr :
 #  app_instance_www_root: "{{ app_instance_root }}/htdocs"
 
   instance_database_name: "{{ app_instance_id }}_db"

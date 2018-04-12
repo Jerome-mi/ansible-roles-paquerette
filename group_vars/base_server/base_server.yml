@@ -184,5 +184,5 @@
 
   certbot_grant_command_nginx: "certbot certonly --agree-tos --webroot -n -m {{ base_postmaster }} --webroot-path=/var/www/html -d {{ letsencrypt_domain | quote }} "
 
-  certbot_grant_command_standalone: "certbot certonly --standalone --agree-tos  -n -m {{ base_postmaster | mandatory }} -d {{ letsencrypt_domain | quote }} "
+  certbot_grant_command_standalone: "certbot certonly --standalone --agree-tos  -n -m {{ base_postmaster | mandatory }} -d {{ app_domain | quote }} "
 

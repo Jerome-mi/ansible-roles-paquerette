@@ -1,5 +1,7 @@
 ---
 
+  app_program: "Dolibarr"
+
   app_domain: "{{ dolibarr_domain | mandatory }}"
   app_version: "{{ dolibarr_version | mandatory }}"
   app_oldversion: "{{ dolibarr_oldversion | mandatory }}"

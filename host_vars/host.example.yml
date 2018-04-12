@@ -1,4 +1,13 @@
 ---
+  paquerette_name: "my-server"
+
+  rev_proxy: "apache2"
+  php_server: "yes"
+  mariadb_mysql_server: "yes"
+  mariadb_mysql: "mysql"
+  mysql_root_password: "Veryverysecret"
+  postgres_server: "yes"
+
   # Nextcloud
   nextcloud_domain: "mynextcloud.mydomain.org"
   nextcloud_oldversion: 12.0.4
@@ -8,21 +17,15 @@
 
   # Mattermost
   mattermost_domain: "team.mydomain.org"
-
   mattermost_oldversion: 4.1.0
   mattermost_version: 4.6.0
-
   mattermost_instance_id: "mat_mydomain"
 
   #Collabora
   collabora_version: "2.1"
-
   collabora_domain: "mycollabora.mydomain.org"
-  collabora_client_domain: "mynextcloud\\.mydomain\\.org"
-
+  collabora_client_domains: ["mynextcloud\\.mydomain\\.org",]
   #collabora_secret: "Veryverysecret"
-
   collabora_port: 9980
-
   collabora_admin_user: "MelindaGates"
-  #collabora_admin_password: "letyouguess"
+  collabora_admin_password: "letyouguess"

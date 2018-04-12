@@ -1,8 +1,5 @@
 ---
 
-- name: reload monit
-  service: name=monit state=reloaded
-
 - name: reload apache2
   service: name=apache2 state=reloaded
 

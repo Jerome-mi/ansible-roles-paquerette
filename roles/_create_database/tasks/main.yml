@@ -7,7 +7,7 @@
       state: present
     when: database_type == "mysql"
     
-  - name: "Create a user with all privileges on database {{ database_name }} "
+  - name: "Create a mysql/mariadb user with all privileges on database {{ database_name }} "
     mysql_user:
       name: "{{ database_user | mandatory }}"
       password: "{{ database_password | mandatory }}"
@@ -15,7 +15,7 @@
       state: present
     when: database_type == "mysql"
 
-  - name: "create database user {{ database_user }}"
+  - name: "create postgres user {{ database_user }}"
     postgresql_user:
       name: "{{ database_user | mandatory }}"
       password: "{{ database_password | mandatory }}"
@@ -25,7 +25,7 @@
       ansible_ssh_pipelining: true
     when: database_type == "postgres"
     
-  - name: "create database {{ database_name }}"
+  - name: "create postgres database {{ database_name }}"
     postgresql_db:
       name: "{{ database_name | mandatory }}"
       owner: "{{ database_user | mandatory }}"

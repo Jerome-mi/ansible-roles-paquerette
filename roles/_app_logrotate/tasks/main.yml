@@ -1,0 +1,12 @@
+---
+
+  - name: "log dest {{ www_log }}/{{ app_instance_id }}"
+    file:
+      state: directory
+      path: "{{ www_log }}/{{ app_instance_id }}"
+
+  - name: "logrotate for {{ www_log }}/{{ app_instance_id }}"
+    template:
+      src: "app_logrotate_{{ rev_proxy }}.j2"
+      dest: "/etc/logrotate.d/{{ app_instance_id }}"
+      mode: 0644

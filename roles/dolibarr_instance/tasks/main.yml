@@ -1,20 +1,12 @@
 ---
 
-  - name: "template check log"
-    template:
-      src: app_check.j2
-      dest: "{{ base_prod_ansible_log }}/{{ app_instance_id }}.log"
-
-  - name: "fetch check log"
-    fetch:
-      src: "{{ base_prod_ansible_log }}/{{ app_instance_id }}.log"
-      dest: "{{ app_instance_id }}.log"
-      flat: yes
+  - include_role:
+      name: _app_log_inventory
+    vars:
+      log_type: "install"
 
   - include_role:
       name: _letsencrypt_certificate
-    vars:
-      letsencrypt_domain: "{{ app_domain }}"
 
   - include_role:
       name: _create_database
@@ -50,22 +42,14 @@
   - include_role:
       name: _app_backup
 
-  - name: "log dest {{ www_log }}/{{ app_instance_id }}"
-    file:
-      state: directory
-      path: "{{ www_log }}/{{ app_instance_id }}"
-
-  - name: "template app_{{ rev_proxy }}.j2 {{ app_instance_id }}"
+  - name: "{{ rev_proxy }} config for {{ app_instance_id }}"
     template:
       src: "app_{{ rev_proxy }}.j2"
       dest: "/etc/{{ rev_proxy }}/sites-available/{{ app_instance_id }}.conf"
     notify: reload {{ rev_proxy }}
 
-  - name: "logrotate for log {{ rev_proxy }} log_dest /{{ app_instance_id }}"
-    template:
-      src: app_logrotate_{{ rev_proxy }}.j2
-      dest: "/etc/logrotate.d/{{ app_instance_id }}"
-      mode: 0644
+  - include_role:
+      name: _app_logrotate
 
   - name: "enable site for {{ app_domain }}"
     file:
@@ -74,8 +58,5 @@
       src: "/etc/{{ rev_proxy }}/sites-available/{{ app_instance_id }}.conf"
     notify: reload {{ rev_proxy }}
 
-  - name: "template for monitoring {{ app_domain }}"
-    template:
-      src: "app_monit.j2"
-      dest: "/etc/monit/conf.d/{{ app_instance_id }}.conf"
-    notify: reload monit
+  - include_role:
+      name: _app_monit

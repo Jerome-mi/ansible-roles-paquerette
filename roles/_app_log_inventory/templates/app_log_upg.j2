@@ -1,0 +1,8 @@
+[{{ app_program | mandatory }}_upg-{{ app_instance_id }}]
+
+hostname = {{ ansible_hostname | mandatory }}
+domain = {{ app_domain | mandatory }}
+rev_proxy = {{ rev_proxy | mandatory }}
+old_version = {{ app_oldversion | mandatory }}
+version = {{ app_version | mandatory }}
+version_backup = {{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}

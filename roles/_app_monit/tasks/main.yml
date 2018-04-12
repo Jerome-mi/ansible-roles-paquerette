@@ -1,0 +1,7 @@
+---
+
+  - name: "template for monitoring {{ app_domain }}"
+    template:
+      src: "app_monit.j2"
+      dest: "/etc/monit/conf.d/{{ app_instance_id }}.conf"
+    notify: reload monit

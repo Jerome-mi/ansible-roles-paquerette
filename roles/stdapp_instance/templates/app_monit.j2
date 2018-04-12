@@ -1,7 +1,0 @@
-check host {{ app_domain }}  with address {{ app_domain }}
-
-# HTTPS check
-    if failed
-          port 443 type tcpSSL protocol http
-       for 1 times within 1 cycles
-       then exec "{{ monit_sms_script }}"

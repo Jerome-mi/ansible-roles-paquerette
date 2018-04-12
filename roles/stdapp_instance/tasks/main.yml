@@ -1,53 +1,13 @@
 ---
 
-  - name: "template check log"
-    template:
-      src: app_check.j2
-      dest: "{{ base_prod_ansible_log }}/{{ app_instance_id }}.log"
+  - include_role:
+      name: _app_log_inventory
 
-  - name: "fetch check log"
-    fetch:
-      src: "{{ base_prod_ansible_log }}/{{ app_instance_id }}.log"
-      dest: "{{ app_instance_id }}.log"
-      flat: yes
+  - include_role:
+      name: _letsencrypt_certificate
 
-  - name: "letsencrypt certificate for {{ app_domain }}"
-    command: "{{ certbot_grant_command_nginx }}"
-    args:
-      creates: "{{ letsencrypt_cert_root }}/{{ app_domain | quote }}"
-    vars:
-      letsencrypt_domain: "{{ app_domain }}"
-    when: rev_proxy == "nginx"
-
-  - name: "letsencrypt certificate for {{ app_domain }}"
-    command: "{{ certbot_grant_command_apache2 }}"
-    args:
-      creates: "{{ letsencrypt_cert_root }}/{{ app_domain | quote }}"
-    vars:
-      letsencrypt_domain: "{{ app_domain }}"
-    when: rev_proxy == "apache2"
-
-  - name: "create database user {{ instance_database_user }}"
-    postgresql_user:
-      name: "{{ instance_database_user | mandatory }}"
-      password: "{{ instance_database_password | mandatory }}"
-      state: present
-    become_user: postgres
-    vars:
-      ansible_ssh_pipelining: true
-
-  - name: "create database {{ instance_database_name }}"
-    postgresql_db:
-      name: "{{ instance_database_name | mandatory }}"
-      owner: "{{ instance_database_user | mandatory }}"
-      encoding: UTF-8
-      lc_collate: fr_FR.UTF-8
-      lc_ctype: fr_FR.UTF-8
-      template: template0
-      state: present
-    become_user: postgres
-    vars:
-      ansible_ssh_pipelining: true
+  - include_role:
+      name: _create_database
 
   - name: create temporary download directory
     tempfile:
@@ -91,16 +51,8 @@
       state: absent
     changed_when: False
 
-  - name: "template for backup"
-    template:
-      src: app_backup.j2
-      dest: "{{ backup_item_dir }}/20-{{ app_instance_id }}.sh"
-      mode: 0640
-
-  - name: "log dest {{ www_log }}/{{ app_instance_id }}"
-    file:
-      state: directory
-      path: "{{ www_log }}/{{ app_instance_id }}"
+  - include_role:
+      name: _app_backup
 
   - name: "template app_{{ rev_proxy }}.j2 {{ app_instance_id }}"
     template:
@@ -108,11 +60,8 @@
       dest: "/etc/{{ rev_proxy }}/sites-available/{{ app_instance_id }}.conf"
     notify: reload {{ rev_proxy }}
 
-  - name: "logrotate for log {{ rev_proxy }} log_dest /{{ app_instance_id }}"
-    template:
-      src: app_logrotate_{{ rev_proxy }}.j2
-      dest: "/etc/logrotate.d/{{ app_instance_id }}"
-      mode: 0644
+  - include_role:
+      name: _app_logrotate
 
   - name: "enable site for {{ app_domain }}"
     file:
@@ -121,8 +70,5 @@
       src: "/etc/{{ rev_proxy }}/sites-available/{{ app_instance_id }}.conf"
     notify: reload {{ rev_proxy }}
 
-  - name: "template for monitoring {{ app_domain }}"
-    template:
-      src: "app_monit.j2"
-      dest: "/etc/monit/conf.d/{{ app_instance_id }}.conf"
-    notify: reload monit
+  - include_role:
+      name: _app_monit

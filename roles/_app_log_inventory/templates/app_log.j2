@@ -1,0 +1,21 @@
+[{{ app_program }}-{{ app_instance_id }}]
+
+hostname = {{ ansible_hostname | mandatory }}
+paquerette_name = {{ paquerette_name | mandatory }}
+domain = {{ app_domain | mandatory }}
+version = {{ app_version | mandatory }}
+app_instance_id = {{ app_instance_id | mandatory }}
+
+rev_proxy = {{ rev_proxy | mandatory }}
+instance = {{ app_instance_root | mandatory }}
+instance_www_root = {{ app_instance_www_root | mandatory }}
+data = {{ app_data | mandatory }}
+
+log_dest = {{ www_log | mandatory }}/{{ app_instance_id }}
+backup_prod_app = {{ backup_prod_dir | mandatory }}/{{ app_instance_id }}
+backup_data = {{ backup_prod_dir | mandatory }}/{{ app_data }}
+
+database_type = {{ database_type | mandatory }}
+database_name = {{ database_name | mandatory }}
+database_user = {{ database_user | mandatory }}
+database_password = {{ database_password | mandatory }}

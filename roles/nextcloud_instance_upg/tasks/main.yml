@@ -3,16 +3,10 @@
 # https://nextcloud.com/install/#instructions-server
 # https://docs.nextcloud.com/server/12/admin_manual/maintenance/upgrade.html
 
-  - name: "template check log"
-    template:
-      src: nextcloud_upg_check.j2
-      dest: "{{ base_prod_ansible_log }}/{{ nextcloud_instance_id }}.upg.{{ nextcloud_version }}.log"
-
-  - name: "fetch check log"
-    fetch:
-      src: "{{ base_prod_ansible_log }}/{{ nextcloud_instance_id }}.upg.{{ nextcloud_version }}.log"
-      dest: "{{ nextcloud_instance_id }}.upg.{{ nextcloud_version }}.log"
-      flat: yes
+  - include_role:
+      name: _app_log_inventory
+    vars:
+      log_type: "upgrade"
 
   - name: "create temporary download directory"
     tempfile:

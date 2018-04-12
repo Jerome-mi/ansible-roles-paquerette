@@ -72,7 +72,6 @@ rôles : \<application\>_upg
 TODO : 
 
 - fusionner les rôles php7_apache2 et php7_nginx
-- finaliser mariadb_mysql, **sécurisation**,cohabitation possible ?
 - failtoban pour les services
 - finaliser letsencrypt sans coupure de service. (fonctionne avec coupure)
 - étudier les listes d'instances dans les fichiers host_vars et les lancements de scripts instance et instance_upg en boucle

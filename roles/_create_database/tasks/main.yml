@@ -1,0 +1,45 @@
+---
+
+  - name: "Create a mysql/mariadb database with name {{ database_name }} "
+    mysql_db:
+      name: "{{ database_name | mandatory }}"
+      encoding: "utf8"
+      state: present
+    when: database_type == "mysql"
+    
+  - name: "Create a mysql/mariadb user with all privileges on database {{ database_name }} "
+    mysql_user:
+      name: "{{ database_user | mandatory }}"
+      password: "{{ database_password | mandatory }}"
+      priv: '{{ database_name }}.*:ALL,GRANT'
+      state: present
+    when: database_type == "mysql"
+
+  - name: "create postgres user {{ database_user }}"
+    postgresql_user:
+      name: "{{ database_user | mandatory }}"
+      password: "{{ database_password | mandatory }}"
+      state: present
+    become_user: postgres
+    vars:
+      ansible_ssh_pipelining: true
+    when: database_type == "postgres"
+    
+  - name: "create postgres database {{ database_name }}"
+    postgresql_db:
+      name: "{{ database_name | mandatory }}"
+      owner: "{{ database_user | mandatory }}"
+      encoding: UTF-8
+      lc_collate: fr_FR.UTF-8
+      lc_ctype: fr_FR.UTF-8
+      template: template0
+      state: present
+    become_user: postgres
+    vars:
+      ansible_ssh_pipelining: true
+    when: database_type == "postgres"
+
+# mysql -u root -p
+# CREATE DATABASE dolibarr_db DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+# GRANT ALL PRIVILEGES ON dolibarr_db.* TO dolibarr_usr@localhost IDENTIFIED BY 'PASSword987.';
+# FLUSH PRIVILEGES;

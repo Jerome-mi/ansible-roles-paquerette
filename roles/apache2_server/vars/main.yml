@@ -2,6 +2,10 @@
 
   apache_default_domain: "{{ ansible_fqdn }}"
 
+  apache_package_list: [
+    "apache2",
+    "libapache2-mod-fastcgi",]
+
   apache_module_list: [
     "proxy",
     "proxy_http",

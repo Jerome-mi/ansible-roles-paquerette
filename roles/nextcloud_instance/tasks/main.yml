@@ -2,66 +2,16 @@
 
 # https://nextcloud.com/install/#instructions-server
 
-  - name: "template check log"
-    template:
-      src: nextcloud_check.j2
-      dest: "{{ base_prod_ansible_log }}/{{ nextcloud_instance_id }}.log"
+  - include_role:
+      name: _app_log_inventory
     vars:
-       letsencrypt_domain: "{{ nextcloud_domain | quote }}"
+      log_type: "install"
 
-  - name: "fetch check log"
-    fetch:
-      src: "{{ base_prod_ansible_log }}/{{ nextcloud_instance_id }}.log"
-      dest: "{{ nextcloud_instance_id }}.log"
-      flat: yes
+  - include_role:
+      name: _letsencrypt_certificate
 
-  - name: "letsencrypt certificate for {{ nextcloud_domain }}"
-    command: "{{ certbot_grant_command_nginx }}"
-    args:
-      creates: "{{ letsencrypt_cert_root }}/{{ nextcloud_domain | quote }}"
-    vars:
-      letsencrypt_domain: "{{ nextcloud_domain }}"
-    when: rev_proxy == "nginx"
-
-  - name: "letsencrypt certificate for {{ nextcloud_domain }}"
-    command: "{{ certbot_grant_command_apache2 }}"
-    args:
-      creates: "{{ letsencrypt_cert_root }}/{{ nextcloud_domain | quote }}"
-    vars:
-      letsencrypt_domain: "{{ nextcloud_domain }}"
-    when: rev_proxy == "apache2"
-
-  - name: "create database {{ nextcloud_database_name }}"
-    postgresql_db:
-      name: "{{ nextcloud_database_name | mandatory }}"
-      encoding: UTF-8
-      lc_collate: fr_FR.UTF-8
-      lc_ctype: fr_FR.UTF-8
-      template: template0
-      state: present
-    become_user: postgres
-    vars:
-      ansible_ssh_pipelining: true
-
-  - name: "create database user {{ nextcloud_database_user }}"
-    postgresql_user:
-      name: "{{ nextcloud_database_user | mandatory }}"
-      password: "{{ nextcloud_database_password | mandatory }}"
-      state: present
-    become_user: postgres
-    vars:
-      ansible_ssh_pipelining: true
-
-  - name: "grant on database"
-    postgresql_privs:
-      db: "{{ nextcloud_database_name }}"
-      role: "{{ nextcloud_database_user }}"
-      privs: ALL
-      type: database
-      state: present
-    become_user: postgres
-    vars:
-      ansible_ssh_pipelining: true
+  - include_role:
+      name: _create_database
 
   - name: create temporary download directory
     tempfile:
@@ -69,8 +19,6 @@
       suffix: "_nextcloud_new"
     register: _tmp_new_nextcloud
     changed_when: False
-
-    #  sudo mkdir /opt/nextcloud/data
 
   - name: "retrieving nextcloud version {{ nextcloud_version }} in {{ _tmp_new_nextcloud.path }}"
     unarchive:
@@ -81,32 +29,26 @@
       group: "www-data"
       owner: "www-data"
     args:
-      creates: "{{ nextcloud_root }}/{{ nextcloud_instance_id }}"
+      creates: "{{ app_instance_root }}"
 
-  - name: "dir {{ nextcloud_root }}"
-    file:
-      path: "{{ nextcloud_root }}"
-      state: directory
-      mode: 0755
-
-  - name: "Move {{ _tmp_new_nextcloud.path }}/nextcloud to {{ nextcloud_root }}/{{ nextcloud_instance_id }}"
-    command: "/bin/mv {{ _tmp_new_nextcloud.path }}/nextcloud {{ nextcloud_root }}/{{ nextcloud_instance_id }}"
+  - name: "Move {{ _tmp_new_nextcloud.path }}/nextcloud to {{ app_instance_root }}"
+    command: "/bin/mv {{ _tmp_new_nextcloud.path }}/nextcloud {{ app_instance_root }}"
     args:
-      creates: "{{ nextcloud_root }}/{{ nextcloud_instance_id }}"
+      creates: "{{ app_instance_root }}"
 
-  - name: "dir {{ nextcloud_root }}/{{ nextcloud_instance_id }}.data"
+  - name: "dir {{ app_data }}"
     file:
-      path: "{{ nextcloud_root }}/{{ nextcloud_instance_id }}.data"
+      path: "{{ app_data }}"
       state: directory
-      mode: 0755
+      mode: 0700
       group: "www-data"
       owner: "www-data"
 
   - name: "link data directory"
     file:
       state: link
-      src: "{{ nextcloud_root }}/{{ nextcloud_instance_id }}.data"
-      path: "{{ nextcloud_root }}/{{ nextcloud_instance_id }}/data"
+      src: "{{ app_data }}"
+      path: "{{ app_instance_root }}/data"
 
   - name: "remove {{ _tmp_new_nextcloud.path }}"
     file:
@@ -117,44 +59,33 @@
   - name: "nextcloud base app configuration template"
     template:
       src: nextcloud_app_install.j2
-      dest: "{{ nextcloud_root }}/{{ nextcloud_instance_id }}/ansible_base_install.sh"
+      dest: "{{ app_instance_root }}/ansible_base_install.sh"
       mode: 0700
 
   - name: "nextcloud base app configuration"
-    command: "{{ nextcloud_root }}/{{ nextcloud_instance_id }}/ansible_base_install.sh"
+    command: "{{ app_instance_root }}/ansible_base_install.sh"
     register: __ansible_base_install
     args:
-      creates: "{{ nextcloud_root }}/{{ nextcloud_instance_id }}/ansible_base_install.done"
+      creates: "{{ app_instance_root }}/ansible_base_install.done"
 
   - name: "cron mode for background jobs"
     cron:
-      name: "{{ nextcloud_root }}/{{ nextcloud_instance_id }}/cron.php >/dev/null 2>&1"
+      name: "{{ app_instance_root }}/cron.php >/dev/null 2>&1"
       user: "www-data"
       minute: "*/15"
-      job: "php -f {{ nextcloud_root }}/{{ nextcloud_instance_id }}/cron.php >/dev/null 2>&1"
+      job: "php -f {{ app_instance_root }}/cron.php >/dev/null 2>&1"
 
-  - name: "template for backup"
-    template:
-      src: nextcloud_backup.j2
-      dest: "{{ backup_item_dir }}/20-{{ nextcloud_instance_id }}.sh"
-      mode: 0640
+  - include_role:
+      name: _app_backup
 
-  - name: "log dest {{ www_log }}/{{ nextcloud_instance_id }}"
-    file:
-      state: directory
-      path: "{{ www_log }}/{{ nextcloud_instance_id }}"
+  - include_role:
+      name: _app_logrotate
 
   - name: "template {{ rev_proxy }}_nextcloud.j2 {{ nextcloud_instance_id }}"
     template:
       src: "{{ rev_proxy }}_nextcloud.j2"
       dest: "/etc/{{ rev_proxy }}/sites-available/{{ nextcloud_instance_id }}.conf"
     notify: reload {{ rev_proxy }}
-
-#  - name: "logrotate for log {{ {{ rev_proxy }}_log_dest }}/{{ nextcloud_instance_id }}"
-#    template:
-#      src: nextcloud_logrotate.j2
-#      dest: "/etc/logrotate.d/{{ nextcloud_instance_id }}"
-#      mode: 0644
 
   - name: "enable site for {{ nextcloud_domain }}"
     file:
@@ -163,8 +94,5 @@
       src: "/etc/{{ rev_proxy }}/sites-available/{{ nextcloud_instance_id }}.conf"
     notify: reload {{ rev_proxy }}
 
-  - name: "template for monitoring {{ nextcloud_domain }}"
-    template:
-      src: "nextcloud_monit.j2"
-      dest: "/etc/monit/conf.d/{{ nextcloud_instance_id }}.conf"
-    notify: reload monit
+  - include_role:
+      name: _app_monit

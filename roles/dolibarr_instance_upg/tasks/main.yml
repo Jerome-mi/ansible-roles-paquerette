@@ -1,15 +1,9 @@
 ---
 
-  - name: "template check log"
-    template:
-      src: app_upg_check.j2
-      dest: "{{ base_prod_ansible_log }}/{{ app_instance_id }}.upg.{{ app_version }}.log"
-
-  - name: "fetch check log"
-    fetch:
-      src: "{{ base_prod_ansible_log }}/{{ app_instance_id }}.upg.{{ app_version }}.log"
-      dest: "{{ app_instance_id }}.upg.{{ app_version }}.log"
-      flat: yes
+  - include_role:
+      name: _app_log_inventory
+    vars:
+      log_type: "upgrade"
 
   - name: "create temporary download directory"
     tempfile:
@@ -89,6 +83,16 @@
       ansible_ssh_pipelining: true
     args:
       creates: "{{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}/sql/{{ app_database_name }}.sql"
+    when: database_type == "postgres"
+
+  - name: "backup database"
+    shell: "/usr/bin/mysqldump --opt {{ app_database_name }} > {{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}/sql/{{ app_database_name }}.sql"
+#    become_user: "postgres"
+#    vars:
+#      ansible_ssh_pipelining: true
+    args:
+      creates: "{{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}/sql/{{ app_database_name }}.sql"
+    when: database_type == "mysql"
 
   - name: "Copy {{ _tmp_new_app.path }}/{{ app_src_root_name }}/ to {{ app_instance_root }}"
     command: "rsync -ax {{ _tmp_new_app.path }}/{{ app_src_root_name }}/ {{ app_instance_root }}"

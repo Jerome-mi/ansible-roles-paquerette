@@ -1,16 +1,23 @@
 ---
 
   #nextcloud_domain: "nextcloud-test.paquerette.eu"
-
   #nextcloud_version: 12.0.3
-
   #nextcloud_instance_id: "nextcloud"
-
-  nextcloud_database_name: "{{ nextcloud_instance_id }}_db"
-  nextcloud_database_user: "{{ nextcloud_instance_id }}_usr"
-  nextcloud_database_password: "{{ nextcloud_instance_id }}_pwd"
 
   nextcloud_default_admin: "admin"
   nextcloud_default_password: "admin"
 
-  nextcloud_root: "{{ www_root }}"
+  app_program: "Nextcloud"
+
+  app_domain: "{{ nextcloud_domain | mandatory }}"
+  app_version: "{{ nextcloud_version | mandatory }}"
+  app_instance_id: "{{ nextcloud_instance_id | mandatory }}"
+
+  app_instance_root: "{{ www_root }}/{{ app_instance_id }}"
+  app_instance_www_root: "{{ app_instance_root }}"
+  app_data: "{{ www_root }}/{{ app_instance_id }}.data"
+
+  database_name: "{{ app_instance_id }}_db"
+  database_user: "{{ app_instance_id }}_usr"
+  database_password: "{{ app_instance_id }}_pwd"
+  database_type: "postgres"

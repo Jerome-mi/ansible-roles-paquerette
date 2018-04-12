@@ -1,5 +1,5 @@
 <VirtualHost *:80>
-   ServerName {{ nextcloud_domain | mandatory }}
+   ServerName {{ app_domain | mandatory }}
 
    RewriteEngine On
    RewriteCond %{HTTPS} off
@@ -9,13 +9,13 @@
 <IfModule mod_ssl.c>
    <VirtualHost *:443>
 
-     ServerName {{ nextcloud_domain }}
-     DocumentRoot {{ nextcloud_root | mandatory }}/{{ nextcloud_instance_id | mandatory }}
+     ServerName {{ app_domain }}
+     DocumentRoot {{ app_instance_root }}
 
-     CustomLog {{ www_log }}/{{ nextcloud_instance_id }}/access.log combined
-     ErrorLog {{ www_log }}/{{ nextcloud_instance_id }}/error.log
+     CustomLog {{ www_log }}/{{ app_instance_id }}/access.log combined
+     ErrorLog {{ www_log }}/{{ app_instance_id }}/error.log
 
-     <Directory {{ nextcloud_root }}/{{ nextcloud_instance_id }}/>
+     <Directory {{ app_instance_root }}/>
        Options +FollowSymlinks
        AllowOverride All
        Require all granted
@@ -24,8 +24,8 @@
         Dav off
       </IfModule>
 
-       SetEnv HOME {{ nextcloud_root }}/{{ nextcloud_instance_id }}
-       SetEnv HTTP_HOME {{ nextcloud_root }}/{{ nextcloud_instance_id }}
+       SetEnv HOME {{ app_instance_root }}
+       SetEnv HTTP_HOME {{ app_instance_root }}
      </Directory>
 
      <IfModule mod_headers.c>
@@ -33,8 +33,8 @@
      </IfModule>
 
      SSLEngine on
-     SSLCertificateFile /etc/letsencrypt/live/{{ nextcloud_domain }}/fullchain.pem
-     SSLCertificateKeyFile /etc/letsencrypt/live/{{ nextcloud_domain }}/privkey.pem
+     SSLCertificateFile /etc/letsencrypt/live/{{ app_domain }}/fullchain.pem
+     SSLCertificateKeyFile /etc/letsencrypt/live/{{ app_domain }}/privkey.pem
      
      # Spreed WebRTC config (must be in same vhost)
 #     <Location /webrtc>

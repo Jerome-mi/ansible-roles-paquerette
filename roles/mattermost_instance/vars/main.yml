@@ -7,6 +7,8 @@
 #  mattermost_port: 8065
 #  mattermost_instance_id: mat_paq_test
 
+  app_program: "Mattermost"
+
   mattermost_root_instance: '{{ www_root | mandatory }}'
 
   mattermost_database_name: "{{ mattermost_instance_id }}_db"

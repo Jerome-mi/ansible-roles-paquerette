@@ -4,15 +4,3 @@
   # for mysql >= 5.6 : use mysql
   mariadb_base_packages: ['{{ mariadb_mysql | default("mariadb") }}-server', "python-mysqldb"]
 
-# hint :
-#  - name: "Create a new database with name 'bobdata' "
-#    mysql_db:
-#      name: bobdata
-#      state: present
-#
-#  - name: "Create a new user with all priviliges on database name 'bobdata' "
-#    mysql_user:
-#      name: bob
-#      password: 12345
-#      priv: 'bobdata.*:ALL,GRANT'
-#      state: present

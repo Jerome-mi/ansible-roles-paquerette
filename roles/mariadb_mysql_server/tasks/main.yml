@@ -1,6 +1,6 @@
 ---
 
-  - name: "mariadb base packages"
+  - name: "{{ mariadb_mysql }} base packages"
     apt:
       name: "{{ item }}"
       state: latest
@@ -13,10 +13,19 @@
       password: "{{ mysql_root_password }}"
       host_all: yes
 
-  - name: "setting the root password for localhost"
-    mysql_user:
-      user: "root"
-      password: "{{ mysql_root_password }}"
+  - name: .my.cnf file with root password credentials for ansible
+    template:
+      src: "my.cnf.j2"
+      dest: "/root/.my.cnf"
+      owner: "root"
+      mode: "0600"
+
+  - name: file with root password credentials for others
+    template:
+      src: "my.cnf.j2"
+      dest: "/etc/mysql/conf.d/root.cnf"
+      owner: "root"
+      mode: "0600"
 
   - name: "removing the test database"
     mysql_db:

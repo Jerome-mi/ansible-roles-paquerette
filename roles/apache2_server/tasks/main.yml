@@ -1,10 +1,9 @@
 ---
 
   - name: "install apache2"
-    apt:
-      name: apache2
-      state: present
-      update_cache: yes
+    apt: name="{{ item }}" state=present
+    with_items: "{{ apache_package_list }}"
+
 
   - name: " ServerName {{ apache_default_domain }}"
     lineinfile:

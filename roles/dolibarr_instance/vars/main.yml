@@ -1,6 +1,7 @@
 ---
 
   app_program: "Dolibarr"
+  log_type: "install"
 
   app_domain: "{{ dolibarr_domain | mandatory }}"
   app_version: "{{ dolibarr_version | mandatory }}"

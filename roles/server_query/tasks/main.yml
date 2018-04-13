@@ -4,8 +4,15 @@
 #    shell: "apt list --installed"
 #    register: out
 
-  - name: ""
+  - name: "inventory"
     shell: "cat {{base_prod_ansible_log}}/inventory"
+    register: out
+    changed_when: False
+
+  - debug: var=out.stdout
+
+  - name: "details"
+    shell: "cat {{base_prod_ansible_log}}/*"
     register: out
     changed_when: False
 

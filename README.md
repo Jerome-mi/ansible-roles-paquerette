@@ -75,6 +75,5 @@ TODO :
 - failtoban pour les services
 - finaliser letsencrypt sans coupure de service. (fonctionne avec coupure)
 - étudier les listes d'instances dans les fichiers host_vars et les lancements de scripts instance et instance_upg en boucle
-- améliorer les logs ansible et l'inventaire 
 
 [paquerette.eu](http://paquerette.eu)

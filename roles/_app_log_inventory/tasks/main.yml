@@ -1,6 +1,6 @@
 ---
 
-  - name: "template log inventory"
+  - name: "template log inventory - install"
     template:
       src: app_log.j2
       dest: "{{ base_prod_ansible_log }}/{{ app_instance_id }}.log"
@@ -14,7 +14,7 @@
 #      flat: yes
 #    when: log_type == "install"
 
-  - name: "template log inventory"
+  - name: "template log inventory - upgrade"
     template:
       src: app_log_upg.j2
       dest: "{{ base_prod_ansible_log }}/{{ app_instance_id }}.{{ app_version }}.log"

@@ -49,7 +49,7 @@ C'est la partie qui définit l'ensemble des services ou composants nécessaire a
 
 rôle : base_platform
 
-## 4 -L'instance applicative
+## 4 - L'instance applicative
 C'est la partie qui définit la méthode de déploiement d'une instance applicative. Elle met en oeuvre:
 - le téléchargement d'une application
 - la création des bases de données et dépendances (certificat letsencrypt...)
@@ -59,7 +59,7 @@ C'est la partie qui définit la méthode de déploiement d'une instance applicat
 
 rôles : \<application\>_instance
 
-## La mise à jour d'instance
+## 5 - La mise à jour d'instance
 C'est la partie qui permet de mettre à jour une instance applicative. La mise à jour d'une instance se distingue de son déploiement :
 - téléchargement de la nouvelle version
 - arrêt du service
@@ -69,13 +69,13 @@ C'est la partie qui permet de mettre à jour une instance applicative. La mise �
 
 rôles : \<application\>_instance_upg
 
-## Éléments réutilisables
+## 6 - Éléments réutilisables
 
 Les rôles utilisent des parties factorisées dans des rôles réutilisables (création de base de données, de certificats etc...)
 
 rôles : \_app\_\<fonction\>
 
-## Gestion multi-instance (en cours de mise en oeuvre)
+## 7 - Gestion multi-instance (en cours de généralisation)
 
 Il est possible d'installer directement une liste d'instance ou de piloter leur mise à jour en déclarant les instances sous forme de liste.
 

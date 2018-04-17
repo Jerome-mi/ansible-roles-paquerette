@@ -12,10 +12,10 @@ Choix, discutables ! :
 - mail, remontée de messages : **postfix configuré en relai SMTP**, copie cachée systématique permettant l'envoi de sms par exemple, non détaillé ici
 - tous les services web utilisent des certificats letsencrypt
 
-**L'organisation des scripts se fait en 5 catégories :**
+**L'organisation des scripts se fait en 7 catégories :**
 
-## L'inventaire
-C'est la partie qui définit la liste des machines pilotées, leur composition et les variables utiles aux rôles.
+## 1 - L'inventaire
+C'est la partie qui définit la liste des machines pilotées, la composition de la plateforme de support applicative, la liste des instances et toutes les variables utiles aux rôles.
 
 ***En gras**, les groupes à définir localement, selon les besoins.* 
 - secret : les variables qui doivent rester secrètes (mot de passe etc...)
@@ -29,7 +29,7 @@ fichiers dans group_vars
 *cf hosts.example*
 
 
-## Le serveur
+## 2 - Le serveur
 C'est la partie qui définit les base du serveur, elle est la couche basse. Elle met en oeuvre :
 - l'organisation des répertoires et fichiers
 - la localisation du serveur
@@ -40,17 +40,17 @@ rôle : base_server
 
 utilitaires : server_\<...\>
 
-## La plateforme applicative
+## 3 - La plateforme de support applicative
 C'est la partie qui définit l'ensemble des services ou composants nécessaire au fonctionnement d'une instance applicative. Elle met en oeuvre :
 - les serveurs web (nginx, apache,...)
 - les serveurs de base de données (mariadb, postgres,...)
 - les languages (php, python,...)
-- le monitoring associé
+- le monitoring associé à ces composants
 
 rôle : base_platform
 
-## L'instance applicative
-C'est la partie qui définit la méthode de déploiement d'une instance applicative. Certaines sont multi instance, d'autres pas. Elle met en oeuvre:
+## 4 -L'instance applicative
+C'est la partie qui définit la méthode de déploiement d'une instance applicative. Elle met en oeuvre:
 - le téléchargement d'une application
 - la création des bases de données et dépendances (certificat letsencrypt...)
 - la configuration de base de l'application
@@ -63,7 +63,7 @@ rôles : \<application\>_instance
 C'est la partie qui permet de mettre à jour une instance applicative. La mise à jour d'une instance se distingue de son déploiement :
 - téléchargement de la nouvelle version
 - arrêt du service
-- sauvegarde de la version courante
+- sauvegarde complète de la version courante
 - mise à jour du logiciel et de la base de données + ou - automatisée selon l'application
 - redémarrage du service
 
@@ -71,11 +71,11 @@ rôles : \<application\>_instance_upg
 
 ## Éléments réutilisables
 
-Les rôles utilisent des parties factorisées dans des rôles réutilisables. Par convention, leur nom commence par "_app" pour ceux utilisées par les rôles d'instance 
+Les rôles utilisent des parties factorisées dans des rôles réutilisables (création de base de données, de certificats etc...)
 
-rôles : _app_\<fonction\>
+rôles : \_app\_\<fonction\>
 
-## Gestion multi-instance
+## Gestion multi-instance (en cours de mise en oeuvre)
 
 Il est possible d'installer directement une liste d'instance ou de piloter leur mise à jour en déclarant les instances sous forme de liste.
 

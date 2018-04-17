@@ -67,13 +67,30 @@ C'est la partie qui permet de mettre à jour une instance applicative. La mise �
 - mise à jour du logiciel et de la base de données + ou - automatisée selon l'application
 - redémarrage du service
 
-rôles : \<application\>_upg
+rôles : \<application\>_instance_upg
+
+## Éléments réutilisables
+
+Les rôles utilisent des parties factorisées dans des rôles réutilisables. Par convention, leur nom commence par "_app" pour ceux utilisées par les rôles d'instance 
+
+rôles : _app_\<fonction\>
+
+## Gestion multi-instance
+
+Il est possible d'installer directement une liste d'instance ou de piloter leur mise à jour en déclarant les instances sous forme de liste.
+
+cf: le fichier d'inventaire host.example.yml et le rôle dolibarr
+
+rôles : \<application\>
+
+##
 
 TODO : 
 
+- mise à jour des scripts mattermost avec les éléments réutilisables
+- multi instance pour nextcloud et mattermost
 - fusionner les rôles php7_apache2 et php7_nginx
 - failtoban pour les services
 - finaliser letsencrypt sans coupure de service. (fonctionne avec coupure)
-- étudier les listes d'instances dans les fichiers host_vars et les lancements de scripts instance et instance_upg en boucle
 
 [paquerette.eu](http://paquerette.eu)

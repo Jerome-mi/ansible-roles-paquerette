@@ -2,8 +2,6 @@
 
   - include_role:
       name: _app_log_inventory
-    vars:
-      log_type: "upgrade"
 
   - name: "create temporary download directory"
     tempfile:
@@ -76,22 +74,19 @@
     args:
       creates: "{{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}/app/{{ app_instance_id }}"
 
-  - name: "backup database"
-    shell: "/usr/bin/pg_dump {{ app_database_name }} > {{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}/sql/{{ app_database_name }}.sql"
+  - name: "backup postgres database"
+    shell: "/usr/bin/pg_dump {{ database_name }} > {{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}/sql/{{ database_name }}.sql"
     become_user: "postgres"
     vars:
       ansible_ssh_pipelining: true
     args:
-      creates: "{{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}/sql/{{ app_database_name }}.sql"
+      creates: "{{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}/sql/{{ database_name }}.sql"
     when: database_type == "postgres"
 
-  - name: "backup database"
-    shell: "/usr/bin/mysqldump --opt {{ app_database_name }} > {{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}/sql/{{ app_database_name }}.sql"
-#    become_user: "postgres"
-#    vars:
-#      ansible_ssh_pipelining: true
+  - name: "backup mysql/mariadb database"
+    shell: "/usr/bin/mysqldump --opt {{ database_name }} > {{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}/sql/{{ database_name }}.sql"
     args:
-      creates: "{{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}/sql/{{ app_database_name }}.sql"
+      creates: "{{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}/sql/{{ database_name }}.sql"
     when: database_type == "mysql"
 
   - name: "Copy {{ _tmp_new_app.path }}/{{ app_src_root_name }}/ to {{ app_instance_root }}"

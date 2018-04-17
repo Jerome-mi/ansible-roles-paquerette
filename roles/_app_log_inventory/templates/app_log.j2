@@ -1,4 +1,4 @@
-[{{ app_program }}-{{ app_instance_id }}]
+[{{ app_program }}:{{ log_type }}:{{ app_instance_id }}]
 
 hostname = {{ ansible_hostname | mandatory }}
 paquerette_name = {{ paquerette_name | mandatory }}

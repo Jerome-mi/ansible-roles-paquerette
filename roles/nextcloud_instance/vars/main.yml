@@ -1,13 +1,10 @@
 ---
 
-  #nextcloud_domain: "nextcloud-test.paquerette.eu"
-  #nextcloud_version: 12.0.3
-  #nextcloud_instance_id: "nextcloud"
+  app_program: "Nextcloud"
+  log_type: "install"
 
   nextcloud_default_admin: "admin"
   nextcloud_default_password: "admin"
-
-  app_program: "Nextcloud"
 
   app_domain: "{{ nextcloud_domain | mandatory }}"
   app_version: "{{ nextcloud_version | mandatory }}"

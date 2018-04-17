@@ -29,3 +29,19 @@
   collabora_port: 9980
   collabora_admin_user: "MelindaGates"
   collabora_admin_password: "letyouguess"
+
+  # Dolibarr
+  dolibarr_instances: [
+    {
+      dolibarr_domain: "myfirstdolibarr.mydomain.com",
+      dolibarr_oldversion: "",
+      dolibarr_version: "7.0.1",
+      dolibarr_instance_id: "dol_1",
+      dolibarr_database_type: "mysql", },
+    {
+      dolibarr_domain: "dolibarr.anotherdomain.com",
+      dolibarr_oldversion: "7.0.0",
+      dolibarr_version: "7.0.1",
+      dolibarr_instance_id: "dol_2",
+      dolibarr_database_type: "postgres", },
+    ]

@@ -4,8 +4,6 @@
 
   - include_role:
       name: _app_log_inventory
-    vars:
-      log_type: "install"
 
   - include_role:
       name: _letsencrypt_certificate

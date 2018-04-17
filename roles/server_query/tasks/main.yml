@@ -4,9 +4,27 @@
 #    shell: "apt list --installed"
 #    register: out
 
-  - name: ""
-    shell: "cat {{base_prod_ansible_log}}/inventory"
-    register: out
+  - name: "clean up"
+    file:
+      path: "{{ base_prod_ansible_log }}/ansible_query"
+      state: absent
+
+  - name: "inventory"
+    shell: "cat {{base_prod_ansible_log}}/inventory > {{base_prod_ansible_log}}/ansible_query"
+#    register: out
     changed_when: False
 
-  - debug: var=out.stdout
+#  - debug: var=out.stdout
+
+  - name: "history"
+    shell: "ls -l {{base_prod_ansible_log}} >> {{base_prod_ansible_log}}/ansible_query"
+#    register: out
+    changed_when: False
+
+#  - debug: var=out.stdout
+
+  - name: "fetch ansible_query"
+    fetch:
+      src: "{{ base_prod_ansible_log }}/ansible_query"
+      dest: "ansible_query.log"
+      flat: yes

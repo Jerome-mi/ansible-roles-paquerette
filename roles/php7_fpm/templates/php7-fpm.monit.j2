@@ -1,0 +1,2 @@
+check process php{{ php_version }}-fpm with pidfile /var/run/php/php{{ php_version }}-fpm.pid
+    if failed unixsocket /var/run/php/php{{ php_version }}-fpm.sock then alert

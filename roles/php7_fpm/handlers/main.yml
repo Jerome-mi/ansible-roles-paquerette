@@ -1,0 +1,13 @@
+---
+
+- name: restart apache2
+  service: name=apache2 state=restarted
+
+- name: restart nginx
+  service: name=nginx state=restarted
+
+- name: reload monit
+  service: name=monit state=reloaded
+
+- name: reload php{{ php_version }}-fpm
+  service: name=php{{ php_version }}-fpm state=reloaded

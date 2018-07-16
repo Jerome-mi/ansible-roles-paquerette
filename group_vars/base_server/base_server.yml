@@ -118,6 +118,7 @@
 
 # local storage for downloading from ext backup host other backups in local backup storage
 # do_cross_backup: "yes/no" in inventory
+  # destination of
   cross_backup_dir: "{{ backup_base_dir }}/cross"
 
   ext_backup_time: "04:00"

@@ -1,5 +1,13 @@
 ---
 
+  # every server can be an backup host
+  - name: "directory for backup as ext backup host"
+    file:
+      state: directory
+      path: "{{ ext_backup_root_dir }}"
+      owner: "{{ ext_backup_user }}"
+      group: "{{ ext_backup_user }}"
+
   - name: "directory for key file for ext backup host"
     file:
       state: directory

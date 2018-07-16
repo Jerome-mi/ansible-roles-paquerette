@@ -88,9 +88,10 @@ rôles : \<application\>
 TODO : 
 
 - mise à jour des scripts mattermost avec les éléments réutilisables
-- multi instance pour nextcloud et mattermost
-- fusionner les rôles php7_apache2 et php7_nginx
-- failtoban pour les services
+- multi instance pour mattermost
+- fusionner les rôles php7_apache2 et php7_nginx (en cours)
+- failtoban pour les services (ou pas)
+- ext backup défini par serveur, tous les servers peuvent être hôte (à tester)
 - finaliser letsencrypt sans coupure de service. (fonctionne avec coupure)
 
 [paquerette.eu](http://paquerette.eu)

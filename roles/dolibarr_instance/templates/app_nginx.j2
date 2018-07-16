@@ -20,6 +20,7 @@ server {
     add_header Strict-Transport-Security "max-age=15768000";
 
     root {{ app_instance_www_root }}/;
+    index  index.php index.html index.htm;
 
     access_log {{ www_log | mandatory }}/{{ app_instance_id }}/access.log;
     error_log {{ www_log | mandatory }}/{{ app_instance_id }}/error.log;
@@ -30,4 +31,18 @@ server {
         access_log off;
     }
 
+    client_max_body_size 100M;
+
+    location ~ ^/api/(?!(index\.php))(.*) {
+          try_files $uri /api/index.php/$2?$query_string;
+      }
+
+    location ~ [^/]\.php(/|$) {
+    include snippets/fastcgi-php.conf;
+    if (!-f $document_root$fastcgi_script_name) {
+        return 404;
+    }
+    fastcgi_pass           unix:/var/run/php/php7.0-fpm.sock;
+    fastcgi_param   SCRIPT_FILENAME $document_root$fastcgi_script_name;
+     }
  }

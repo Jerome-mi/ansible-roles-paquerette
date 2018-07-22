@@ -4,7 +4,6 @@
     apt: name="{{ item }}" state=present
     with_items: "{{ apache_package_list }}"
 
-
   - name: " ServerName {{ apache_default_domain }}"
     lineinfile:
       line: "ServerName {{ apache_default_domain }}"

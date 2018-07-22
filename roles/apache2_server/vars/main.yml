@@ -4,7 +4,8 @@
 
   apache_package_list: [
     "apache2",
-    "libapache2-mod-fastcgi",]
+    "libapache2-mod-fastcgi",
+    "libapache2-mod-wsgi-py3",]
 
   apache_module_list: [
     "proxy",
@@ -20,4 +21,5 @@
     "rewrite",
     "setenvif",
     "fastcgi",
+    "wsgi"
     ]

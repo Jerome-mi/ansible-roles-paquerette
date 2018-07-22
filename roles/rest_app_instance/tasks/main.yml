@@ -1,0 +1,94 @@
+---
+
+  - include_role:
+      name: _app_log_inventory
+
+  - include_role:
+      name: _letsencrypt_certificate
+
+  - include_role:
+      name: _python3
+
+  - name: "root directory for flask"
+    file:
+      path: "{{ app_flask_root }}"
+      state: directory
+      mode: 0755
+      group: "www-data"
+      owner: "www-data"
+
+  - name: "root directory for {{ app_instance_id }}"
+    file:
+      path: "{{ app_instance_root }}"
+      state: directory
+      mode: 0755
+      group: "www-data"
+      owner: "www-data"
+
+  - name: "wsgi app for {{ app_instance_id }}"
+    template:
+      src: "flask_wsgi.j2"
+      dest: "{{ app_instance_root }}/{{ app_instance_id }}.wsgi"
+
+  - name: "module directory for {{ app_instance_id }}"
+    file:
+      path: "{{ app_instance_module }}"
+      state: directory
+      mode: 0755
+      group: "www-data"
+      owner: "www-data"
+
+  - name: "app module for {{ app_instance_id }}"
+    template:
+      src: "default_app.j2"
+      dest: "{{ app_instance_module}}/__init__.py"
+
+  - name: "requirements for {{ app_instance_id }}"
+    template:
+      src: "requirements.j2"
+      dest: "{{ app_instance_module }}/requirements.txt"
+
+#  - name: "Install virtualenv via pip"
+#    pip:
+#      name: virtualenv
+#      executable: pip3
+#
+#  - name: "install requirements and virtualenv"
+#    pip:
+#      requirements: "{{ app_instance_module }}/requirements.txt"
+#      virtualenv: "{{ app_instance_module }}/venv"
+#      virtualenv_python: "python3"
+#      state: present
+
+  - name: "install requirements"
+    pip:
+      requirements: "{{ app_instance_module }}/requirements.txt"
+      executable: pip3
+      state: present
+
+  - name: "directory static for {{ app_instance_id }}"
+    file:
+      path: "{{ app_instance_module }}/static"
+      state: directory
+      mode: 0755
+      group: "www-data"
+      owner: "www-data"
+
+  - name: "{{ rev_proxy }} config for {{ app_instance_id }}"
+    template:
+      src: "app_{{ rev_proxy }}.j2"
+      dest: "/etc/{{ rev_proxy }}/sites-available/{{ app_instance_id }}.conf"
+    notify: reload {{ rev_proxy }}
+
+  - include_role:
+      name: _app_logrotate
+
+  - name: "enable site for {{ app_domain }}"
+    file:
+      state: link
+      path: "/etc/{{ rev_proxy }}/sites-enabled/{{ app_instance_id }}.conf"
+      src: "/etc/{{ rev_proxy }}/sites-available/{{ app_instance_id }}.conf"
+    notify: reload {{ rev_proxy }}
+
+  - include_role:
+      name: _app_monit

@@ -1,0 +1,35 @@
+<VirtualHost *:80>
+   ServerName {{ app_domain | mandatory }}
+
+   RewriteEngine On
+   RewriteCond %{HTTPS} off
+   RewriteRule ^(.*)$ https://%{HTTP_HOST}$1 [R=301,L]
+</VirtualHost>
+
+<IfModule mod_ssl.c>
+   <VirtualHost *:443>
+
+     ServerName {{ app_domain }}
+
+     CustomLog {{ www_log }}/{{ app_instance_id }}/access.log combined
+     ErrorLog {{ www_log }}/{{ app_instance_id }}/error.log
+
+     SSLEngine on
+     SSLCertificateFile /etc/letsencrypt/live/{{ app_domain }}/fullchain.pem
+     SSLCertificateKeyFile /etc/letsencrypt/live/{{ app_domain }}/privkey.pem
+
+     WSGIScriptAlias / {{ app_instance_root }}/{{ app_instance_id }}.wsgi
+
+	 <Directory {{ app_instance_root }}/>
+       AllowOverride All
+       Require all granted
+     </Directory>
+
+     Alias /static {{ app_instance_module }}/static
+	 <Directory {{ app_instance_module }}/static/>
+       AllowOverride All
+       Require all granted
+	 </Directory>
+
+   </VirtualHost>
+</IfModule>

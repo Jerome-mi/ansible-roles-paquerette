@@ -1,0 +1,22 @@
+---
+  app_program: "Falsk API App"
+  log_type: "install"
+
+  app_domain: "{{ rest_app_domain }}"
+  app_version: "{{ rest_app_version }}"
+  app_instance_id: "{{ rest_app_instance_id }}"
+
+  app_flask_root: "{{ www_root }}/flask"
+  app_port: "5000"
+
+  app_instance_root: "{{ app_flask_root }}/{{ app_instance_id }}"
+  app_instance_www_root: "{{ app_instance_root }}"
+  app_instance_module: "{{ app_instance_root }}/{{ app_instance_id }}"
+  app_data: "none"
+  # app_key: "mykey"
+
+  database_name: "{{ app_instance_id }}_db"
+  database_user: "{{ app_instance_id }}_usr"
+  database_password: "{{ app_instance_id }}_pwd"
+  database_type: "None"
+

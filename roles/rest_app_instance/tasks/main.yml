@@ -25,7 +25,7 @@
       group: "www-data"
       owner: "www-data"
 
-  - name: "wsgi app for {{ app_instance_id }}"
+  - name: "wsgi entry point for {{ app_instance_id }}"
     template:
       src: "flask_wsgi.j2"
       dest: "{{ app_instance_root }}/{{ app_instance_id }}.wsgi"
@@ -38,15 +38,25 @@
       group: "www-data"
       owner: "www-data"
 
-  - name: "app module for {{ app_instance_id }}"
+  - name: "Check default app module doesn't exists"
+    stat:
+      path: "{{ app_instance_module}}/__init__.py"
+    register: stat_defmod
+
+  - name: "default app module for {{ app_instance_id }}"
     template:
       src: "default_app.j2"
       dest: "{{ app_instance_module}}/__init__.py"
+      group: "www-data"
+      owner: "www-data"
+    when: stat_defmod.stat.exists == False
 
   - name: "requirements for {{ app_instance_id }}"
     template:
       src: "requirements.j2"
       dest: "{{ app_instance_module }}/requirements.txt"
+      group: "www-data"
+      owner: "www-data"
 
 #  - name: "Install virtualenv via pip"
 #    pip:
@@ -73,6 +83,14 @@
       mode: 0755
       group: "www-data"
       owner: "www-data"
+
+#  - name: "directory templates for {{ app_instance_id }}"
+#    file:
+#      path: "{{ app_instance_module }}/templates"
+#      state: directory
+#      mode: 0755
+#      group: "www-data"
+#      owner: "www-data"
 
   - name: "{{ rev_proxy }} config for {{ app_instance_id }}"
     template:

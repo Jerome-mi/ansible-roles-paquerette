@@ -19,6 +19,7 @@
      SSLCertificateKeyFile /etc/letsencrypt/live/{{ app_domain }}/privkey.pem
 
      WSGIScriptAlias / {{ app_instance_root }}/{{ app_instance_id }}.wsgi
+     WSGIScriptReloading On
 
 	 <Directory {{ app_instance_root }}/>
        AllowOverride All

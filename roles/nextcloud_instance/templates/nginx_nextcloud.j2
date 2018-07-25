@@ -4,6 +4,11 @@ upstream php-handler{{ app_instance_id }} {
     #server unix:/var/run/php5-fpm.sock;
 }
 
+map $http_user_agent $log_ua {
+    ~Monit 0;
+    default 1;
+}
+
 server {
     listen 80;
     server_name {{ app_domain | mandatory }};
@@ -39,7 +44,7 @@ server {
     # Path to the root of your installation
     root {{ app_instance_root }}/;
 
-    access_log {{ www_log | mandatory }}/{{ app_instance_id }}/access.log;
+    access_log {{ www_log | mandatory }}/{{ app_instance_id }}/access.log combined if=$log_ua;
     error_log {{ www_log | mandatory }}/{{ app_instance_id }}/error.log;
 
     location = /robots.txt {

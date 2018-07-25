@@ -1,4 +1,4 @@
-check host {{ mattermost_domain }}  with address {{ mattermost_domain }}
+check host {{ mattermost_domain }} with address {{ mattermost_domain }}
    start program = "/bin/systemctl start {{ mattermost_instance_service }}"
    stop  program = "/bin/systemctl stop {{ mattermost_instance_service }}"
 

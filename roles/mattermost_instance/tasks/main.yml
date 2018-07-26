@@ -13,6 +13,9 @@
       dest: "{{ mattermost_instance_id }}.log"
       flat: yes
 
+  - include_role:
+      name: _uninstall_instance_script
+
   - name: create database {{ mattermost_database_name }}
     postgresql_db:
     # postgres=# CREATE DATABASE mattermost;

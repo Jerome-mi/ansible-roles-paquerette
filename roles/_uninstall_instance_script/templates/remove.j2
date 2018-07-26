@@ -1,0 +1,107 @@
+#!/usr/bin/env bash
+
+read -p "Couper le monitoring (y/N) ?"
+if [ "$REPLY" == "y" ]; then
+    sudo rm "/etc/monit/conf.d/{{ app_instance_id }}.conf"
+    sudo systemctl reload monit
+    sudo systemctl status monit
+fi
+
+read -p "Fermer le site (y/N) ?"
+if [ "$REPLY" == "y" ]; then
+    sudo rm "/etc/{{ rev_proxy }}/sites-enabled/{{ app_instance_id }}.conf"
+    sudo rm "/etc/{{ rev_proxy }}/sites-available/{{ app_instance_id }}.conf"
+    sudo rm "/etc/logrotate.d/{{ app_instance_id }}"
+    sudo rm -r "/mnt/vdb/log/{{ rev_proxy }}/{{ app_instance_id }}"
+    sudo systemctl reload {{ rev_proxy }}
+    sudo systemctl status {{ rev_proxy }}
+fi
+
+read -p "Supprimer les crons ratachés (y/N) ?"
+if [ "$REPLY" == "y" ]; then
+    sudo crontab -e
+fi
+
+read -p "Arreter les services (y/N) ?"
+if [ "$REPLY" == "y" ]; then
+    echo sudo systemctl stop SERVICEXXX
+fi
+
+read -p "Supprimer les regles ufw spécifiques (y/N) ?"
+if [ "$REPLY" == "y" ]; then
+    echo sudo ufw status verbose
+    echo sudo ufw delete allow xxx
+fi
+
+read -p "Relacher le certificat SSL (y/N) ?"
+if [ "$REPLY" == "y" ]; then
+    sudo certbot revoke --cert-path /etc/letsencrypt/live/{{ app_domain }}/cert.pem
+    sudo certbot delete --cert-name {{ app_domain }}
+    sudo certbot certificates
+fi
+
+read -p "Supprimer le paramétrage du backup (y/N) ?"
+if [ "$REPLY" == "y" ]; then
+    sudo rm {{ backup_item_dir }}/20-{{ app_instance_id }}.sh
+fi
+
+read -p "Supprimer les backups (y/N) ?"
+if [ "$REPLY" == "y" ]; then
+    sudo rm -r /mnt/vdb/backups/prod/{{ app_instance_id }}
+fi
+
+read -p "Supprimer les applicatifs (y/N) ?"
+if [ "$REPLY" == "y" ]; then
+    sudo rm -r /mnt/vdb/www/{{ app_instance_id }}
+fi
+
+read -p "Supprimer les données (y/N) ?"
+if [ "$REPLY" == "y" ]; then
+    sudo rm -r /mnt/vdb/www/{{ app_instance_id }}.data
+fi
+
+read -p "Supprimer les utilisateurs spécifiques (y/N) ?"
+if [ "$REPLY" == "y" ]; then
+    echo sudo deluser --remove-home USER
+fi
+
+echo Supprimer la base de données
+
+echo su postgres
+echo psql
+echo DROP DATABASE {{ database_name }};
+echo DROP USER {{ database_user }};
+echo \q
+
+echo mysql -u root -p
+echo mysql
+echo DROP DATABASE {{ database_name }};
+echo DROP USER {{ database_user }}@'localhost';
+
+
+#Enlever les paquets spécifiques
+
+# echo sudo apt remove xxx
+# echo sudo apt purge xxx
+# echo sudo apt autoremove
+# echo sudo rm /danger/etc/xxx/
+
+#Enlever les dépots spécifiques
+
+# echo sudo nano /etc/apt/sources.list.d/
+# echo sudo apt update
+
+#Enlever les containers spécifiques
+
+# echo sudo docker container ps
+# echo sudo docker container stop xxx
+# echo sudo docker container rm xxx
+# echo sudo docker container prune
+# echo sudo docker image rm xxx
+# echo sudo docker image prune
+
+read -p "retirer de l'inventaire (y/N) ?"
+if [ "$REPLY" == "y" ]; then
+    sudo rm "{{ base_prod_ansible_log }}/{{ app_instance_id }}.log"
+    sudo nano "{{ base_prod_ansible_log }}/inventory"
+fi

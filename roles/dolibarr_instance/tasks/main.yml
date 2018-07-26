@@ -4,6 +4,9 @@
       name: _app_log_inventory
 
   - include_role:
+      name: _uninstall_instance_script
+
+  - include_role:
       name: _letsencrypt_certificate
 
   - include_role:

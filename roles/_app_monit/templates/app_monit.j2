@@ -1,8 +1,9 @@
 check host {{ app_domain }} with address {{ app_domain }}
 
 if failed
-    url {{ monit_url | mandatory }}
-    content == {{ monit_content | mandatory }}
-    timeout 5 seconds
-    3 cycles
-  then alert
+  port 443
+  protocol https
+  request "{{ monit_request }}"
+  timeout 5 seconds
+  3 cycles
+then alert

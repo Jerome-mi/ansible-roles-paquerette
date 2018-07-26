@@ -19,5 +19,6 @@
   database_password: "{{ app_instance_id }}_pwd"
   database_type: "postgres"
 
-  monit_url: "https://{{ app_domain }}/index.php/login"
-  monit_content: "nextcloud"
+  monit_request: "/index.php/login"
+  # soon
+  monit_expect: "nextcloud"

@@ -23,3 +23,7 @@
     "hunspell-en-us",
     "hunspell-en-gb",
     ]
+
+  monit_request: "/"
+  # soon
+  monit_expect: ""

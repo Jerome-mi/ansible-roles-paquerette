@@ -1,0 +1,7 @@
+---
+  - name: "template for uninstall facility"
+    template:
+      src: remove.j2
+      dest: "{{ ansible_env.HOME }}/remove_{{ app_domain }}.sh"
+      mode: 0777
+

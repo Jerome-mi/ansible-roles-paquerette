@@ -4,6 +4,11 @@ upstream backend{{ mattermost_port }} {
 
 proxy_cache_path /var/cache/nginx/{{ mattermost_port }} levels=1:2 keys_zone=mattermost_cache:10m max_size=3g inactive=120m use_temp_path=off;
 
+map $http_user_agent $log_ua {
+    ~Monit 0;
+    default 1;
+}
+
 server {
    listen 80;
    server_name    {{ mattermost_domain | mandatory }};
@@ -23,7 +28,7 @@ server {
   ssl_prefer_server_ciphers on;
   ssl_session_cache shared:SSL:10m;
 
-   access_log {{ www_log | mandatory }}/{{ mattermost_instance_id }}/access.log;
+   access_log {{ www_log | mandatory }}/{{ mattermost_instance_id }}/access.log combined if=$log_ua;
    error_log {{ www_log | mandatory }}/{{ mattermost_instance_id }}/error.log;
 
    location ~ /.well-known {

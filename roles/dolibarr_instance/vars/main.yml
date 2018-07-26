@@ -17,3 +17,7 @@
   database_name: "{{ app_instance_id }}_db"
   database_user: "{{ app_instance_id }}_usr"
   database_password: "{{ app_instance_id }}_pwd"
+
+  monit_request: "/index.php/login"
+  # soon
+  monit_expect: ""

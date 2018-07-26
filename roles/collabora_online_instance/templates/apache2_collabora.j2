@@ -1,7 +1,9 @@
 <VirtualHost *:443>
   ServerName {{ collabora_domain | mandatory }}:443
 
-  CustomLog {{ www_log | mandatory }}/{{ collabora_domain }}/access.log combined
+
+  SetEnvIFNoCase User-Agent "Monit" dontlog
+  CustomLog {{ www_log | mandatory }}/{{ collabora_domain }}/access.log combined env=!dontlog
   ErrorLog {{ www_log | mandatory }}/{{ collabora_domain }}/error.log
 
   # SSL configuration, you may want to take the easy route instead and use Lets Encrypt!

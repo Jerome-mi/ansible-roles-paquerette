@@ -18,3 +18,7 @@
   database_user: "{{ app_instance_id }}_usr"
   database_password: "{{ app_instance_id }}_pwd"
   database_type: "postgres"
+
+  monit_request: "/index.php/login"
+  # soon
+  monit_expect: "nextcloud"

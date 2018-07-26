@@ -1,2 +1,4 @@
 check process apache2 with pidfile /var/run/apache2/apache2.pid
-   if failed host 127.0.0.1 port 443 then alert
+    start program = "/bin/systemctl start apache2.service"
+    stop  program = "/bin/systemctl stop apache2.service"
+    if failed host 127.0.0.1 port 443 then restart

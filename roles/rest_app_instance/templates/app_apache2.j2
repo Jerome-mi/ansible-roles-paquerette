@@ -11,7 +11,8 @@
 
      ServerName {{ app_domain }}
 
-     CustomLog {{ www_log }}/{{ app_instance_id }}/access.log combined
+     SetEnvIFNoCase User-Agent "Monit" dontlog
+     CustomLog {{ www_log }}/{{ app_instance_id }}/access.log combined env=!dontlog
      ErrorLog {{ www_log }}/{{ app_instance_id }}/error.log
 
      SSLEngine on
@@ -19,6 +20,7 @@
      SSLCertificateKeyFile /etc/letsencrypt/live/{{ app_domain }}/privkey.pem
 
      WSGIScriptAlias / {{ app_instance_root }}/{{ app_instance_id }}.wsgi
+     WSGIScriptReloading On
 
 	 <Directory {{ app_instance_root }}/>
        AllowOverride All

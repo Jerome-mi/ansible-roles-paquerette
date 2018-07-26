@@ -1,7 +1,9 @@
 check host {{ collabora_domain }}  with address {{ collabora_domain }}
 
-# HTTPS check
-    if failed
-          port 443 type tcpSSL protocol http
-       for 1 times within 1 cycles
-       then exec "{{ monit_sms_script }}"
+if failed
+  port 443
+  protocol https
+  request "{{ monit_request }}"
+  timeout 5 seconds
+  3 cycles
+then alert

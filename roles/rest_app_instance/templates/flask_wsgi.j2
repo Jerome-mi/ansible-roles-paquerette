@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# activating virtualenv if any
+# if using virtualenv
 # activate_this = '/path/to/virtualenv/bin/activate_this.py'
 # +execfile(activate_this, dict(__file__=activate_this)
 
@@ -10,4 +10,3 @@ logging.basicConfig(stream=sys.stderr)
 sys.path.insert(0,"{{ app_instance_root }}")
 
 from {{ app_instance_id }} import app as application
-# application.secret_key = 'Add your secret key'

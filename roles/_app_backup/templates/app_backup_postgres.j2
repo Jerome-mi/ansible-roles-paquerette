@@ -4,7 +4,7 @@ when = everyday at {{ backup_app_service_conf_time | mandatory }}
 rsync -aAx --del {{ app_instance_root }} {{ backup_prod_dir | mandatory }}/{{ app_instance_id }}
 rc=$?; if [[ $rc != 0 ]]; then error "app" ; fi
 
-#rsync -aAx --del {{ app_data }} {{ backup_prod_dir | mandatory }}/{{ nextcloud_instance_id }}.data
+#rsync -aAx --del {{ app_data }} {{ backup_prod_dir | mandatory }}/{{ app_instance_id }}.data
 #rc=$?; if [[ $rc != 0 ]]; then error "data" ; fi
 
 cd {{ backup_prod_dir | mandatory}}/{{ app_instance_id }}

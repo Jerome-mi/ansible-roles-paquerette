@@ -1,5 +1,11 @@
 ---
 
+  - name: "http check facility {{ base_root_opt }}/http_check.py"
+    template:
+      src: "http_check.py.j2"
+      dest: "{{ base_root_opt }}/http_check.py"
+      mode: "755"
+
   - name: "template for monitoring {{ app_domain }}"
     template:
       src: "app_monit.j2"

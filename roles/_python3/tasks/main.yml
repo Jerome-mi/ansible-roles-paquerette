@@ -1,6 +1,18 @@
 ---
 
   - name: "install python3"
-    apt: name="{{ item }}" state=present
-    with_items: "{{ python3_package_list }}"
+    apt:
+      name: "{{ python3_package }}"
+      state: present
+    loop: "{{ python3_package_list }}"
+    loop_control:
+      loop_var: python3_package
 
+  - name: "install modules"
+    pip:
+      name: "{{ python3_module }}"
+      executable: pip3
+      state: present
+    loop: "{{ python3_module_list }}"
+    loop_control:
+      loop_var: python3_module

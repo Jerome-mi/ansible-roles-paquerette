@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+
+import argparse
+import requests
+import re
+
+default_timeout = 1.0
+
+if __name__ == '__main__':
+    arg_parser = argparse.ArgumentParser()
+    arg_parser.description = \
+        'Check url status code is 200 and optionally content. Exit 0 when success, else 1'
+    arg_parser.add_argument("url",
+                            help='Url to check, must return status code 200')
+    arg_parser.add_argument("-c", "--contains",
+                            help="Search pattern in http response")
+    arg_parser.add_argument("-o", "--output-response",
+                            help="Print http response in stdout.",
+                            action="store_true", default=False)
+    arg_parser.add_argument("-s", "--silent",
+                            help="Silent mode, no errors, no output",
+                            action="store_true", default=False)
+    arg_parser.add_argument("-t", "--timeout",
+                            help="Timeout for request in seconds, default %s" % default_timeout)
+    args = arg_parser.parse_args()
+
+    r = re.compile(args.contains) if args.contains else None
+
+    request_timeout = float(args.timeout) if args.timeout else default_timeout
+
+    try:
+        response = requests.get(args.url, timeout=request_timeout)
+        if response.status_code != 200:
+            raise Exception("HTTP status code %s" % response.status_code)
+        if args.output_response:
+            print(response.text)
+        if r and not re.search(r, response.text):
+            raise Exception('Pattern not found : "%s"' % args.contains)
+    except Exception as E:
+        if not args.silent:
+            print(E)
+        exit(1)
+
+    if not (args.silent or args.output_response):
+        print('ok')

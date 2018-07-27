@@ -4,5 +4,5 @@ check program {{ app_domain }}
 
 with path "{{ base_root_opt }}/http_check.py -t {{ monit_timeout | default(3) }} -c {{ monit_expect | quote }} {{ monit_request | quote }}"
 
-if status != 0 then alert
+if status != 0 for 3 cycles then alert
 

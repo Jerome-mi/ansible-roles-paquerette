@@ -18,6 +18,5 @@
   database_user: "{{ app_instance_id }}_usr"
   database_password: "{{ app_instance_id }}_pwd"
 
-  monit_request: "/index.php/login"
-  # soon
-  monit_expect: ""
+  monit_request: "https://{{ app_domain }}/index.php/login"
+  monit_expect: "Dolibarr"

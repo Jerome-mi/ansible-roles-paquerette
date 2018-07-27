@@ -1,9 +1,7 @@
-check host {{ app_domain }} with address {{ app_domain }}
+check program {{ app_domain }} with path
 
-if failed
-  port 443
-  protocol https
-  request "{{ monit_request }}"
-  timeout 5 seconds
-  3 cycles
-then alert
+# by default timeout = 3 seconds, use monit_timeout variable to change
+
+"{{ base_root_opt }}/http_check.py -t {{ monit_timeout | default(3) }} -c {{ monit_expect | quote }} {{ monit_request | quote }}"
+
+if status != 0 then alert

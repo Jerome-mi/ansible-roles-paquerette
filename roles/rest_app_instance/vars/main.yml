@@ -20,5 +20,5 @@
   database_password: "{{ app_instance_id }}_pwd"
   database_type: "None"
 
-  monit_url: "https://{{ app_instance_www_root }}"
-  monit_content: "*"
+  monit_request: "https://{{ app_instance_www_root }}"
+  # monit_expect: ""

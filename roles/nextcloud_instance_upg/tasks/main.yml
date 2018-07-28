@@ -25,14 +25,7 @@
   - name: "disable site for {{ app_domain }}"
     file:
       state: absent
-      path: "/etc/nginx/sites-enabled/{{ app_instance_id }}"
-    when: rev_proxy == "nginx"
-
-  - name: "disable site for {{ app_domain }}"
-    file:
-      state: absent
-      path: "/etc/apache2/sites-enabled/{{ app_instance_id }}.conf"
-    when: rev_proxy == "apache2"
+      path: "/etc/{{ rev_proxy }}/sites-enabled/{{ app_instance_id }}.conf"
 
   - name: "reload {{ rev_proxy }}"
     service: name={{ rev_proxy }} state=reloaded
@@ -61,17 +54,10 @@
       state: directory
       mode: 0777
 
-  - name: "backup nginx config"
-    command: "cp /etc/nginx/sites-available/{{ app_instance_id }} {{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}/{{ rev_proxy }}"
-    args:
-      creates: "{{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}/{{ rev_proxy }}/{{ app_instance_id }}"
-    when: rev_proxy == "nginx"
-
-  - name: "backup apache2 config"
-    command: "cp /etc/apache2/sites-available/{{ app_instance_id }}.conf {{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}/{{ rev_proxy }}"
+  - name: "backup {{ rev_proxy }} config"
+    command: "cp /etc/{{ rev_proxy }}/sites-available/{{ app_instance_id }}.conf {{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}/{{ rev_proxy }}"
     args:
       creates: "{{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}/{{ rev_proxy }}/{{ app_instance_id }}.conf"
-    when: rev_proxy == "apache2"
 
   - name: "backup app"
     command: "rsync -aAx --del {{ www_root }}/{{ app_instance_id}} {{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}/app"
@@ -152,16 +138,8 @@
   - name: "enable site for {{ app_domain }}"
     file:
       state: link
-      path: "/etc/nginx/sites-enabled/{{ app_instance_id }}"
-      src: "/etc/nginx/sites-available/{{ app_instance_id }}"
-    when: rev_proxy == "nginx"
-
-  - name: "enable site for {{ app_domain }}"
-    file:
-      state: link
-      path: "/etc/apache2/sites-enabled/{{ app_instance_id }}.conf"
-      src: "/etc/apache2/sites-available/{{ app_instance_id }}.conf"
-    when: rev_proxy == "apache2"
+      path: "/etc/{{ rev_proxy }}/sites-enabled/{{ app_instance_id }}.conf"
+      src: "/etc/{{ rev_proxy }}/sites-available/{{ app_instance_id }}.conf"
 
   - name: "reload {{ rev_proxy }}"
     service: name={{ rev_proxy }} state=reloaded

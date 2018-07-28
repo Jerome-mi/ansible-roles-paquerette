@@ -6,10 +6,6 @@
   nextcloud_default_admin: "admin"
   nextcloud_default_password: "admin"
 
-  app_domain: "{{ nextcloud_domain | mandatory }}"
-  app_version: "{{ nextcloud_version | mandatory }}"
-  app_instance_id: "{{ nextcloud_instance_id | mandatory }}"
-
   app_instance_root: "{{ www_root }}/{{ app_instance_id }}"
   app_instance_www_root: "{{ app_instance_root }}"
   app_data: "{{ www_root }}/{{ app_instance_id }}.data"
@@ -19,6 +15,5 @@
   database_password: "{{ app_instance_id }}_pwd"
   database_type: "postgres"
 
-  monit_request: "/index.php/login"
-  # soon
+  monit_request: "https://{{ app_domain }}/index.php/login"
   monit_expect: "nextcloud"

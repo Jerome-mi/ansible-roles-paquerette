@@ -17,23 +17,22 @@
   - name: create temporary download directory
     tempfile:
       state: directory
-      suffix: "_nextcloud_new"
-    register: _tmp_new_nextcloud
+      suffix: "_app_new"
+    register: _tmp_new_app
     changed_when: False
 
-  - name: "retrieving nextcloud version {{ nextcloud_version }} in {{ _tmp_new_nextcloud.path }}"
+  - name: "retrieving nextcloud version {{ app_version }} in {{ _tmp_new_app.path }}"
     unarchive:
-    #  wget https://releases.nextcloud.com/X.X.X/nextcloud-X.X.X-linux-amd64.tar.gz
-      src: "https://download.nextcloud.com/server/releases/nextcloud-{{ nextcloud_version }}.tar.bz2"
-      dest: "{{ _tmp_new_nextcloud.path }}"
+      src: "https://download.nextcloud.com/server/releases/nextcloud-{{ app_version }}.tar.bz2"
+      dest: "{{ _tmp_new_app.path }}"
       remote_src: True
       group: "www-data"
       owner: "www-data"
     args:
       creates: "{{ app_instance_root }}"
 
-  - name: "Move {{ _tmp_new_nextcloud.path }}/nextcloud to {{ app_instance_root }}"
-    command: "/bin/mv {{ _tmp_new_nextcloud.path }}/nextcloud {{ app_instance_root }}"
+  - name: "Move {{ _tmp_new_app.path }}/nextcloud to {{ app_instance_root }}"
+    command: "/bin/mv {{ _tmp_new_app.path }}/nextcloud {{ app_instance_root }}"
     args:
       creates: "{{ app_instance_root }}"
 
@@ -51,9 +50,9 @@
       src: "{{ app_data }}"
       path: "{{ app_instance_root }}/data"
 
-  - name: "remove {{ _tmp_new_nextcloud.path }}"
+  - name: "remove {{ _tmp_new_app.path }}"
     file:
-      path: "{{ _tmp_new_nextcloud.path }}"
+      path: "{{ _tmp_new_app.path }}"
       state: absent
     changed_when: False
 
@@ -82,17 +81,17 @@
   - include_role:
       name: _app_logrotate
 
-  - name: "template {{ rev_proxy }}_nextcloud.j2 {{ nextcloud_instance_id }}"
+  - name: "template {{ rev_proxy }}_nextcloud.j2 {{ app_instance_id }}"
     template:
       src: "{{ rev_proxy }}_nextcloud.j2"
-      dest: "/etc/{{ rev_proxy }}/sites-available/{{ nextcloud_instance_id }}.conf"
+      dest: "/etc/{{ rev_proxy }}/sites-available/{{ app_instance_id }}.conf"
     notify: reload {{ rev_proxy }}
 
-  - name: "enable site for {{ nextcloud_domain }}"
+  - name: "enable site for {{ app_domain }}"
     file:
       state: link
-      path: "/etc/{{ rev_proxy }}/sites-enabled/{{ nextcloud_instance_id }}.conf"
-      src: "/etc/{{ rev_proxy }}/sites-available/{{ nextcloud_instance_id }}.conf"
+      path: "/etc/{{ rev_proxy }}/sites-enabled/{{ app_instance_id }}.conf"
+      src: "/etc/{{ rev_proxy }}/sites-available/{{ app_instance_id }}.conf"
     notify: reload {{ rev_proxy }}
 
   - include_role:

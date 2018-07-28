@@ -3,12 +3,7 @@
   app_program: "Nextcloud"
   log_type: "upgrade"
 
-  app_domain: "{{ nextcloud_domain | mandatory }}"
-  app_version: "{{ nextcloud_version | mandatory }}"
-  app_oldversion: "{{ nextcloud_oldversion | mandatory }}"
-  app_instance_id: "{{ nextcloud_instance_id | mandatory }}"
-
   app_instance_root: "{{ www_root }}/{{ app_instance_id }}"
 
   database_type: "postgres"
-  database_name: "{{ nextcloud_database_name }}"
+  database_name: "{{ app_instance_id }}_db"

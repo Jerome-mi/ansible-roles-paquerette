@@ -3,20 +3,24 @@
   - include_role:
       name: dolibarr_instance
     vars:
-      app_domain: "{{ item.dolibarr_domain}}"
-      app_instance_id: "{{ item.dolibarr_instance_id }}"
-      app_version: "{{ item.dolibarr_version }}"
-      database_type: "{{ item.dolibarr_database_type }}"
-    when: item.dolibarr_oldversion == ""
+      app_domain: "{{ inst.dolibarr_domain}}"
+      app_instance_id: "{{ inst.dolibarr_instance_id }}"
+      app_version: "{{ inst.dolibarr_version }}"
+      database_type: "{{ inst.dolibarr_database_type }}"
+    when: inst.run == "install"
     loop: "{{ dolibarr_instances }}"
+    loop_control:
+      loop_var: inst
 
   - include_role:
       name: dolibarr_instance_upg
     vars:
-      app_domain: "{{ item.dolibarr_domain}}"
-      app_instance_id: "{{ item.dolibarr_instance_id }}"
-      app_version: "{{ item.dolibarr_version }}"
-      app_oldversion: "{{ item.dolibarr_oldversion }}"
-      database_type: "{{ item.dolibarr_database_type }}"
-    when: item.dolibarr_oldversion != ""
+      app_domain: "{{ inst.dolibarr_domain}}"
+      app_instance_id: "{{ inst.dolibarr_instance_id }}"
+      app_version: "{{ inst.dolibarr_version }}"
+      app_oldversion: "{{ inst.dolibarr_oldversion | mandatory }}"
+      database_type: "{{ inst.dolibarr_database_type }}"
+    when: inst.run == "upgrade"
     loop: "{{ dolibarr_instances }}"
+    loop_control:
+      loop_var: inst

@@ -3,13 +3,6 @@
   app_program: "Dolibarr"
   log_type: "upgrade"
 
-#  app_domain: "{{ dolibarr_domain | mandatory }}"
-#  app_version: "{{ dolibarr_version | mandatory }}"
-#  app_oldversion: "{{ dolibarr_oldversion | mandatory }}"
-#  app_instance_id: "{{ dolibarr_instance_id | mandatory }}"
-#  database_type: "{{ dolibarr_database_type }}"
-
-
   app_src: "https://sourceforge.net/projects/dolibarr/files/Dolibarr%20ERP-CRM/{{ app_version }}/dolibarr-{{ app_version }}.tgz/download"
   app_src_root_name: "dolibarr-{{ app_version }}"
   app_instance_root: "{{ www_root }}/{{ app_instance_id }}"

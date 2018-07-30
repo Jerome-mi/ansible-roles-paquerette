@@ -2,7 +2,7 @@ check program {{ app_domain }}
 
 # by default timeout = 3 seconds, use monit_timeout variable to change it
 
-with path "{{ base_root_opt }}/http_check.py -t {{ monit_timeout | default(3) }} {{ monit_request | quote }}"
+with path "{{ base_root_opt }}/http_check.py -t {{ monit_timeout }} -c {{ monit_expect }} {{ monit_request | quote }}"
 
 if status != 0 for 3 cycles then alert
 

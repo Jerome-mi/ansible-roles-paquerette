@@ -13,7 +13,6 @@
   nextcloud_oldversion: 12.0.4
   nextcloud_version: 12.0.5
   nextcloud_instance_id: "nc_mydomain"
-  nextcloud_database_name: "{{ nextcloud_instance_id }}_db"
 
   # Mattermost
   mattermost_domain: "team.mydomain.org"

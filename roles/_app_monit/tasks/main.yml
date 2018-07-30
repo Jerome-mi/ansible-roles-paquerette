@@ -8,6 +8,14 @@
 
   - name: "template for monitoring {{ app_domain }}"
     template:
+      src: "app_monit_expect.j2"
+      dest: "/etc/monit/conf.d/{{ app_instance_id }}.conf"
+    when: monit_expect != ""
+    notify: reload monit
+
+  - name: "template for monitoring {{ app_domain }}"
+    template:
       src: "app_monit.j2"
       dest: "/etc/monit/conf.d/{{ app_instance_id }}.conf"
+    when: monit_expect == ""
     notify: reload monit

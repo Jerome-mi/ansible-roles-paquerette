@@ -169,8 +169,5 @@
       dest: "/etc/logrotate.d/{{ collabora_domain }}"
       mode: 0644
 
-  - name: "template for monitoring {{ collabora_domain }}"
-    template:
-      src: collabora_monit.j2
-      dest: "/etc/monit/conf.d/{{ collabora_domain }}.conf"
-    notify: reload monit
+  - include_role:
+    name: _app_monit

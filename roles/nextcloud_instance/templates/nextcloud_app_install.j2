@@ -4,8 +4,8 @@ cd {{ app_instance_root }}
 
 sudo -u www-data php occ maintenance:install --database "pgsql" --database-name "{{ database_name }}"  --database-user "{{ database_user }}" --database-pass "{{ database_password }}" --admin-user "{{ nextcloud_default_admin | mandatory}}" --admin-pass "{{ nextcloud_default_password | mandatory }}"
 
-sudo -u www-data php occ config:system:set trusted_domains 0 --value="{{ nextcloud_domain }}"
-sudo -u www-data php occ config:system:set overwrite.cli.url --value="https://{{ nextcloud_domain }}"
+sudo -u www-data php occ config:system:set trusted_domains 0 --value="{{ app_domain }}"
+sudo -u www-data php occ config:system:set overwrite.cli.url --value="https://{{ app_domain }}"
 
 sudo -u www-data php occ config:system:set redis host port
 

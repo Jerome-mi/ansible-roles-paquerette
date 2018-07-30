@@ -1,9 +1,0 @@
-check host {{ collabora_domain }}  with address {{ collabora_domain }}
-
-if failed
-  port 443
-  protocol https
-  request "{{ monit_request }}"
-  timeout 5 seconds
-  3 cycles
-then alert

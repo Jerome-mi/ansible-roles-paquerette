@@ -24,6 +24,5 @@
     "hunspell-en-gb",
     ]
 
-  monit_request: "/"
-  # soon
-  monit_expect: ""
+  monit_request: "https://{{ collabora_domain }}/hosting/discovery"
+  monit_expect: "discovery"

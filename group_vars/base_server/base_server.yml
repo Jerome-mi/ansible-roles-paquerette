@@ -147,6 +147,13 @@
   # comment_for_sms_push: "moved"
   #mail_for_sms_push: "moved"
 
+  # request, timeout and expected response for monitoring applications
+  monit_request: ""
+  # regular expression pattern expected, optional
+  monit_expect: ""
+  # default timeout
+  monit_timeout: 3
+
 #############################################
 #  SCRIPT UTILITY
 #############################################

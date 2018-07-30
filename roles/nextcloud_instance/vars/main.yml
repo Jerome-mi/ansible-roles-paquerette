@@ -16,4 +16,4 @@
   database_type: "postgres"
 
   monit_request: "https://{{ app_domain }}/index.php/login"
-  monit_expect: "nextcloud"
+  # monit_expect: ""

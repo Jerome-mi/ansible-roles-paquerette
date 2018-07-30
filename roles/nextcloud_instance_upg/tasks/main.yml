@@ -15,7 +15,6 @@
 
   - name: "retrieving nextcloud version {{ app_version }} in {{ _tmp_new_nextcloud.path }}"
     unarchive:
-    #  wget https://releases.nextcloud.com/X.X.X/nextcloud-X.X.X-linux-amd64.tar.gz
       src: "https://download.nextcloud.com/server/releases/nextcloud-{{ app_version }}.tar.bz2"
       dest: "{{ _tmp_new_nextcloud.path }}"
       remote_src: True

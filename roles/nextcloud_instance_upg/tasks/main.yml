@@ -102,13 +102,6 @@
       remote_src: yes
       backup: yes
 
-  - name: "restore {{ app_instance_root }}/ansible_base_install.done"
-    copy:
-      src: "{{ backup_version_dir }}/{{ app_instance_id }}/{{ app_oldversion }}/app/{{ app_instance_id}}/ansible_base_install.done"
-      dest: "{{ app_instance_root }}/ansible_base_install.done"
-      remote_src: yes
-      backup: yes
-
   # cron task or something ? may log while migrating
   - name: "remove default data directory"
     file:

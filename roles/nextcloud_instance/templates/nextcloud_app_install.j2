@@ -31,5 +31,3 @@ sudo -u www-data php occ config:system:set knowledgebaseenabled --value="true" -
 sudo -u www-data php occ user:setting admin settings lang "fr"
 
 sudo -u www-data php occ background:cron
-
-echo "Done" > {{ app_instance_root }}/ansible_base_install.done

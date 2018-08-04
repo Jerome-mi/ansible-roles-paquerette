@@ -56,24 +56,34 @@
       state: absent
     changed_when: False
 
-  - name: "nextcloud base app configuration template"
-    template:
-      src: nextcloud_app_install.j2
-      dest: "{{ app_instance_root }}/ansible_base_install.sh"
-      mode: 0700
-
-  - name: "nextcloud base app configuration"
-    command: "{{ app_instance_root }}/ansible_base_install.sh"
-    register: __ansible_base_install
-    args:
-      creates: "{{ app_instance_root }}/ansible_base_install.done"
-
   - name: "cron mode for background jobs"
     cron:
       name: "{{ app_instance_root }}/cron.php >/dev/null 2>&1"
       user: "www-data"
       minute: "*/15"
       job: "php -f {{ app_instance_root }}/cron.php >/dev/null 2>&1"
+
+  - name: "test absence of config.php (determines first install)"
+    stat:
+      path: "{{ app_instance_root }}/config/config.php"
+    register: config
+
+  - name: "template for install script"
+    template:
+      src: "nextcloud_app_install.j2"
+      dest: "{{ app_instance_root }}/ansible_base_install.sh"
+      mode: 0700
+    when: not (config.stat.exists)
+
+  - name: "run install script using occ (no idempotency) "
+    command: "{{ app_instance_root }}/ansible_base_install.sh"
+    when: not (config.stat.exists)
+
+  - name: "remove install script"
+    file:
+      path: "{{ app_instance_root }}/ansible_base_install.sh"
+      state: absent
+    when: not (config.stat.exists)
 
   - include_role:
       name: _app_backup

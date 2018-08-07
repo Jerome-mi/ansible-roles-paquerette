@@ -13,11 +13,23 @@
       dest: "{{ backup_item_dir }}/10-postgres.sh"
       mode: 0640
 
+  - name: "remove old postgres monitoring file"
+    file:
+      path: "/etc/monit/conf.d/postgres9.5.conf"
+      state: absent
+
   - name: "template for monitoring postgres9.5"
     template:
       src: "postgres9.5.monit.j2"
-      dest: "/etc/monit/conf.d/postgres9.5.conf"
+      dest: "/etc/monit/conf.d/postgres.conf"
     notify: reload monit
+    when: ansible_distribution_release == 'xenial'
 
+  - name: "template for monitoring postgres10"
+    template:
+      src: "postgres10.monit.j2"
+      dest: "/etc/monit/conf.d/postgres.conf"
+    notify: reload monit
+    when: ansible_distribution_release == 'bionic'
 
 

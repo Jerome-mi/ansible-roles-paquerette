@@ -1,6 +1,6 @@
 ---
 
-  # every server can be an backup host
+  # every server can be an backup host for other servers
   - name: "directory for backup as ext backup host"
     file:
       state: directory
@@ -8,14 +8,23 @@
       owner: "{{ ext_backup_user }}"
       group: "{{ ext_backup_user }}"
 
-  - name: "directory for key file for ext backup host"
+  - name: "public key in authorized keys for ext backup host"
+    authorized_key:
+      user: "{{ ext_backup_user }}"
+      state: present
+      # waiting for template in lookup filepath
+      # lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub')
+      key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/backup-store/id_rsa.pub') }}"
+
+  # private key file to connect to external backup, directory, then key
+  - name: "directory for key file for ext backup client"
     file:
       state: directory
       path: "{{ ext_backup_key_path }}"
       owner: "{{ ext_backup_user }}"
       group: "{{ ext_backup_user }}"
 
-  - name: "key file for scp to ext backup host"
+  - name: "key file for scp for ext backup client"
     copy:
       src: "{{ src_key_file }}"
       dest: "{{ ext_backup_key_path }}"
@@ -23,6 +32,7 @@
       group: "{{ ext_backup_user }}"
       mode: 0600
 
+  # if the public key is not present
   - name: "check known host for {{ ext_backup_host }}"
     command: "ssh-keygen -F {{ ext_backup_host }}"
     changed_when: False
@@ -34,6 +44,7 @@
       path: "/root/.ssh"
       state: directory
 
+  # add public key in known host for client
   - name: "ssh-keyscan {{ ext_backup_host }} >> /root/.ssh/known_hosts"
     shell: "ssh-keyscan {{ ext_backup_host }} >> /root/.ssh/known_hosts"
     changed_when: False

@@ -2,12 +2,17 @@
 
   apache_default_domain: "{{ ansible_fqdn }}"
 
-  apache_package_list: [
+  apache_package_list_ubuntu_xenial: [
     "apache2",
     "libapache2-mod-fastcgi",
     "libapache2-mod-wsgi-py3",]
 
-  apache_module_list: [
+  apache_package_list_ubuntu_bionic: [
+    "apache2",
+#    "libapache2-mod-fastcgi",
+    "libapache2-mod-wsgi-py3",]
+
+  apache_module_list_xenial: [
     "proxy",
     "proxy_http",
     "proxy_connect",
@@ -21,5 +26,22 @@
     "rewrite",
     "setenvif",
     "fastcgi",
+    "wsgi"
+    ]
+
+  apache_module_list_bionic: [
+    "proxy",
+    "proxy_http",
+    "proxy_connect",
+    "proxy_wstunnel",
+    "ssl",
+    "dir",
+    "env",
+    "headers",
+    "mime",
+    "proxy_fcgi",
+    "rewrite",
+    "setenvif",
+#    "fastcgi",
     "wsgi"
     ]

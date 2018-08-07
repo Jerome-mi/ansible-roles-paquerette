@@ -1,8 +1,14 @@
 ---
 
-  - name: "install apache2"
+  - name: "install apache2 for {{ ansible_distribution_release }}"
     apt: name="{{ item }}" state=present
-    with_items: "{{ apache_package_list }}"
+    with_items: "{{ apache_package_list_ubuntu_xenial }}"
+    when: ansible_distribution_release == 'xenial'
+
+  - name: "install apache2 for {{ ansible_distribution_release }}"
+    apt: name="{{ item }}" state=present
+    with_items: "{{ apache_package_list_ubuntu_bionic }}"
+    when: ansible_distribution_release == 'bionic'
 
   - name: " ServerName {{ apache_default_domain }}"
     lineinfile:
@@ -17,11 +23,21 @@
     service: name=apache2 state=restarted
     when: ServerName.changed
 
-  - apache2_module:
+  - name: "apache2 module for {{ ansible_distribution_release }}"
+    apache2_module:
       name: "{{ item }}"
       state: present
-    with_items: "{{ apache_module_list }}"
+    with_items: "{{ apache_module_list_xenial }}"
     notify: restart apache2
+    when: ansible_distribution_release == 'xenial'
+
+  - name: "apache2 module for {{ ansible_distribution_release }}"
+    apache2_module:
+      name: "{{ item }}"
+      state: present
+    with_items: "{{ apache_module_list_bionic }}"
+    notify: restart apache2
+    when: ansible_distribution_release == 'bionic'
 
   - name: "ufw: Allow Apache Full"
     ufw:

@@ -2,7 +2,7 @@
 
 *Proposition de rôles ansible **minimaux**, pour mettre en oeuvre et maintenir des applications sur des machines auto hébergées ou dans le cloud.* 
 
-Systèmes supportés : **Ubuntu 16.04 LTS**, **Ubuntu 18.04 LTS**, plus maintenu pour debian
+Systèmes supportés : **Ubuntu 16.04 LTS**, **Ubuntu 18.04 LTS**
 
 Choix, discutables ! :
 

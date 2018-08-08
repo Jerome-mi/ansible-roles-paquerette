@@ -4,6 +4,7 @@ when = 01 at {{ ext_backup_time | mandatory }}
 tar -czf /tmp/prod.Month.tar.gz {{ backup_prod_dir }}
 rc=$?; if [[ $rc != 0 ]]; then error "Month prod archive" ; fi
 
+ssh -i {{ ext_backup_key_file | mandatory | quote }} {{ ext_backup_user | mandatory }}@{{ ext_backup_host | mandatory }} 'mkdir {{ ext_backup_dir | mandatory }}'
 scp -i {{ ext_backup_key_file | mandatory | quote }} /tmp/prod.Month.tar.gz {{ ext_backup_user | mandatory }}@{{ ext_backup_host | mandatory }}:{{ ext_backup_dir | mandatory }}
 rc=$?; if [[ $rc != 0 ]]; then error "Month prod ext copy" ; fi
 

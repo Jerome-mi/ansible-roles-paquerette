@@ -8,7 +8,7 @@
 
 - import_tasks: base_backup.yml
 
-- import_tasks: base_cross_backup.yml
+- import_tasks: base_ext_backup.yml
 
 - import_tasks: base_monitoring.yml
 

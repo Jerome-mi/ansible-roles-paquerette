@@ -7,26 +7,12 @@
       mode: 0600
     when: log_type == "install"
 
-#  - name: "fetch check log"
-#    fetch:
-#      src: "{{ base_prod_ansible_log }}/{{ app_instance_id }}.log"
-#      dest: "{{ app_instance_id }}.log"
-#      flat: yes
-#    when: log_type == "install"
-
   - name: "template log inventory - upgrade"
     template:
       src: app_log_upg.j2
       dest: "{{ base_prod_ansible_log }}/{{ app_instance_id }}.{{ app_version }}.log"
       mode: 0600
     when: log_type == "upgrade"
-
-#  - name: "fetch check log"
-#    fetch:
-#      src: "{{ base_prod_ansible_log }}/{{ app_instance_id }}.{{ app_version }}.log"
-#      dest: "{{ app_instance_id }}.log"
-#      flat: yes
-#    when: log_type == "upgrade"
 
   - name: "inventory"
     lineinfile:

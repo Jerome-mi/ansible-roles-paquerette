@@ -36,3 +36,9 @@
       src: opt_backup_day.j2
       dest: "{{ backup_item_dir }}/20-prod-opt.sh"
       mode: 0640
+
+  - name: "template {{ base_prod_applications }}"
+    template:
+      src: app_backup_day.j2
+      dest: "{{ backup_item_dir }}/20-prod-app.sh"
+      mode: 0640

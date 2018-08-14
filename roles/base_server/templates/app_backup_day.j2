@@ -1,0 +1,6 @@
+
+# Note: the spaces around the equal sign ('=') are optional.
+when = everyday at {{ backup_app_service_conf_time | mandatory }}
+
+rsync -aAx --del {{ base_prod_applications }} {{ backup_app_dir | mandatory}}
+rc=$?; if [[ $rc != 0 ]]; then error "paquerette server prod/app" ; fi

@@ -64,6 +64,9 @@
 
   base_tmp_path: "{{ base_prod_path }}/tmp"
 
+  base_prod_applications: "{{ base_prod_path }}/app"
+
+
 #############################################
 # SMTP postmaster@mydomain.org
 #############################################
@@ -92,6 +95,7 @@
   backup_prod_dir: "{{ backup_base_dir }}/prod"
   backup_version_dir: "{{ backup_base_dir }}/version"
   backup_opt_dir: "{{ backup_base_dir }}/opt"
+  backup_app_dir: "{{ backup_base_dir }}/app"
 
 # stop and start web services for backup
   backup_web_stop_hour: "3"

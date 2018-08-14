@@ -1,6 +1,7 @@
 ---
 
   # every server can be an backup host for other servers
+  # backup is made in prod partition linked in /home system partition
   - name: "directory for backup as ext backup host"
     file:
       state: directory
@@ -8,13 +9,19 @@
       owner: "{{ ext_backup_user }}"
       group: "{{ ext_backup_user }}"
 
+  - name: "link to the directory in /home/{{ ext_backup_user }}"
+    file:
+      state: link
+      src: "{{ ext_backup_root_dir }}"
+      path: "{{ ext_backup_root_link }}"
+      owner: "{{ ext_backup_user }}"
+      group: "{{ ext_backup_user }}"
+
   - name: "public key in authorized keys for ext backup host"
     authorized_key:
       user: "{{ ext_backup_user }}"
       state: present
-      # waiting for template in lookup filepath
-      # lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub')
-      key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/backup-store/id_rsa.pub') }}"
+      key: "{{ lookup('file', lookup('env','HOME') + '{{ src_key_file }}' + '.pub') }}"
 
   # private key file to connect to external backup, directory, then key
   - name: "directory for key file for ext backup client"
@@ -26,7 +33,7 @@
 
   - name: "key file for scp for ext backup client"
     copy:
-      src: "{{ src_key_file }}"
+      src: "~{{ src_key_file }}"
       dest: "{{ ext_backup_key_path }}"
       owner: "{{ ext_backup_user }}"
       group: "{{ ext_backup_user }}"

@@ -16,6 +16,11 @@
       state: directory
       path: "{{ base_prod_options }}"
 
+  - name: "{{ base_prod_applications }}"
+    file:
+      state: directory
+      path: "{{ base_prod_applications }}"
+
   - name: "Move /opt to {{ base_root_opt }}"
     command: "/bin/mv /opt {{ base_root_opt }}"
     args:

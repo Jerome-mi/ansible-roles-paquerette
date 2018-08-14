@@ -27,7 +27,7 @@
       minute: "{{ backup_monit_stop_minute }}"
       job: "/bin/systemctl stop monit.service"
 
-  - name: "cron start monit for backup"
+  - name: "cron start monit after backup"
     cron:
       name: "start monit"
       hour: "{{ backup_monit_start_hour | mandatory }}"

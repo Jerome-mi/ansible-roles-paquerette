@@ -9,7 +9,7 @@
       owner: "{{ ext_backup_user }}"
       group: "{{ ext_backup_user }}"
 
-  - name: "link to the directory in /home/{{ ext_backup_user }}"
+  - name: "ext backup : link to the directory in /home/{{ ext_backup_user }}"
     file:
       state: link
       src: "{{ ext_backup_root_dir }}"

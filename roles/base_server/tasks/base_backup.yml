@@ -14,30 +14,30 @@
       line: 'reportinfo = yes'
       state: present
 
-  - name: "{{ backup_prod_dir }}"
+  - name: "backup production directory {{ backup_prod_dir }}"
     file:
       state: directory
       path: "{{ backup_prod_dir }}"
 
-  - name: "template day"
+  - name: "backup template day"
     template:
       src: backup.day.j2
       dest: "{{ backup_item_dir }}/50-day.sh"
       mode: 0640
 
-  - name: "template month"
+  - name: "backup template month"
     template:
       src: backup.month.j2
       dest: "{{ backup_item_dir }}/50-month.sh"
       mode: 0640
 
-  - name: "template {{ base_prod_options }}"
+  - name: "backup template {{ base_prod_options }}"
     template:
       src: opt_backup_day.j2
       dest: "{{ backup_item_dir }}/20-prod-opt.sh"
       mode: 0640
 
-  - name: "template {{ base_prod_applications }}"
+  - name: "backup template {{ base_prod_applications }}"
     template:
       src: app_backup_day.j2
       dest: "{{ backup_item_dir }}/20-prod-app.sh"

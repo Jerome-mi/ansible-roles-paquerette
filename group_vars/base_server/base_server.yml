@@ -1,4 +1,10 @@
 ---
+
+#############################################
+# Global configuration variables
+#############################################
+# when specified, some varaiable must be set in inventory or "secret" files
+
 #############################################
 # BASE PACKAGES
 #############################################
@@ -12,18 +18,14 @@
     "curl",
     # needed for timezone
     "dbus",
-    # needed for human beings
     "htop",
     "iftop",
     "iotop",
     # needed for smtp ssl
     "libsasl2-modules",
     "monit",
-    # needed for human beings
     "nano",
     "nfs-common",
-#    "python3",
-    # needed for human beings
     "tree",
     "python-pip",
     "ufw",
@@ -31,7 +33,7 @@
     ]
 
 #############################################
-# SCHEDULING BACKUP AND LETSENCRYPT
+# SCHEDULING BACKUP AND LETSENCRYPT RENEW
 #############################################
 
 # 03:05 backup_monit_stop
@@ -48,22 +50,17 @@
 # 06:00 monit_start_anyway_hour
 
 
-
 #############################################
 # FILE SYSTEM
 #############################################
+  # allow to use different partition form /
   base_prod_path: "/mnt/vdb"
 
   base_prod_ansible_log: "{{ base_prod_path }}/ansible_log"
-
   base_prod_options: "{{ base_prod_path }}/opt"
-
   base_prod_log: "{{ base_prod_path }}/log"
-
   base_root_opt: "{{ base_prod_path }}/opt-root"
-
   base_tmp_path: "{{ base_prod_path }}/tmp"
-
   base_prod_applications: "{{ base_prod_path }}/app"
 
 
@@ -89,12 +86,19 @@
 #############################################
 # BACKUP
 #############################################
+  # backup scripts are here
   backup_item_dir: "/etc/backup.d"
 
+  # backup destinations
+  # base destination
   backup_base_dir: "{{ base_prod_path | mandatory }}/backups"
+  # production daily backup
   backup_prod_dir: "{{ backup_base_dir }}/prod"
+  # used for upgrades of instances
   backup_version_dir: "{{ backup_base_dir }}/version"
+  # for opt components
   backup_opt_dir: "{{ backup_base_dir }}/opt"
+  # for app not in www root
   backup_app_dir: "{{ backup_base_dir }}/app"
 
 # stop and start web services for backup
@@ -113,16 +117,16 @@
 # in ../secret/base_backup.yml
 #  ext_backup_host: "my.backup.host"
 #  ext_backup_user: "my_backup_user"
-#  ext_backup_key_path: "/home/{{ ext_backup_user }}/.ssh/backup"
-#  ext_backup_key_file: "{{ ext_backup_key_path }}/id_rsa"
-#  ext_backup_root_dir: "/home/{{ ext_backup_user }}/backup"
-#  ext_backup_dir: "{{ ext_backup_root_dir }}/{{ ansible_hostname }}"
+#  src_key_file: "/.ssh/my.backup.host/id_rsa" # mypath is starting from $HOME
+  ext_backup_key_path: "/home/{{ ext_backup_user }}/.ssh/backup"
+  ext_backup_key_file: "{{ ext_backup_key_path }}/id_rsa"
+  ext_backup_root_link: "/home/{{ ext_backup_user }}/backup"
+  ext_backup_root_dir: "{{ backup_base_dir }}/ext"
+  ext_backup_dir: "{{ ext_backup_root_link }}/{{ ansible_hostname }}"
 
-#  src_key_file: "mypath/id_rsa"
-
-# local storage for downloading from ext backup host other backups in local backup storage
-# do_cross_backup: "yes/no" in inventory
-  # destination of
+  # cross backup : production is backuped in an external host and every night each server bring bak production backup of other servers
+  # -> inventory do_cross_backup: "yes/no"
+  # local storage for downloading from ext backup host other backups in local backup storage
   cross_backup_dir: "{{ backup_base_dir }}/cross"
 
   ext_backup_time: "04:00"
@@ -146,10 +150,10 @@
 
   # sms script
   monit_sms_script: "/root/monit_sms.sh"
+  # todo: review sms script is actually not in use
   # put comment to disable push via mail
-  #### in group vars
-  # comment_for_sms_push: "moved"
-  #mail_for_sms_push: "moved"
+  # -> group vars : comment_for_sms_push: "moved"
+  # -> group vars : mail_for_sms_push: "moved"
 
   # request, timeout and expected response for monitoring applications
   monit_request: ""
@@ -175,26 +179,29 @@
   certbot_revoke_command: "certbot revoke --cert-path "
   cert_delete_command: "certbot delete --cert-name "
 
+#  certbot_grant_command_apache2: 'certbot --agree-tos --authenticator standalone --installer apache --pre-hook "service apache2 stop" --post-hook "service apache2 start"
+#  -n -m {{ base_postmaster | mandatory }} -d {{ letsencrypt_domain | mandatory }} '
+  # todo: refactor this
+  certbot_grant_command_apache2: 'certbot --agree-tos --authenticator standalone --installer apache -n -m {{ base_postmaster | mandatory }} -d {{ letsencrypt_domain | quote }} '
+  certbot_grant_command_nginx: "certbot certonly --agree-tos --webroot -n -m {{ base_postmaster }} --webroot-path=/var/www/html -d {{ letsencrypt_domain | quote }} "
+
+  # use that for the moment
+  certbot_grant_command_standalone: "certbot certonly --standalone --agree-tos  -n -m {{ base_postmaster | mandatory }} -d {{ app_domain | quote }} "
+
+
 #############################################
 #  WWW
 #############################################
+  # www root directory and root directory for logs of reverse proxy
   www_root: "{{ base_prod_path }}/www"
   www_log: "{{ base_prod_log }}/{{ rev_proxy }}"
 
 #############################################
 # PLATFORM
 #############################################
+  # by default component are not installed
   docker_server: "no"
   rev_proxy: "none"
   postgres_server: "no"
   mariadb_mysql_server: "no"
   php_server: "no"
-
-#  certbot_grant_command_apache2: 'certbot --agree-tos --authenticator standalone --installer apache --pre-hook "service apache2 stop" --post-hook "service apache2 start"
-#  -n -m {{ base_postmaster | mandatory }} -d {{ letsencrypt_domain | mandatory }} '
-  certbot_grant_command_apache2: 'certbot --agree-tos --authenticator standalone --installer apache -n -m {{ base_postmaster | mandatory }} -d {{ letsencrypt_domain | quote }} '
-
-  certbot_grant_command_nginx: "certbot certonly --agree-tos --webroot -n -m {{ base_postmaster }} --webroot-path=/var/www/html -d {{ letsencrypt_domain | quote }} "
-
-  certbot_grant_command_standalone: "certbot certonly --standalone --agree-tos  -n -m {{ base_postmaster | mandatory }} -d {{ app_domain | quote }} "
-

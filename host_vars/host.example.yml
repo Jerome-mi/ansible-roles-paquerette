@@ -9,10 +9,16 @@
   postgres_server: "yes"
 
   # Nextcloud
-  nextcloud_domain: "mynextcloud.mydomain.org"
-  nextcloud_oldversion: 12.0.4
-  nextcloud_version: 12.0.5
-  nextcloud_instance_id: "nc_mydomain"
+  nextcloud_instances: [
+    {
+      nextcloud_domain: "mynextcloud.mydomain.org",
+      nextcloud_instance_id: "nc_mydomain",
+      nextcloud_oldversion: "13.0.5",
+      nextcloud_version: "13.0.5",
+      # skip, install, upgrade
+      run: "skip"}
+    ]
+
 
   # Mattermost
   mattermost_domain: "team.mydomain.org"
@@ -26,8 +32,8 @@
   collabora_client_domains: ["mynextcloud\\.mydomain\\.org",]
   #collabora_secret: "Veryverysecret"
   collabora_port: 9980
-  collabora_admin_user: "MelindaGates"
-  collabora_admin_password: "letyouguess"
+  collabora_admin_user: "Melinda"
+  collabora_admin_password: "Billforever"
 
   # Dolibarr
   dolibarr_instances: [
@@ -36,11 +42,15 @@
       dolibarr_oldversion: "",
       dolibarr_version: "7.0.1",
       dolibarr_instance_id: "dol_1",
-      dolibarr_database_type: "mysql", },
+      dolibarr_database_type: "mysql",
+      # skip, install, upgrade
+      run: "skip"},
     {
       dolibarr_domain: "dolibarr.anotherdomain.com",
       dolibarr_oldversion: "7.0.0",
       dolibarr_version: "7.0.1",
       dolibarr_instance_id: "dol_2",
-      dolibarr_database_type: "postgres", },
+      dolibarr_database_type: "postgres",
+      # skip, install, upgrade
+      run: "skip"},
     ]

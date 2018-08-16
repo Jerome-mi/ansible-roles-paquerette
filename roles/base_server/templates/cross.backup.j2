@@ -1,6 +1,6 @@
 # Note: the spaces around the equal sign ('=') are optional.
 when = everyday at {{ cross_backup_time | mandatory }}
 
-rsync -a --del -e "ssh -i {{ ext_backup_key_file | mandatory }}" --exclude="{{ ansible_hostname }}" {{ ext_backup_user | mandatory }}@{{ ext_backup_host | mandatory }}:{{ ext_backup_root_dir | mandatory }}/ {{ cross_backup_dir | mandatory }}
+rsync -a --del -e "ssh -i {{ ext_backup_key_file | mandatory }}" --exclude="{{ ansible_hostname }}" {{ ext_backup_user | mandatory }}@{{ ext_backup_host | mandatory }}:{{ ext_backup_root_link | mandatory }}/ {{ cross_backup_dir | mandatory }}
 rc=$?; if [[ $rc != 0 ]]; then error "cross backup" ; fi
 
